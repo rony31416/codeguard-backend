@@ -1,0 +1,15 @@
+FROM python:3.10-slim
+
+# Set working directory
+WORKDIR /code
+
+# Install minimal packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
+
+# Disable network (handled by Docker run command)
+# Create non-root user for security
+RUN useradd -m -u 1000 sandbox
+USER sandbox
+
+CMD ["python"]

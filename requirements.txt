@@ -1,0 +1,10 @@
+fastapi 
+uvicorn 
+python-multipart 
+docker 
+pylint 
+pyflakes 
+sqlalchemy 
+psycopg2-binary 
+pydantic 
+python-dotenv
