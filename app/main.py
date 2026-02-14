@@ -2,45 +2,51 @@ from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from typing import List
-import time
-import json
-from pydantic import BaseModel
+import os , json , time
 
 from .database import engine, get_db, Base
 from .schemas import CodeAnalysisRequest, AnalysisResponse, FeedbackRequest, BugPatternSchema, ExecutionLogSchema
 from .models import Analysis, BugPattern, Feedback, ExecutionLog, LinguisticAnalysis
 from .analyzers.static_analyzer import StaticAnalyzer
 from .analyzers.dynamic_analyzer import DynamicAnalyzer
-from .analyzers.classifier import TaxonomyClassifier
-from .analyzers.explainer import ExplainabilityLayer
+from .analyzers.classifier import BugClassifier
+from .analyzers.explainer import Explainer
 
-# Create database tables
+# Create tables
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="CodeGuard API",
-    version="2.0.0",
-    description="LLM Bug Taxonomy Classifier & Analyzer with Three-Stage Hybrid Detection"
+    description="LLM Bug Taxonomy Classifier & Analyzer",
+    version="2.0.0"
 )
 
-# CORS configuration
+# CORS - Allow VS Code extension to connect
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origins=["*"],  # In production, restrict to your extension
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# Docker configuration - Use environment variable or fallback to local
+DOCKER_HOST = os.getenv("DOCKER_HOST", "unix:///var/run/docker.sock")  # Local Docker by default
+
 @app.get("/")
-def read_root():
-    """API health check endpoint"""
+async def root():
     return {
         "message": "CodeGuard API is running",
         "version": "2.0.0",
         "stages": ["static", "dynamic", "linguistic"],
-        "bug_patterns": 10
+        "bug_patterns": 10,
+        "docker_host": DOCKER_HOST
     }
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for Render"""
+    return {"status": "healthy", "backend": "render", "database": "supabase"}
 
 @app.post("/api/analyze", response_model=AnalysisResponse)
 def analyze_code(request: CodeAnalysisRequest, db: Session = Depends(get_db)):
@@ -179,7 +185,7 @@ def analyze_code(request: CodeAnalysisRequest, db: Session = Depends(get_db)):
         print("Stage 4: Classifying bug patterns...")
         classifier_start = time.time()
         try:
-            classifier = TaxonomyClassifier(static_results, dynamic_results, linguistic_results)
+            classifier = BugClassifier(static_results, dynamic_results, linguistic_results)
             bug_patterns_list = classifier.classify()
             classifier_time = time.time() - classifier_start
             
@@ -203,7 +209,7 @@ def analyze_code(request: CodeAnalysisRequest, db: Session = Depends(get_db)):
             raise HTTPException(status_code=500, detail=f"Classification failed: {str(e)}")
         
         # ===== STAGE 5: Explainability =====
-        explainer = ExplainabilityLayer()
+        explainer = Explainer()
         summary = explainer.generate_summary(bug_patterns_list)
         overall_severity = classifier.get_overall_severity()
         has_bugs = classifier.has_bugs()
