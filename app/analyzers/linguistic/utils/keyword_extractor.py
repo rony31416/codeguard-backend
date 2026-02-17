@@ -2,8 +2,12 @@
 Enhanced keyword extraction using multiple NLP techniques with lazy loading
 """
 import re
+import os
 from typing import Set, List
 from collections import Counter
+
+# Force lightweight mode on low-memory environments (Render free tier)
+DISABLE_HEAVY_NLP = os.getenv("DISABLE_HEAVY_NLP", "false").lower() == "true"
 
 # Lazy loading for heavy models
 SPACY_AVAILABLE = False
@@ -15,26 +19,29 @@ nlp = None
 keybert_model = None
 
 # Check if libraries are installed (but don't load yet)
-try:
-    import spacy
-    SPACY_AVAILABLE = True
-except ImportError:
-    pass
+if not DISABLE_HEAVY_NLP:
+    try:
+        import spacy
+        SPACY_AVAILABLE = True
+    except ImportError:
+        pass
 
-try:
-    from keybert import KeyBERT
-    KEYBERT_AVAILABLE = True
-except ImportError:
-    pass
+    try:
+        from keybert import KeyBERT
+        KEYBERT_AVAILABLE = True
+    except ImportError:
+        pass
 
-try:
-    import nltk
-    from nltk.corpus import stopwords
-    from nltk.tokenize import word_tokenize
-    from nltk.stem import WordNetLemmatizer
-    NLTK_AVAILABLE = True
-except ImportError:
-    pass
+    try:
+        import nltk
+        from nltk.corpus import stopwords
+        from nltk.tokenize import word_tokenize
+        from nltk.stem import WordNetLemmatizer
+        NLTK_AVAILABLE = True
+    except ImportError:
+        pass
+else:
+    print("⚠️  Heavy NLP disabled (DISABLE_HEAVY_NLP=true) - using regex fallback")
 
 
 class KeywordExtractor:

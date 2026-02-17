@@ -225,8 +225,8 @@ def analyze_code(request: CodeAnalysisRequest, db: Session = Depends(get_db)):
             has_bugs=has_bugs,
             summary=summary,
             confidence_score=sum(p.confidence for p in bug_patterns_list) / len(bug_patterns_list) if bug_patterns_list else 0.0,
-            prompt_keywords=json.dumps(list(linguistic_analyzer.prompt_keywords)) if linguistic_analyzer else None,
-            code_features=json.dumps(list(linguistic_analyzer.code_features)) if linguistic_analyzer else None
+            prompt_keywords=None,  # Removed - not used in current implementation
+            code_features=None  # Removed - not used in current implementation
         )
         db.add(analysis)
         db.flush()  # Get analysis_id before adding related records

@@ -9,6 +9,7 @@ Main orchestrator for all linguistic detectors:
 """
 
 import ast
+import os
 from typing import Dict, Any
 
 # Import specialized detectors

@@ -3,6 +3,10 @@ Calculate semantic similarity between prompt and code with lazy loading
 """
 from typing import Tuple
 import re
+import os
+
+# Force lightweight mode on low-memory environments (Render free tier)
+DISABLE_HEAVY_NLP = os.getenv("DISABLE_HEAVY_NLP", "false").lower() == "true"
 
 # Lazy loading for heavy models
 SBERT_AVAILABLE = False
@@ -12,18 +16,21 @@ SKLEARN_AVAILABLE = False
 sbert_model = None
 
 # Check if libraries are installed (but don't load yet)
-try:
-    from sentence_transformers import SentenceTransformer, util
-    SBERT_AVAILABLE = True
-except ImportError:
-    pass
+if not DISABLE_HEAVY_NLP:
+    try:
+        from sentence_transformers import SentenceTransformer, util
+        SBERT_AVAILABLE = True
+    except ImportError:
+        pass
 
-try:
-    from sklearn.feature_extraction.text import TfidfVectorizer
-    from sklearn.metrics.pairwise import cosine_similarity
-    SKLEARN_AVAILABLE = True
-except ImportError:
-    pass
+    try:
+        from sklearn.feature_extraction.text import TfidfVectorizer
+        from sklearn.metrics.pairwise import cosine_similarity
+        SKLEARN_AVAILABLE = True
+    except ImportError:
+        pass
+else:
+    print("⚠️  Heavy NLP disabled (DISABLE_HEAVY_NLP=true) - using keyword overlap")
 
 
 class SimilarityCalculator:
