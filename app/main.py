@@ -9,7 +9,7 @@ from .schemas import CodeAnalysisRequest, AnalysisResponse, FeedbackRequest, Bug
 from .models import Analysis, BugPattern, Feedback, ExecutionLog, LinguisticAnalysis
 from .analyzers.static_analyzer import StaticAnalyzer
 from .analyzers.dynamic_analyzer import DynamicAnalyzer
-from .analyzers.classifier import BugClassifier
+from .analyzers.classifier import TaxonomyClassifier
 from .analyzers.explainer import Explainer
 
 # Create tables
@@ -185,7 +185,7 @@ def analyze_code(request: CodeAnalysisRequest, db: Session = Depends(get_db)):
         print("Stage 4: Classifying bug patterns...")
         classifier_start = time.time()
         try:
-            classifier = BugClassifier(static_results, dynamic_results, linguistic_results)
+            classifier = TaxonomyClassifier(static_results, dynamic_results, linguistic_results)
             bug_patterns_list = classifier.classify()
             classifier_time = time.time() - classifier_start
             
