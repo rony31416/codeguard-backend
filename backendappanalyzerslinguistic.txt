@@ -1,0 +1,708 @@
+backend/app/analyzers/linguistic/
+├── __init__.py
+├── base_detector.py           # Base class with shared utilities
+├── npc_detector.py            # Non-Prompted Consideration
+├── prompt_bias_detector.py    # Hardcoded example values
+├── missing_feature_detector.py # Requested but not implemented
+├── misinterpretation_detector.py # Fundamental misunderstanding
+└── utils/
+    ├── __init__.py
+    ├── keyword_extractor.py   # Enhanced NLP keyword extraction
+    ├── similarity_calculator.py # Semantic similarity
+    └── ast_analyzer.py        # Deep AST analysis
+
+
+1. base_detector.py - Shared Base Class
+"""
+Base detector class with shared utilities
+"""
+import ast
+from typing import Set, Dict, Any, List
+from abc import ABC, abstractmethod
+
+class BaseDetector(ABC):
+    """Abstract base class for all linguistic detectors"""
+    
+    # Common stop words
+    STOP_WORDS = {
+        'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for',
+        'of', 'with', 'by', 'from', 'as', 'is', 'was', 'are', 'were', 'been',
+        'be', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would',
+        'should', 'could', 'may', 'might', 'must', 'can', 'this', 'that'
+    }
+    
+    # Programming verbs
+    ACTION_VERBS = {
+        'create', 'write', 'implement', 'calculate', 'compute', 'return',
+        'get', 'fetch', 'find', 'check', 'validate', 'sort', 'filter',
+        'parse', 'process', 'handle', 'update', 'delete', 'add', 'remove'
+    }
+    
+    def __init__(self, prompt: str, code: str, code_ast: ast.AST = None):
+        self.prompt = prompt
+        self.prompt_lower = prompt.lower()
+        self.code = code
+        self.code_lower = code.lower()
+        self.code_ast = code_ast
+    
+    @abstractmethod
+    def detect(self) -> Dict[str, Any]:
+        """Each detector must implement this method"""
+        pass
+    
+    def _safe_parse_ast(self) -> ast.AST:
+        """Safely parse AST"""
+        try:
+            return ast.parse(self.code)
+        except SyntaxError:
+            return None
+    
+    def _filter_stop_words(self, words: Set[str]) -> Set[str]:
+        """Remove common stop words"""
+        return {w for w in words if w.lower() not in self.STOP_WORDS}
+
+
+
+
+2. utils/keyword_extractor.py - Advanced Keyword Extraction
+"""
+Enhanced keyword extraction using multiple NLP techniques
+"""
+import re
+from typing import Set, List
+from collections import Counter
+
+# Optional NLP libraries with graceful fallback
+try:
+    import spacy
+    nlp = spacy.load("en_core_web_sm")
+    SPACY_AVAILABLE = True
+except:
+    SPACY_AVAILABLE = False
+
+try:
+    from keybert import KeyBERT
+    keybert_model = KeyBERT()
+    KEYBERT_AVAILABLE = True
+except:
+    KEYBERT_AVAILABLE = False
+
+try:
+    import nltk
+    from nltk.corpus import stopwords
+    from nltk.tokenize import word_tokenize
+    from nltk.stem import WordNetLemmatizer
+    # Download required NLTK data
+    try:
+        nltk.data.find('corpora/stopwords')
+    except LookupError:
+        nltk.download('stopwords', quiet=True)
+        nltk.download('punkt', quiet=True)
+        nltk.download('wordnet', quiet=True)
+    NLTK_AVAILABLE = True
+except:
+    NLTK_AVAILABLE = False
+
+
+class KeywordExtractor:
+    """Multi-strategy keyword extraction"""
+    
+    def __init__(self):
+        self.stop_words = self._get_stop_words()
+        self.lemmatizer = WordNetLemmatizer() if NLTK_AVAILABLE else None
+    
+    def _get_stop_words(self) -> Set[str]:
+        """Get stop words from NLTK or fallback"""
+        if NLTK_AVAILABLE:
+            return set(stopwords.words('english'))
+        return {
+            'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to',
+            'for', 'of', 'with', 'by', 'from', 'as', 'is', 'was', 'are'
+        }
+    
+    def extract_from_prompt(self, prompt: str, top_n: int = 20) -> Set[str]:
+        """
+        Extract keywords from prompt using best available method
+        Priority: KeyBERT > spaCy > NLTK > Regex
+        """
+        # Try KeyBERT first (best for keyword extraction)
+        if KEYBERT_AVAILABLE:
+            return self._extract_with_keybert(prompt, top_n)
+        
+        # Fall back to spaCy
+        elif SPACY_AVAILABLE:
+            return self._extract_with_spacy(prompt)
+        
+        # Fall back to NLTK
+        elif NLTK_AVAILABLE:
+            return self._extract_with_nltk(prompt)
+        
+        # Last resort: regex
+        else:
+            return self._extract_with_regex(prompt)
+    
+    def _extract_with_keybert(self, text: str, top_n: int = 20) -> Set[str]:
+        """
+        Use KeyBERT for state-of-the-art keyword extraction
+        Best for: Finding most relevant keywords automatically
+        """
+        try:
+            keywords = keybert_model.extract_keywords(
+                text,
+                keyphrase_ngram_range=(1, 2),  # Single words and bigrams
+                stop_words='english',
+                top_n=top_n,
+                use_maxsum=True,  # Diversify results
+                nr_candidates=50
+            )
+            # Extract just the keyword strings
+            return {kw[0].lower() for kw in keywords}
+        except Exception as e:
+            print(f"KeyBERT extraction failed: {e}")
+            return self._extract_with_spacy(text)
+    
+    def _extract_with_spacy(self, text: str) -> Set[str]:
+        """
+        Use spaCy for linguistic analysis
+        Best for: Part-of-speech tagging, named entities
+        """
+        doc = nlp(text.lower())
+        keywords = set()
+        
+        # Extract important verbs (actions)
+        for token in doc:
+            if token.pos_ == "VERB" and not token.is_stop:
+                keywords.add(token.lemma_)
+        
+        # Extract nouns (entities/objects)
+        for token in doc:
+            if token.pos_ in ["NOUN", "PROPN"] and len(token.text) > 3:
+                keywords.add(token.lemma_)
+        
+        # Extract named entities
+        for ent in doc.ents:
+            keywords.add(ent.text.lower())
+        
+        # Extract important adjectives (attributes)
+        for token in doc:
+            if token.pos_ == "ADJ" and len(token.text) > 4:
+                keywords.add(token.lemma_)
+        
+        return keywords
+    
+    def _extract_with_nltk(self, text: str) -> Set[str]:
+        """
+        Use NLTK for traditional NLP
+        Best for: Research, custom algorithms
+        """
+        # Tokenize
+        tokens = word_tokenize(text.lower())
+        
+        # Remove stop words and short words
+        keywords = {
+            self.lemmatizer.lemmatize(token) 
+            for token in tokens 
+            if token.isalpha() and len(token) > 3 and token not in self.stop_words
+        }
+        
+        # POS tagging to keep only verbs and nouns
+        try:
+            import nltk
+            if not hasattr(nltk.data, 'find'):
+                nltk.download('averaged_perceptron_tagger', quiet=True)
+            
+            pos_tags = nltk.pos_tag(tokens)
+            filtered_keywords = {
+                self.lemmatizer.lemmatize(word)
+                for word, pos in pos_tags
+                if pos.startswith(('NN', 'VB', 'JJ')) and word in keywords
+            }
+            return filtered_keywords if filtered_keywords else keywords
+        except:
+            return keywords
+    
+    def _extract_with_regex(self, text: str) -> Set[str]:
+        """
+        Fallback: Simple regex extraction
+        Best for: When no NLP library available
+        """
+        # Extract words
+        words = re.findall(r'\b[a-z]+\b', text.lower())
+        
+        # Filter by length and stop words
+        keywords = {
+            w for w in words 
+            if len(w) > 3 and w not in self.stop_words
+        }
+        
+        return keywords
+    
+    def extract_action_verbs(self, text: str) -> Set[str]:
+        """Extract programming action verbs specifically"""
+        action_verbs = {
+            'create', 'write', 'implement', 'calculate', 'compute', 'return',
+            'get', 'fetch', 'retrieve', 'find', 'search', 'check', 'validate',
+            'sort', 'filter', 'parse', 'process', 'handle', 'convert', 'format'
+        }
+        
+        if SPACY_AVAILABLE:
+            doc = nlp(text.lower())
+            found_verbs = {token.lemma_ for token in doc if token.pos_ == "VERB"}
+            return found_verbs & action_verbs
+        else:
+            return {verb for verb in action_verbs if verb in text.lower()}
+    
+    def extract_data_types(self, text: str) -> Set[str]:
+        """Extract mentioned data types"""
+        data_types = {
+            'list', 'dict', 'dictionary', 'string', 'str', 'int', 'integer',
+            'float', 'number', 'tuple', 'array', 'set', 'bool', 'boolean'
+        }
+        return {dt for dt in data_types if dt in text.lower()}
+
+
+
+3. utils/similarity_calculator.py - Semantic Similarity
+
+
+"""
+Calculate semantic similarity between prompt and code
+"""
+from typing import Tuple
+import re
+
+try:
+    from sentence_transformers import SentenceTransformer, util
+    model = SentenceTransformer('all-MiniLM-L6-v2')  # Lightweight model
+    SBERT_AVAILABLE = True
+except:
+    SBERT_AVAILABLE = False
+
+try:
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    from sklearn.metrics.pairwise import cosine_similarity
+    SKLEARN_AVAILABLE = True
+except:
+    SKLEARN_AVAILABLE = False
+
+
+class SimilarityCalculator:
+    """Calculate semantic similarity using multiple methods"""
+    
+    def calculate_similarity(self, text1: str, text2: str) -> float:
+        """
+        Calculate similarity using best available method
+        Priority: Sentence-BERT > TF-IDF > Keyword Overlap
+        """
+        if SBERT_AVAILABLE:
+            return self._sbert_similarity(text1, text2)
+        elif SKLEARN_AVAILABLE:
+            return self._tfidf_similarity(text1, text2)
+        else:
+            return self._keyword_overlap(text1, text2)
+    
+    def _sbert_similarity(self, text1: str, text2: str) -> float:
+        """
+        Use Sentence-BERT for semantic similarity
+        Best method: Understands context and meaning
+        """
+        try:
+            # Encode texts
+            embedding1 = model.encode(text1, convert_to_tensor=True)
+            embedding2 = model.encode(text2, convert_to_tensor=True)
+            
+            # Calculate cosine similarity
+            similarity = util.cos_sim(embedding1, embedding2).item()
+            return round(similarity, 3)
+        except Exception as e:
+            print(f"SBERT failed: {e}, falling back to TF-IDF")
+            return self._tfidf_similarity(text1, text2)
+    
+    def _tfidf_similarity(self, text1: str, text2: str) -> float:
+        """
+        Use TF-IDF with cosine similarity
+        Good for: Keyword-based matching
+        """
+        try:
+            vectorizer = TfidfVectorizer(stop_words='english', max_features=100)
+            tfidf_matrix = vectorizer.fit_transform([text1.lower(), text2.lower()])
+            similarity = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2])[0][0]
+            return round(float(similarity), 3)
+        except:
+            return self._keyword_overlap(text1, text2)
+    
+    def _keyword_overlap(self, text1: str, text2: str) -> float:
+        """
+        Fallback: Simple keyword overlap (Jaccard similarity)
+        """
+        # Extract words
+        words1 = set(re.findall(r'\b\w+\b', text1.lower()))
+        words2 = set(re.findall(r'\b\w+\b', text2.lower()))
+        
+        # Filter short words
+        words1 = {w for w in words1 if len(w) > 3}
+        words2 = {w for w in words2 if len(w) > 3}
+        
+        if not words1:
+            return 0.0
+        
+        # Jaccard similarity
+        intersection = len(words1 & words2)
+        union = len(words1 | words2)
+        
+        return round(intersection / union if union > 0 else 0.0, 3)
+
+
+
+
+4. npc_detector.py - Non-Prompted Consideration
+
+"""
+Detect features added that weren't requested (NPC)
+"""
+import ast
+from typing import Dict, Any, List
+from .base_detector import BaseDetector
+from .utils.keyword_extractor import KeywordExtractor
+
+
+class NPCDetector(BaseDetector):
+    """Detect Non-Prompted Considerations"""
+    
+    # Common NPC patterns
+    NPC_PATTERNS = {
+        'sorted': 'sorting',
+        'sort(': 'sorting',
+        '.sort': 'sorting',
+        'raise': 'exception raising',
+        'Exception': 'exception handling',
+        'admin': 'admin checks',
+        'auth': 'authentication',
+        'permission': 'permission checks',
+        'role': 'role-based access',
+        'log': 'logging',
+        'logger': 'logging',
+        'print(': 'debugging output',
+        'assert': 'assertions',
+        'validate': 'validation',
+        'cache': 'caching',
+        '@lru_cache': 'memoization',
+        'lock': 'thread locking',
+        'mutex': 'synchronization',
+        'semaphore': 'synchronization'
+    }
+    
+    def __init__(self, prompt: str, code: str, code_ast: ast.AST = None):
+        super().__init__(prompt, code, code_ast)
+        self.keyword_extractor = KeywordExtractor()
+        self.prompt_keywords = self.keyword_extractor.extract_from_prompt(prompt)
+    
+    def detect(self) -> Dict[str, Any]:
+        """Main detection method"""
+        unprompted_features = []
+        
+        # Method 1: Pattern matching
+        unprompted_features.extend(self._pattern_based_detection())
+        
+        # Method 2: AST-based detection
+        if self.code_ast:
+            unprompted_features.extend(self._ast_based_detection())
+        
+        # Method 3: Keyword difference
+        unprompted_features.extend(self._keyword_based_detection())
+        
+        # Remove duplicates
+        unprompted_features = list(set(unprompted_features))
+        
+        return {
+            "found": len(unprompted_features) > 0,
+            "features": unprompted_features,
+            "count": len(unprompted_features)
+        }
+    
+    def _pattern_based_detection(self) -> List[str]:
+        """Check for common NPC patterns in code"""
+        found = []
+        
+        for pattern, feature_name in self.NPC_PATTERNS.items():
+            if pattern in self.code and pattern.lower() not in self.prompt_lower:
+                found.append(feature_name)
+        
+        return found
+    
+    def _ast_based_detection(self) -> List[str]:
+        """Use AST to detect structural NPC"""
+        found = []
+        
+        # 1. Try-except blocks not mentioned
+        try_blocks = [node for node in ast.walk(self.code_ast) if isinstance(node, ast.Try)]
+        if try_blocks and 'error' not in self.prompt_lower and 'exception' not in self.prompt_lower:
+            found.append("error handling not requested")
+        
+        # 2. Security/admin checks
+        for node in ast.walk(self.code_ast):
+            if isinstance(node, ast.If):
+                try:
+                    condition_str = ast.unparse(node.test).lower() if hasattr(ast, 'unparse') else ""
+                    security_keywords = ['admin', 'auth', 'permission', 'role', 'authorized']
+                    if any(kw in condition_str for kw in security_keywords):
+                        if not any(kw in self.prompt_lower for kw in security_keywords):
+                            found.append("security checks not requested")
+                            break
+                except:
+                    pass
+        
+        # 3. Performance optimizations (decorators)
+        for node in ast.walk(self.code_ast):
+            if isinstance(node, ast.FunctionDef):
+                for decorator in node.decorator_list:
+                    if isinstance(decorator, ast.Name):
+                        if 'cache' in decorator.id.lower() or 'memo' in decorator.id.lower():
+                            if 'cache' not in self.prompt_lower and 'optimize' not in self.prompt_lower:
+                                found.append("performance optimization not requested")
+        
+        # 4. Logging statements
+        log_calls = 0
+        for node in ast.walk(self.code_ast):
+            if isinstance(node, ast.Call):
+                if isinstance(node.func, ast.Attribute):
+                    if 'log' in node.func.attr.lower():
+                        log_calls += 1
+        
+        if log_calls > 0 and 'log' not in self.prompt_lower:
+            found.append("logging not requested")
+        
+        return found
+    
+    def _keyword_based_detection(self) -> List[str]:
+        """Detect features in code not mentioned in prompt"""
+        found = []
+        
+        # Extract code features
+        code_keywords = self.keyword_extractor.extract_from_prompt(self.code)
+        
+        # Find code features not in prompt
+        unprompted_keywords = code_keywords - self.prompt_keywords
+        
+        # Filter to significant additions only
+        significant_additions = {
+            'security', 'validation', 'optimization', 'caching', 
+            'logging', 'monitoring', 'authentication'
+        }
+        
+        for keyword in unprompted_keywords:
+            if any(sig in keyword for sig in significant_additions):
+                found.append(f"'{keyword}' feature not requested")
+        
+        return found
+
+
+
+
+
+5. prompt_bias_detector.py - Hardcoded Examples
+"""
+Detect hardcoded values from prompt examples
+"""
+import re
+import ast
+from typing import Dict, Any, List
+from .base_detector import BaseDetector
+
+
+class PromptBiasDetector(BaseDetector):
+    """Detect prompt-biased code (hardcoded example values)"""
+    
+    def detect(self) -> Dict[str, Any]:
+        """Main detection method"""
+        hardcoded_values = []
+        
+        # Method 1: String literals from prompt examples
+        hardcoded_values.extend(self._detect_string_literals())
+        
+        # Method 2: Magic numbers from examples
+        hardcoded_values.extend(self._detect_magic_numbers())
+        
+        # Method 3: AST-based hardcoded comparisons
+        if self.code_ast:
+            hardcoded_values.extend(self._detect_ast_comparisons())
+        
+        # Remove duplicates
+        hardcoded_values = list(set(hardcoded_values))
+        
+        return {
+            "found": len(hardcoded_values) > 0,
+            "values": hardcoded_values,
+            "count": len(hardcoded_values)
+        }
+    
+    def _detect_string_literals(self) -> List[str]:
+        """Extract quoted strings from prompt and check if hardcoded"""
+        hardcoded = []
+        
+        # Extract examples from prompt
+        prompt_examples = []
+        
+        # Pattern 1: Quoted strings
+        prompt_examples.extend(re.findall(r'["\']([^"\']{3,})["\']', self.prompt))
+        
+        # Pattern 2: "e.g., Example"
+        prompt_examples.extend(re.findall(r'e\.g\.,?\s+["\']?([a-zA-Z_][a-zA-Z0-9_]{2,})["\']?', self.prompt, re.IGNORECASE))
+        
+        # Pattern 3: "for example: value"
+        prompt_examples.extend(re.findall(r'example[:\s]+["\']?([a-zA-Z_][a-zA-Z0-9_]{2,})["\']?', self.prompt, re.IGNORECASE))
+        
+        # Pattern 4: "like 'value'"
+        prompt_examples.extend(re.findall(r'like\s+["\']([^"\']+)["\']', self.prompt, re.IGNORECASE))
+        
+        # Check if examples are hardcoded in comparisons
+        for example in prompt_examples:
+            if example and len(example) > 2:
+                # Check for hardcoded equality checks
+                patterns = [
+                    f'== "{example}"',
+                    f"== '{example}'",
+                    f'== {example}',
+                    f'if "{example}"',
+                    f"if '{example}'"
+                ]
+                
+                if any(pattern in self.code for pattern in patterns):
+                    hardcoded.append(f'string: "{example}"')
+        
+        return hardcoded
+    
+    def _detect_magic_numbers(self) -> List[str]:
+        """Detect hardcoded numbers from prompt examples"""
+        hardcoded = []
+        
+        # Extract numbers from prompt
+        prompt_numbers = re.findall(r'\b(\d+)\b', self.prompt)
+        
+        # Check if these numbers appear in conditionals
+        for num in set(prompt_numbers):
+            # Skip common numbers (0, 1, 2)
+            if int(num) <= 2:
+                continue
+            
+            # Check if number is in a condition
+            conditional_patterns = [
+                f'== {num}',
+                f'> {num}',
+                f'< {num}',
+                f'>= {num}',
+                f'<= {num}',
+                f'!= {num}'
+            ]
+            
+            if any(pattern in self.code for pattern in conditional_patterns):
+                hardcoded.append(f'magic number: {num}')
+        
+        return hardcoded
+    
+    def _detect_ast_comparisons(self) -> List[str]:
+        """Use AST to find hardcoded comparisons"""
+        hardcoded = []
+        
+        # Get all string constants from prompt
+        prompt_strings = set(re.findall(r'["\']([^"\']{3,})["\']', self.prompt))
+        
+        # Find all comparison nodes in code
+        for node in ast.walk(self.code_ast):
+            if isinstance(node, ast.Compare):
+                # Check if comparing with a constant
+                for comparator in node.comparators:
+                    if isinstance(comparator, ast.Constant):
+                        value = comparator.value
+                        
+                        # If string constant matches prompt example
+                        if isinstance(value, str) and value in prompt_strings:
+                            hardcoded.append(f'hardcoded comparison: "{value}"')
+                        
+                        # If numeric constant from prompt
+                        elif isinstance(value, (int, float)):
+                            if str(value) in self.prompt:
+                                hardcoded.append(f'hardcoded number in condition: {value}')
+        
+        return hardcoded
+
+
+
+6. Integrating Everything - Updated linguistic_analyzer.py
+"""
+Main Linguistic Analyzer - Orchestrates all detectors
+"""
+import ast
+from typing import Dict, Any
+from .utils.keyword_extractor import KeywordExtractor
+from .utils.similarity_calculator import SimilarityCalculator
+from .npc_detector import NPCDetector
+from .prompt_bias_detector import PromptBiasDetector
+# Import others when implemented...
+
+
+class LinguisticAnalyzer:
+    """
+    Stage 3: Linguistic Analysis Orchestrator
+    Coordinates all specialized detectors
+    """
+    
+    def __init__(self, prompt: str, code: str):
+        self.prompt = prompt
+        self.code = code
+        self.code_ast = self._safe_parse_ast()
+        
+        # Initialize utilities
+        self.keyword_extractor = KeywordExtractor()
+        self.similarity_calculator = SimilarityCalculator()
+        
+        # Initialize detectors
+        self.npc_detector = NPCDetector(prompt, code, self.code_ast)
+        self.prompt_bias_detector = PromptBiasDetector(prompt, code, self.code_ast)
+        # Add others...
+    
+    def analyze(self) -> Dict[str, Any]:
+        """Run all linguistic analyses"""
+        results = {
+            "npc": self.npc_detector.detect(),
+            "prompt_biased": self.prompt_bias_detector.detect(),
+            "missing_features": self._detect_missing_features(),  # Placeholder
+            "misinterpretation": self._detect_misinterpretation(),  # Placeholder
+            "intent_match_score": self.similarity_calculator.calculate_similarity(
+                self.prompt, self.code
+            )
+        }
+        return results
+    
+    def _safe_parse_ast(self) -> ast.AST:
+        try:
+            return ast.parse(self.code)
+        except SyntaxError:
+            return None
+    
+    def _detect_missing_features(self) -> Dict[str, Any]:
+        # TODO: Implement with MissingFeatureDetector
+        return {"found": False, "features": []}
+    
+    def _detect_misinterpretation(self) -> Dict[str, Any]:
+        # TODO: Implement with MisinterpretationDetector
+        return {"found": False, "score": 0.0, "reasons": []}
+
+
+📦 Updated requirements.txt
+
+# Existing
+fastapi==0.104.1
+uvicorn==0.24.0
+sqlalchemy==2.0.23
+psycopg2-binary==2.9.9
+
+# NLP Libraries (Production-Ready)
+spacy>=3.7.0
+sentence-transformers>=2.2.2
+keybert>=0.8.4
+scikit-learn>=1.3.0
+
+# Optional (Research/Enhancement)
+# nltk>=3.8.1
+# yake>=0.4.8
