@@ -10,7 +10,7 @@ from .models import Analysis, BugPattern, Feedback, ExecutionLog, LinguisticAnal
 from .analyzers.static_analyzer import StaticAnalyzer
 from .analyzers.dynamic_analyzer import DynamicAnalyzer
 from .analyzers.classifier import TaxonomyClassifier
-from .analyzers.explainer import Explainer
+from .analyzers.explainer import ExplainabilityLayer
 
 # Create tables
 Base.metadata.create_all(bind=engine)
@@ -209,8 +209,7 @@ def analyze_code(request: CodeAnalysisRequest, db: Session = Depends(get_db)):
             raise HTTPException(status_code=500, detail=f"Classification failed: {str(e)}")
         
         # ===== STAGE 5: Explainability =====
-        explainer = Explainer()
-        summary = explainer.generate_summary(bug_patterns_list)
+        summary = ExplainabilityLayer.generate_summary(bug_patterns_list)
         overall_severity = classifier.get_overall_severity()
         has_bugs = classifier.has_bugs()
         
