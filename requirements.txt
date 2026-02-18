@@ -8,6 +8,7 @@ sqlalchemy
 psycopg2-binary 
 pydantic 
 python-dotenv
+requests
 
 # NLP Libraries for Linguistic Analysis (Stage 3)
 spacy==3.8.11
@@ -17,3 +18,6 @@ scikit-learn==1.7.2
 
 # spaCy English model
 https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl
+
+# Google Gemini AI - New SDK (for semantic analysis)
+google-genai>=1.63.0

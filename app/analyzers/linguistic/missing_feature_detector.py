@@ -1,46 +1,78 @@
 """
 Detect features mentioned in prompt but missing in code
+Enhanced with 3-layer cascade architecture
 """
 import re
 import ast
 from typing import Dict, Any, List, Set
 from .base_detector import BaseDetector
 from .utils.keyword_extractor import KeywordExtractor
-from .utils.ast_analyzer import ASTAnalyzer
+from .utils.ast_analyzer import ASTAnalyzer as UtilsASTAnalyzer
+from .layers import RuleEngine, ASTAnalyzer, LLMReasoner, LayerAggregator
 
 
 class MissingFeatureDetector(BaseDetector):
-    """Detect features requested but not implemented"""
+    """Detect features requested but not implemented using 3-layer cascade"""
     
     def __init__(self, prompt: str, code: str, code_ast: ast.AST = None):
         super().__init__(prompt, code, code_ast)
         self.keyword_extractor = KeywordExtractor()
-        self.ast_analyzer = ASTAnalyzer(self.code_ast) if self.code_ast else None
+        self.utils_ast_analyzer = UtilsASTAnalyzer(self.code_ast) if self.code_ast else None
+        
+        # Initialize 3-layer architecture
+        self.rule_engine = RuleEngine()
+        self.ast_analyzer = ASTAnalyzer()
+        self.llm_reasoner = LLMReasoner()
+        self.aggregator = LayerAggregator()
     
     def detect(self) -> Dict[str, Any]:
-        """Main detection method"""
-        missing_features = []
+        """Main detection method using 3-layer cascade with aggregation"""
+        # LAYER 1: Rule Engine (Fast pattern matching ~10ms, 95% confidence)
+        layer1_result = self.rule_engine.detect_missing_features(self.code, self.prompt)
         
-        # Method 1: Missing action verbs
-        missing_features.extend(self._detect_missing_actions())
+        # LAYER 2: AST Analyzer (Structural verification ~50ms, 100% confidence)
+        layer2_result = None
+        if self.code_ast:
+            layer2_result = self.ast_analyzer.verify_missing_features(self.code, self.prompt)
         
-        # Method 2: Missing data types
-        missing_features.extend(self._detect_missing_data_types())
+        # LAYER 3: LLM Reasoner (Deep semantic analysis ~300ms, 98% confidence)
+        # Important for semantic feature matching
+        layer3_result = None
+        if layer1_result.get('confidence', 0) < 0.98 or not layer1_result.get('issues'):
+            layer3_result = self.llm_reasoner.deep_semantic_analysis(
+                self.prompt,
+                self.code,
+                previous_findings={
+                    'rule_engine': layer1_result,
+                    'ast': layer2_result
+                }
+            )
         
-        # Method 3: Missing return values
-        missing_features.extend(self._detect_missing_returns())
+        # AGGREGATE RESULTS from all layers
+        aggregated = self.aggregator.aggregate_findings(
+            layer1_result,
+            layer2_result,
+            layer3_result
+        )
         
-        # Method 4: Missing error handling
-        if self._is_error_handling_requested():
-            missing_features.extend(self._detect_missing_error_handling())
+        # Limit features to top 5
+        features = aggregated['findings'][:5]
         
-        # Remove duplicates and limit
-        missing_features = list(set(missing_features))[:5]
-        
+        # Return aggregated results in expected format
         return {
-            "found": len(missing_features) > 0,
-            "features": missing_features,
-            "count": len(missing_features)
+            "found": aggregated['found'],
+            "features": features,
+            "count": len(features),
+            "confidence": aggregated['confidence'],
+            "severity": aggregated.get('severity'),
+            "consensus": aggregated['consensus'],
+            "primary_detection": aggregated['primary_detection'],
+            "layers_used": aggregated['layers_used'],
+            "layers_detail": aggregated['layers_detail'],
+            "reliability": self.aggregator.calculate_reliability_score(
+                aggregated['consensus'], 
+                aggregated['confidence']
+            )
         }
     
     def _detect_missing_actions(self) -> List[str]:

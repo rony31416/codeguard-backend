@@ -1,59 +1,76 @@
 """
 Detect fundamental misunderstanding of the task
+Enhanced with 3-layer cascade architecture
 """
 import re
 import ast
 from typing import Dict, Any, List
 from .base_detector import BaseDetector
 from .utils.similarity_calculator import SimilarityCalculator
+from .layers import RuleEngine, ASTAnalyzer, LLMReasoner, LayerAggregator
 
 
 class MisinterpretationDetector(BaseDetector):
-    """Detect if code fundamentally misunderstood the prompt"""
+    """Detect if code fundamentally misunderstood the prompt using 3-layer cascade"""
     
     def __init__(self, prompt: str, code: str, code_ast: ast.AST = None):
         super().__init__(prompt, code, code_ast)
         self.similarity_calculator = SimilarityCalculator()
+        
+        # Initialize 3-layer architecture
+        self.rule_engine = RuleEngine()
+        self.ast_analyzer = ASTAnalyzer()
+        self.llm_reasoner = LLMReasoner()
+        self.aggregator = LayerAggregator()
     
     def detect(self) -> Dict[str, Any]:
-        """Main detection method"""
-        misinterpretation_score = 0.0
-        reasons = []
+        """Main detection method using 3-layer cascade with aggregation"""
+        # LAYER 1: Rule Engine (Fast pattern matching ~10ms, 95% confidence)
+        layer1_result = self.rule_engine.detect_misinterpretation(self.code, self.prompt)
         
-        # Method 1: Return vs Print mismatch
-        score, reason = self._detect_return_print_mismatch()
-        if reason:
-            misinterpretation_score += score
-            reasons.append(reason)
+        # LAYER 2: AST Analyzer (Structural verification ~50ms, 100% confidence)
+        layer2_result = None
+        if self.code_ast:
+            layer2_result = self.ast_analyzer.analyze_return_type_mismatch(self.code, self.prompt)
         
-        # Method 2: Wrong data type
-        score, reason = self._detect_wrong_data_type()
-        if reason:
-            misinterpretation_score += score
-            reasons.append(reason)
+        # LAYER 3: LLM Reasoner (ALWAYS invoke - most important for misinterpretation)
+        layer3_result = self.llm_reasoner.verify_misinterpretation(
+            self.prompt,
+            self.code
+        )
         
-        # Method 3: Semantic similarity too low
+        # AGGREGATE RESULTS from all layers
+        aggregated = self.aggregator.aggregate_findings(
+            layer1_result,
+            layer2_result,
+            layer3_result
+        )
+        
+        # Semantic similarity check (backup for edge cases)
         similarity = self.similarity_calculator.calculate_similarity(self.prompt, self.code)
-        if similarity < 0.2:  # Very low similarity
-            misinterpretation_score += 0.3
-            reasons.append(f"low semantic similarity ({similarity})")
+        if similarity < 0.2 and not aggregated['findings']:
+            aggregated['findings'].append(f"low semantic similarity ({round(similarity, 2)})")
+            aggregated['found'] = True
+            aggregated['severity'] = max(aggregated.get('severity', 0), 3.0)
         
-        # Method 4: Missing core functionality
-        score, reason = self._detect_missing_core_function()
-        if reason:
-            misinterpretation_score += score
-            reasons.append(reason)
+        # Calculate misinterpretation score from severity
+        misinterpretation_score = aggregated.get('severity', 0) / 10.0
         
-        # Method 5: Wrong algorithm/approach
-        score, reason = self._detect_wrong_approach()
-        if reason:
-            misinterpretation_score += score
-            reasons.append(reason)
-        
+        # Return aggregated results in expected format
         return {
-            "found": misinterpretation_score > 0.4,  # Threshold for misinterpretation
+            "found": aggregated['found'] or misinterpretation_score > 0.4,
             "score": round(misinterpretation_score, 2),
-            "reasons": reasons
+            "reasons": aggregated['findings'],
+            "confidence": aggregated['confidence'],
+            "severity": aggregated.get('severity'),
+            "consensus": aggregated['consensus'],
+            "primary_detection": aggregated['primary_detection'],
+            "layers_used": aggregated['layers_used'],
+            "layers_detail": aggregated['layers_detail'],
+            "reliability": self.aggregator.calculate_reliability_score(
+                aggregated['consensus'], 
+                aggregated['confidence']
+            )
         }
     
     def _detect_return_print_mismatch(self) -> tuple:

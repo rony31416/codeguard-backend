@@ -1,0 +1,3 @@
+@echo off
+echo Testing Gemini API with venv...
+F:\Codeguard\.venv\Scripts\python.exe F:\Codeguard\backend\test\test_gemini_api.py
