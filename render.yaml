@@ -4,12 +4,27 @@ services:
     env: python
     region: oregon
     plan: free
-    buildCommand: "pip install -r requirements.txt"
+    buildCommand: "pip install -r requirements.txt && python -m spacy download en_core_web_sm"
     startCommand: "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
     envVars:
+      # Database Configuration
       - key: DATABASE_URL
+        value: "sqlite:///./codeguard.db"
+      
+      # LLM API Keys (Primary: Ollama, Fallback: OpenRouter)
+      - key: OLLAMA_API_KEY
         sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+      
+      # Docker Configuration
       - key: DOCKER_HOST
-        value: "tcp://codeguard-sandbox.fly.dev:2375"
+        value: "unix:///var/run/docker.sock"
+      - key: DOCKER_TIMEOUT
+        value: "5"
+      - key: DOCKER_MEMORY_LIMIT
+        value: "128m"
+      
+      # Python Version
       - key: PYTHON_VERSION
-        value: "3.10.0"
+        value: "3.13.0"

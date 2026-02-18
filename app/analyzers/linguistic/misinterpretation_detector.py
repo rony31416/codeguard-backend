@@ -51,10 +51,11 @@ class MisinterpretationDetector(BaseDetector):
         if similarity < 0.2 and not aggregated['findings']:
             aggregated['findings'].append(f"low semantic similarity ({round(similarity, 2)})")
             aggregated['found'] = True
-            aggregated['severity'] = max(aggregated.get('severity', 0), 3.0)
+            aggregated['severity'] = max(aggregated.get('severity') or 0, 3.0)
         
-        # Calculate misinterpretation score from severity
-        misinterpretation_score = aggregated.get('severity', 0) / 10.0
+        # Calculate misinterpretation score from severity (handle None)
+        severity_value = aggregated.get('severity') or 0
+        misinterpretation_score = severity_value / 10.0 if severity_value else 0.0
         
         # Return aggregated results in expected format
         return {

@@ -10,6 +10,9 @@ pydantic
 python-dotenv
 requests
 
+# LLM API Clients
+ollama>=0.4.3
+
 # NLP Libraries for Linguistic Analysis (Stage 3)
 spacy==3.8.11
 sentence-transformers==5.2.2

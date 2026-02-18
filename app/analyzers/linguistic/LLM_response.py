@@ -1,52 +1,141 @@
 """
-OpenRouter API Integration - Simple & Free
-Using google/gemma-3-12b-it:free model
+Dual LLM API Integration - Ollama (Primary) + OpenRouter (Fallback)
+Fallback Chain: Ollama → OpenRouter → Skip LLM
+
+Primary: Ollama Cloud (gpt-oss:20b-cloud) - Fast & Reliable
+Fallback: OpenRouter (google/gemma-3-12b-it:free) - Free tier
 """
 
 import os
 import requests
 import time
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from dotenv import load_dotenv
 
 load_dotenv()
 
-API_URL = "https://openrouter.ai/api/v1/chat/completions"
-API_KEY = os.getenv("OPENROUTER_API_KEY")
+# Try to import Ollama client (graceful fail if not installed)
+OLLAMA_AVAILABLE = False
+try:
+    from ollama import Client
+    OLLAMA_AVAILABLE = True
+except ImportError:
+    print("⚠️ Ollama client not installed. Install with: pip install ollama")
+    Client = None
 
 
 class LLM:
-    """Simple LLM wrapper using OpenRouter free model."""
+    """Dual LLM wrapper with Ollama (primary) and OpenRouter (fallback)."""
     
     def __init__(self):
-        self.api_key = os.getenv("OPENROUTER_API_KEY", "")
-        self.api_url = "https://openrouter.ai/api/v1/chat/completions"
-        self.model = "google/gemma-3-12b-it:free"
-        self.enabled = bool(self.api_key and self.api_key != "*****")
+        # Ollama configuration
+        self.ollama_api_key = os.getenv("OLLAMA_API_KEY", "")
+        self.ollama_enabled = OLLAMA_AVAILABLE and bool(self.ollama_api_key and self.ollama_api_key != "*****")
+        self.ollama_model = "gpt-oss:20b-cloud"
+        self.ollama_client = None
+        
+        # OpenRouter configuration (fallback)
+        self.openrouter_api_key = os.getenv("OPENROUTER_API_KEY", "")
+        self.openrouter_enabled = bool(self.openrouter_api_key and self.openrouter_api_key != "*****")
+        self.openrouter_url = "https://openrouter.ai/api/v1/chat/completions"
+        self.openrouter_model = "google/gemma-3-12b-it:free"
+        
+        # Initialize Ollama client if available
+        if self.ollama_enabled:
+            try:
+                self.ollama_client = Client(
+                    host='https://ollama.com',
+                    headers={'Authorization': f'Bearer {self.ollama_api_key}'}
+                )
+            except Exception as e:
+                print(f"⚠️ Failed to initialize Ollama client: {e}")
+                self.ollama_enabled = False
+        
+        # Overall LLM status
+        self.enabled = self.ollama_enabled or self.openrouter_enabled
     
-    def ask(self, prompt: str, max_retries: int = 3) -> str:
-        """Ask the LLM a question."""
+    def ask(self, prompt: str, max_retries: int = 2) -> Optional[str]:
+        """
+        Ask LLM with fallback chain: Ollama → OpenRouter → None
+        
+        Args:
+            prompt: Question to ask the LLM
+            max_retries: Number of retries per API (default: 2)
+        
+        Returns:
+            LLM response string or None if all APIs fail
+        """
         if not self.enabled:
             return None
         
+        # Try Ollama first (primary)
+        if self.ollama_enabled:
+            response = self._ask_ollama(prompt, max_retries)
+            if response:
+                return response
+            print("⚠️ Ollama failed, falling back to OpenRouter...")
+        
+        # Fallback to OpenRouter
+        if self.openrouter_enabled:
+            response = self._ask_openrouter(prompt, max_retries)
+            if response:
+                return response
+            print("⚠️ OpenRouter failed, skipping LLM analysis...")
+        
+        # Both APIs failed
+        return None
+    
+    def _ask_ollama(self, prompt: str, max_retries: int = 2) -> Optional[str]:
+        """Ask Ollama Cloud API with streaming."""
+        if not self.ollama_enabled or not self.ollama_client:
+            return None
+        
+        messages = [{"role": "user", "content": prompt}]
+        
+        for attempt in range(max_retries):
+            try:
+                stream = self.ollama_client.chat(
+                    model=self.ollama_model,
+                    messages=messages,
+                    stream=True
+                )
+                
+                full_response = ""
+                for part in stream:
+                    content = part.message.content
+                    full_response += content
+                
+                if full_response:
+                    return full_response
+                
+            except Exception as e:
+                print(f"⚠️ Ollama attempt {attempt + 1}/{max_retries} failed: {e}")
+                if attempt < max_retries - 1:
+                    time.sleep(1)  # Brief pause before retry
+        
+        return None
+    
+    def _ask_openrouter(self, prompt: str, max_retries: int = 2) -> Optional[str]:
+        """Ask OpenRouter API (fallback)."""
+        if not self.openrouter_enabled:
+            return None
+        
         headers = {
-            "Authorization": f"Bearer {self.api_key}",
+            "Authorization": f"Bearer {self.openrouter_api_key}",
             "Content-Type": "application/json"
         }
         
         payload = {
-            "model": self.model,
-            "messages": [
-                {"role": "user", "content": prompt}
-            ]
+            "model": self.openrouter_model,
+            "messages": [{"role": "user", "content": prompt}]
         }
         
         for attempt in range(max_retries):
             try:
                 r = requests.post(
-                    self.api_url, 
-                    headers=headers, 
-                    json=payload, 
+                    self.openrouter_url,
+                    headers=headers,
+                    json=payload,
                     timeout=60
                 )
                 
@@ -55,50 +144,67 @@ class LLM:
                 
                 elif r.status_code == 429:
                     wait = 2 ** attempt
-                    print(f"Rate limited. Retry in {wait}s")
+                    print(f"⚠️ OpenRouter rate limited. Retry in {wait}s...")
                     time.sleep(wait)
                 
                 else:
-                    print(f"Error {r.status_code}:", r.text)
-                    return None
-            
+                    print(f"⚠️ OpenRouter error {r.status_code}: {r.text[:100]}")
+                    
             except Exception as e:
-                print(f"Request failed: {e}")
+                print(f"⚠️ OpenRouter attempt {attempt + 1}/{max_retries} failed: {e}")
                 if attempt < max_retries - 1:
                     time.sleep(2 ** attempt)
-                else:
-                    return None
         
         return None
     
     def is_alive(self) -> Dict[str, Any]:
-        """Test if API works."""
+        """Test if LLM APIs are working (both Ollama and OpenRouter)."""
         if not self.enabled:
-            return {"status": "disabled", "message": "No API key"}
+            return {"status": "disabled", "message": "No API keys configured"}
         
-        try:
-            response = self.ask("Reply with OK")
-            if response:
-                return {
-                    "status": "alive",
-                    "message": "Working",
-                    "response": response
-                }
-            else:
-                return {
-                    "status": "error",
-                    "message": "No response from API"
-                }
-        except Exception as e:
-            return {
-                "status": "error",
-                "message": str(e)
-            }
+        results = {
+            "ollama": {"enabled": self.ollama_enabled, "working": False},
+            "openrouter": {"enabled": self.openrouter_enabled, "working": False}
+        }
+        
+        # Test Ollama
+        if self.ollama_enabled:
+            try:
+                response = self._ask_ollama("Reply with OK", max_retries=1)
+                if response:
+                    results["ollama"]["working"] = True
+                    results["ollama"]["response"] = response[:50]
+            except Exception as e:
+                results["ollama"]["error"] = str(e)
+        
+        # Test OpenRouter
+        if self.openrouter_enabled:
+            try:
+                response = self._ask_openrouter("Reply with OK", max_retries=1)
+                if response:
+                    results["openrouter"]["working"] = True
+                    results["openrouter"]["response"] = response[:50]
+            except Exception as e:
+                results["openrouter"]["error"] = str(e)
+        
+        # Determine overall status
+        if results["ollama"]["working"] or results["openrouter"]["working"]:
+            status = "alive"
+            message = f"Working: {'Ollama' if results['ollama']['working'] else ''} {'OpenRouter' if results['openrouter']['working'] else ''}".strip()
+        else:
+            status = "error"
+            message = "All LLM APIs failed"
+        
+        return {
+            "status": status,
+            "message": message,
+            "apis": results
+        }
     
     def analyze_code(self, prompt: str, code: str) -> Dict[str, Any]:
-        """Analyze code for bugs."""
+        """Analyze code for bugs using fallback chain."""
         if not self.enabled:
-            return {"success": False, "error": "API not enabled"}
+            return {"success": False, "error": "No API enabled", "api_used": None}
         
         question = f"""Analyze this code for bugs.
 
@@ -125,24 +231,40 @@ Return ONLY valid JSON in this format:
 }}"""
         
         try:
-            response = self.ask(question)
+            # Try Ollama first
+            api_used = None
+            response = None
+            
+            if self.ollama_enabled:
+                response = self._ask_ollama(question, max_retries=1)
+                if response:
+                    api_used = "ollama"
+            
+            # Fallback to OpenRouter
+            if not response and self.openrouter_enabled:
+                response = self._ask_openrouter(question, max_retries=1)
+                if response:
+                    api_used = "openrouter"
             
             if response:
                 return {
                     "success": True,
                     "analysis": response,
-                    "model": self.model
+                    "api_used": api_used,
+                    "model": self.ollama_model if api_used == "ollama" else self.openrouter_model
                 }
             else:
                 return {
                     "success": False,
-                    "error": "No response from LLM"
+                    "error": "All LLM APIs failed",
+                    "api_used": None
                 }
         
         except Exception as e:
             return {
                 "success": False,
-                "error": str(e)
+                "error": str(e),
+                "api_used": None
             }
 
 
@@ -158,22 +280,42 @@ def get_llm():
 
 
 if __name__ == "__main__":
-    """Quick test"""
+    """Quick test for dual LLM system"""
     llm = get_llm()
     
-    print("Testing OpenRouter API...")
-    print("-" * 60)
+    print("=" * 80)
+    print("🧪 Testing Dual LLM System (Ollama + OpenRouter)")
+    print("=" * 80)
+    print(f"\n✅ Ollama Enabled: {llm.ollama_enabled}")
+    print(f"✅ OpenRouter Enabled: {llm.openrouter_enabled}")
+    print(f"✅ Overall Status: {'ENABLED' if llm.enabled else 'DISABLED'}")
+    
+    if not llm.enabled:
+        print("\n⚠️ No LLM APIs configured. Add API keys to .env file.")
+        exit(1)
+    
+    print("\n" + "-" * 80)
+    print("Testing API Connectivity...")
+    print("-" * 80)
     
     result = llm.is_alive()
-    print(f"Status: {result['status']}")
+    print(f"\nStatus: {result['status']}")
     print(f"Message: {result['message']}")
+    print(f"\nAPI Details:")
+    for api_name, api_info in result.get('apis', {}).items():
+        print(f"  {api_name.upper()}:")
+        print(f"    Enabled: {api_info['enabled']}")
+        print(f"    Working: {api_info['working']}")
+        if 'response' in api_info:
+            print(f"    Response: {api_info['response']}")
+        if 'error' in api_info:
+            print(f"    Error: {api_info['error']}")
     
     if result['status'] == 'alive':
-        print(f"Response: {result.get('response', 'N/A')}")
-        print("-" * 60)
+        print("\n" + "-" * 80)
+        print("Testing Code Analysis...")
+        print("-" * 80)
         
-        # Test code analysis
-        print("\nTesting code analysis...")
         analysis = llm.analyze_code(
             prompt="Create a function to add two numbers",
             code="""def add(a, b):
@@ -185,9 +327,12 @@ result = add(5, 3)  # hardcoded example"""
         )
         
         if analysis['success']:
-            print("Analysis:")
-            print(analysis['analysis'])
+            print(f"\n✅ Analysis successful!")
+            print(f"API Used: {analysis['api_used'].upper()}")
+            print(f"Model: {analysis['model']}")
+            print(f"\nResponse:\n{analysis['analysis'][:500]}...")
         else:
-            print(f"Error: {analysis['error']}")
+            print(f"\n❌ Analysis failed: {analysis['error']}")
     
-    print("-" * 60)
+    print("\n" + "=" * 80)
+
