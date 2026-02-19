@@ -1,0 +1,38 @@
+# CodeGuard Backend - Lightweight Dependencies (NO PyTorch/spaCy/sentence-transformers)
+# Use this for Render free tier (512MB RAM)
+
+# Core Web Framework
+fastapi 
+uvicorn 
+python-multipart 
+
+# Code Analysis
+docker 
+pylint 
+pyflakes 
+
+# Database
+sqlalchemy 
+psycopg2-binary 
+
+# Utilities
+pydantic 
+python-dotenv
+requests
+
+# LLM API Clients (lightweight - just HTTP clients, NO models)
+ollama>=0.4.3
+
+# Google Gemini AI SDK (API client only, no heavy dependencies)
+google-genai>=1.63.0
+
+# Note: This skips:
+# - PyTorch (~900MB)
+# - sentence-transformers (~500MB)  
+# - spaCy + models (~200MB)
+# - scikit-learn (~100MB)
+# - keybert
+# - All CUDA libraries (~2GB)
+#
+# Total size: ~200MB instead of ~4GB
+# NPC detection will use LLM Layer 3 only (via API calls)
