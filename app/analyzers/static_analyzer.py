@@ -442,18 +442,18 @@ class StaticAnalyzer:
         
         # Look for hardcoded specific values
         for i, line in enumerate(self.lines):
-            # Check for hardcoded strings in comparisons
+            # Check for hardcoded strings in comparisons (but skip common patterns)
             if re.search(r'==\s*["\']Example_', line):
                 biased_code.append({
                     "line": i + 1,
                     "description": "Hardcoded check for example-specific value"
                 })
             
-            # Check for hardcoded magic numbers in logic
-            if re.search(r'==\s*0(?!\.)|\s*=\s*0(?!\.)(?!x)', line) and 'if' in line:
+            # Check for hardcoded file names from examples (e.g., "orders_demo.csv")
+            if re.search(r'==\s*["\'][^"\']*(demo|example|sample|test)[^"\']*(\.(csv|txt|json))?["\']', line, re.IGNORECASE):
                 biased_code.append({
                     "line": i + 1,
-                    "description": "Hardcoded zero assignment in conditional logic"
+                    "description": "Hardcoded example filename in comparison"
                 })
         
         return {
@@ -487,34 +487,38 @@ class StaticAnalyzer:
         }
     
     def _check_missing_corner_cases(self) -> Dict[str, Any]:
-        """Detect missing null checks and edge case handling"""
+        """Detect missing critical edge case handling (very conservative)"""
         missing_cases = []
         
-        # Check if there's None checking for parameters
-        has_none_check = any('is None' in line or 'is not None' in line for line in self.lines)
-        
-        # Look for function definitions
+        # Only check for CRITICAL missing corner cases, not defensive programming
         tree = self._try_parse_partial()
-        if tree:
-            for node in ast.walk(tree):
-                if isinstance(node, ast.FunctionDef):
-                    # Check if function handles None inputs
-                    if node.args.args and not has_none_check:
-                        missing_cases.append({
-                            "function": node.name,
-                            "line": node.lineno,
-                            "description": f"Function '{node.name}' doesn't check for None inputs"
-                        })
         
-        # Check for division operations without zero checking
-        for i, line in enumerate(self.lines):
-            if '/' in line and 'if' not in line:
-                # Look for division without apparent zero check
-                if not any('!= 0' in l or '== 0' in l for l in self.lines[max(0, i-2):i+1]):
-                    missing_cases.append({
-                        "line": i + 1,
-                        "description": "Division operation without zero check"
-                    })
+        # Check for division operations without ANY zero/empty checking
+        if tree:
+            for i, line in enumerate(self.lines):
+                if '/' in line and 'if' not in line:
+                    # Check if there's ANY protection against division by zero
+                    # Look for checks in surrounding context (wider range)
+                    context_start = max(0, i-5)
+                    context_end = min(len(self.lines), i+3)
+                    context_lines = '\n'.join(self.lines[context_start:context_end])
+                    
+                    # Check for various forms of protection
+                    has_protection = any([
+                        '!= 0' in context_lines,
+                        '== 0' in context_lines,
+                        'if not' in context_lines,  # Empty check
+                        'len(' in context_lines and ('if' in context_lines or 'return' in context_lines),  # Length check
+                        'ZeroDivisionError' in context_lines,  # Exception handling
+                    ])
+                    
+                    if not has_protection:
+                        # Only report if it's clearly risky (dividing by len() without checks)
+                        if 'len(' in line or 'count' in line.lower():
+                            missing_cases.append({
+                                "line": i + 1,
+                                "description": "Division operation without zero check"
+                            })
         
         return {
             "found": len(missing_cases) > 0,

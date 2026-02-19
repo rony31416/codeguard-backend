@@ -108,9 +108,24 @@ class RuleEngine:
         
         # Extract potential examples from prompt
         if prompt:
-            # Look for numbers in prompt
+            # Look for numbers in prompt, but exclude specifications like "return 0" or "default 0"
+            prompt_lower = prompt.lower()
+            
+            # Skip numbers that are part of return value specifications
+            specification_keywords = ['return', 'default', 'returns', 'output', 'result']
+            
             prompt_numbers = re.findall(r'\b\d+\b', prompt)
             for num in prompt_numbers:
+                # Check if this number is part of a specification (e.g., "return 0")
+                is_specification = False
+                for keyword in specification_keywords:
+                    if re.search(rf'{keyword}\s+.*{num}', prompt_lower) or re.search(rf'{num}\s+.*{keyword}', prompt_lower):
+                        is_specification = True
+                        break
+                
+                if is_specification:
+                    continue  # Skip numbers that are specifications, not examples
+                
                 # Check if this number appears in code (not in comments)
                 code_clean = re.sub(r'#.*$', '', code, flags=re.MULTILINE)
                 if re.search(rf'\b{num}\b', code_clean):

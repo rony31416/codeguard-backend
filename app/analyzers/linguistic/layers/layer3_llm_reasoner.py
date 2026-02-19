@@ -369,10 +369,25 @@ Return JSON in this exact format:
 **YOUR TASK:**
 Based on the evidence, determine what features were EXPLICITLY requested but NOT implemented.
 
-**CRITICAL:** Only report features that were clearly mentioned in the original prompt.
-- DO NOT report general best practices (error handling, edge cases) unless explicitly requested
+**CRITICAL - BE EXTREMELY CONSERVATIVE:**
+- ONLY report features that were EXPLICITLY and CLEARLY mentioned in the original prompt
+- DO NOT report:
+  - Type variations (e.g., returning 0.0 instead of 0 is fine for numeric functions)
+  - General best practices (error handling, validation) unless EXPLICITLY requested
+  - Defensive programming (None checks, type checking) unless EXPLICITLY requested
+  - Edge case handling unless EXPLICITLY mentioned in prompt
+- If the feature is implemented in a slightly different way but achieves the same goal, DO NOT report it
+- When in doubt, DO NOT report it
 - If prompt is simple (e.g., "add two numbers"), missing_features should be EMPTY []
-- Be very conservative - only explicit requests count
+
+**Example of what TO report:**
+- Prompt: "validate email AND phone" → Code only validates email ← REPORT: Missing phone validation
+- Prompt: "return both sum and product" → Code only returns sum ← REPORT: Missing product return
+
+**Example of what NOT to report:**
+- Prompt: "return 0" → Code returns 0.0 ← DO NOT REPORT: Same thing
+- Prompt: "calculate average" → Code doesn't check for None ← DO NOT REPORT: Not requested
+- Prompt: "add numbers" → No error handling ← DO NOT REPORT: Not requested
 
 Return JSON in this exact format:
 {{
