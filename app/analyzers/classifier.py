@@ -35,6 +35,11 @@ class TaxonomyClassifier:
         if self.static.get("wrong_attribute", {}).get("found"):
             self._add_wrong_attribute_static()
         
+        # Also check static detection of wrong input types
+        if self.static.get("wrong_input_type", {}).get("found"):
+            if not any(p.pattern_name == "Wrong Input Type" for p in self.bug_patterns):
+                self._add_wrong_input_type_static()
+        
         # Confirm hallucinated object with NameError
         if self.dynamic.get("name_error", {}).get("found"):
             if not any(p.pattern_name == "Hallucinated Object" for p in self.bug_patterns):
@@ -152,6 +157,18 @@ class TaxonomyClassifier:
             description=f"TypeError occurred: {error_info.get('error')}. The function was called with an inappropriate data type or wrong operation on incompatible types.",
             location="See traceback",
             fix_suggestion="Verify the expected input types for the function. Add type conversion or validation before operations. Check for string concatenation with numeric values."
+        ))
+    
+    def _add_wrong_input_type_static(self):
+        details = self.static["wrong_input_type"]["details"]
+        issues = [f"{d['function']}({d['value']})" for d in details[:3]]
+        self.bug_patterns.append(BugPatternSchema(
+            pattern_name="Wrong Input Type",
+            severity=6,
+            confidence=0.80,
+            description=f"Detected wrong input types: {', '.join(issues)}. Passing string literals to numeric functions or vice versa.",
+            location=f"Line {details[0]['line']}",
+            fix_suggestion=f"Convert types appropriately: use {details[0]['expected_type']} instead of {details[0]['actual_type']}. Remove quotes from numeric values."
         ))
     
     def _add_npc(self):
