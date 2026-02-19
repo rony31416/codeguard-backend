@@ -67,25 +67,39 @@ GENERATED CODE:
 {code}
 ```{context}
 
-Your task:
-1. Check if the code semantically matches what the user asked for
-2. Look for subtle NPC bugs (non-prompted considerations like missing edge cases)
-3. Identify prompt-biased implementations (too literal interpretation)
-4. Find missing features the user likely expected
-5. Detect misinterpretations of user intent
+CRITICAL DEFINITIONS - Read carefully before analyzing:
 
-Focus on:
-- Semantic correctness (does it do what was asked?)
-- Edge cases and error handling
-- User expectations vs implementation
-- Subtle bugs that patterns/AST can't catch
+1. **NPC (Non-Prompted Consideration)**: Features/code added that were NOT requested
+   - Example: User asks "add two numbers" but code includes logging, validation, type checking
+   - Example: User asks "sort a list" but code includes caching, error handling, input sanitization
+   - Report ONLY truly unrequested additions, not missing validations
+
+2. **Prompt-Biased Code**: Using hardcoded values from prompt examples instead of general logic
+   - Example: Prompt says "sort [3,1,2]" and code only works for those exact 3 numbers
+   - Example: Using "test@example.com" as a hardcoded default instead of accepting any email
+
+3. **Missing Features**: Features EXPLICITLY mentioned in prompt but NOT implemented
+   - ONLY report if the feature was clearly requested in the original prompt
+   - Example: Prompt says "validate email and phone" but code only validates email
+   - DO NOT report general best practices (error handling, edge cases) unless explicitly requested
+   - If prompt is simple (e.g., "add two numbers"), missing_features should be EMPTY []
+
+4. **Misinterpretation**: Code does something fundamentally different from what was asked
+   - Example: User asks to "remove duplicates" but code sorts instead
+   - Example: User asks for "average" but code returns sum
+
+STRICT RULES:
+- Be conservative with "missing_features" - ONLY report explicitly requested items
+- If the prompt is simple/minimal, missing_features should be [] or very short
+- Don't confuse critiques of NPC with missing features
+- Unrequested edge case handling = NPC, not a missing feature
 
 Return ONLY valid JSON in this exact format:
 {{
-    "npc_issues": ["semantic NPC bugs found"],
-    "prompt_bias_issues": ["prompt interpretation issues"],
-    "missing_features": ["expected but missing features"],
-    "misinterpretation": ["intent mismatches"],
+    "npc_issues": ["specific unrequested features found in code"],
+    "prompt_bias_issues": ["hardcoded example values or logic"],
+    "missing_features": ["features explicitly requested but not implemented - be conservative"],
+    "misinterpretation": ["fundamental mismatches between request and implementation"],
     "severity": 0-10,
     "summary": "brief semantic analysis summary",
     "confidence": 0.0-1.0
