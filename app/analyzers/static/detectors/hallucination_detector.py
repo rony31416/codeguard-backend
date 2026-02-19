@@ -32,6 +32,10 @@ class HallucinatedObjectDetector:
         'vars', 'zip', '__import__',
         # Built-in constants
         'False', 'True', 'None', 'NotImplemented', 'Ellipsis', '__debug__',
+        # Dunder variables (always available in Python)
+        '__name__', '__main__', '__file__', '__doc__', '__package__',
+        '__loader__', '__spec__', '__annotations__', '__builtins__',
+        '__cached__', '__dict__', '__class__',
     }
     
     COMMON_MODULES = {

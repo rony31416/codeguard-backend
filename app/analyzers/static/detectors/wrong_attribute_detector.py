@@ -39,10 +39,22 @@ class WrongAttributeDetector:
         # Pattern: dict.attribute instead of dict['key']
         # Common mistake: item.cost instead of item['cost']
         for i, line in enumerate(self.lines):
+            # Skip if line contains class definition or self (class attributes are valid)
+            if 'class ' in line or 'self.' in line or 'def ' in line:
+                continue
+            
             dict_access = re.findall(r'(\w+)\.(\w+)', line)
             for var, attr in dict_access:
-                # Common dict keys that are often accessed incorrectly
-                if attr in ['cost', 'price', 'name', 'value', 'id', 'key', 'username', 'email']:
+                # Skip 'self' and common class-related patterns
+                if var in ['self', 'cls', 'super']:
+                    continue
+                
+                # Skip common module/library attributes
+                if var in ['os', 'sys', 'json', 'math', 'datetime', 'time', 're', 'collections']:
+                    continue
+                
+                # Only flag if it looks like a dict operation context
+                if attr in ['cost', 'price', 'value', 'key'] and ('[' in line or 'dict' in line.lower()):
                     wrong_attrs.append({
                         "variable": var,
                         "attribute": attr,

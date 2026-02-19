@@ -26,7 +26,7 @@ class NPCDetector:
     
     def detect(self) -> Dict[str, Any]:
         """
-        Detect non-prompted considerations (very conservative).
+        Detect non-prompted considerations (EXTREMELY conservative).
         
         Returns:
             Dict with detection results containing:
@@ -35,21 +35,24 @@ class NPCDetector:
         """
         npc_issues = []
         
-        # Only detect obvious, unrequested additions
+        # ONLY detect OBVIOUS, unrequested additions (be very strict)
+        # Standard implementation details (like due_date for checkout) are NOT NPC
         for i, line in enumerate(self.lines):
-            # Pattern 1: Security/auth checks not requested
-            if 'raise' in line and any(word in line.lower() for word in ['admin', 'security', 'permission', 'auth']):
+            # Pattern 1: Explicit security/permission checks with role hardcoding
+            # Only flag if it checks for specific hardcoded roles like "admin", "root"
+            if 'raise' in line and ('== "admin"' in line or '== "root"' in line or '== "superuser"' in line):
                 npc_issues.append({
                     "line": i + 1,
-                    "description": "Added security/authentication logic not requested"
+                    "description": "Added hardcoded admin/role check not requested"
                 })
             
-            # Pattern 2: Arbitrary threshold validation
+            # Pattern 2: Arbitrary threshold validation with very high numbers (1000+)
+            # Only flag extremely specific/arbitrary limits
             import re
-            if re.search(r'if.*>\s*\d{3,}.*raise', line):
+            if re.search(r'if.*>\s*(1000|10000|100000).*raise', line):
                 npc_issues.append({
                     "line": i + 1,
-                    "description": "Added arbitrary threshold validation not requested"
+                    "description": "Added arbitrary high-value threshold validation not requested"
                 })
         
         return {
