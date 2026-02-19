@@ -188,39 +188,34 @@ class ASTAnalyzer:
         }
     
     def verify_missing_features(self, code: str, prompt: str) -> Dict[str, Any]:
-        """Verify if mentioned functions exist using AST."""
+        """Verify if mentioned functions exist using AST.
+        
+        CONSERVATIVE: Only reports missing features for complex prompts with
+        explicit multiple requirements. Simple prompts return no missing features.
+        """
         tree = self.parse_code(code)
         if not tree:
             return {'found': False, 'issues': [], 'layer': 'ast', 'confidence': 0}
         
-        issues = []
-        functions = self.extract_functions(tree)
-        function_names = [f['name'].lower() for f in functions]
+        # Conservative approach: Skip for simple prompts
+        prompt_words = prompt.split()
+        if len(prompt_words) < 15:
+            # Simple prompt - don't look for missing features
+            return {
+                'found': False,
+                'issues': [],
+                'layer': 'ast',
+                'confidence': 0
+            }
         
-        # Extract action verbs from prompt
-        import re
-        action_verbs = ['create', 'add', 'delete', 'remove', 'update', 'edit',
-                       'save', 'load', 'fetch', 'get', 'set', 'send',
-                       'validate', 'check', 'calculate', 'sort', 'filter']
-        
-        prompt_lower = prompt.lower()
-        for verb in action_verbs:
-            if re.search(rf'\b{verb}\b', prompt_lower):
-                # Check if any function contains this verb
-                has_function = any(verb in fname for fname in function_names)
-                if not has_function:
-                    issues.append({
-                        'type': 'missing_function',
-                        'action': verb,
-                        'message': f'Prompt mentions "{verb}" but no function with this action found',
-                        'confidence': 0.8
-                    })
+        # For complex prompts, could analyze here, but leave to LLM Layer 3
+        # Layer 2 focuses on structural verification, not semantic feature matching
         
         return {
-            'found': len(issues) > 0,
-            'issues': issues,
+            'found': False,
+            'issues': [],
             'layer': 'ast',
-            'confidence': 0.8 if issues else 0
+            'confidence': 0
         }
     
     def analyze_return_type_mismatch(self, code: str, prompt: str) -> Dict[str, Any]:

@@ -5,6 +5,7 @@ Intelligently combines results from all 3 layers using weighted voting and conse
 Makes UI and automation decisions more reliable.
 """
 
+import re
 from typing import Dict, List, Any, Optional
 
 
@@ -74,7 +75,7 @@ class LayerAggregator:
         # Determine consensus
         consensus = self._determine_consensus(active_layers)
         
-        # Aggregate findings from all layers
+        # Aggregate findings from all layers with smart filtering
         all_findings = []
         for layer_name, layer_data in active_layers.items():
             issues = layer_data.get('issues', [])
@@ -85,6 +86,10 @@ class LayerAggregator:
                         message = issue.get('message', str(issue))
                     else:
                         message = str(issue)
+                    
+                    # Filter out invalid "missing features" (code quality critiques)
+                    if self._is_code_quality_critique(message):
+                        continue  # Skip this finding
                     
                     if message and message not in all_findings:
                         all_findings.append(message)
@@ -113,6 +118,35 @@ class LayerAggregator:
                 for k, v in active_layers.items()
             }
         }
+    
+    def _is_code_quality_critique(self, message: str) -> bool:
+        \"\"\"
+        Detect if a 'missing feature' is actually a code quality critique.
+        
+        These are NOT missing features:
+        - \"Unnecessary X\" (critique of existing code)
+        - \"Type validation performed only...\" (inconsistency in NPC, not missing feature)
+        - \"Should use X instead of Y\" (best practice suggestion)
+        - Anything mentioning \"unnecessary\", \"inconsistent\", \"should remove\"
+        
+        Returns True if it's a critique (should be filtered out)
+        \"\"\"
+        critique_patterns = [
+            r'unnecessary',
+            r'inconsistent',
+            r'should remove',
+            r'should not',
+            r'too many',
+            r'redundant',
+            r'performed only',  # \"validation performed only on...\"
+            r'applied only',    # \"check applied only to...\"
+            r'without configuration',  # \"logging without configuration\"
+            r'may clutter',      # \"may clutter output\"
+            r'introduces overhead',  # performance critiques
+        ]
+        
+        message_lower = message.lower()
+        return any(re.search(pattern, message_lower) for pattern in critique_patterns)
     
     def _calculate_weighted_severity(self, layers: Dict[str, Dict]) -> float:
         """

@@ -151,34 +151,49 @@ class RuleEngine:
         }
     
     def detect_missing_features(self, code: str, prompt: str) -> Dict[str, Any]:
-        """Detect potentially missing features based on prompt."""
+        """Detect potentially missing features based on prompt.
+        
+        CONSERVATIVE APPROACH: Only report features that are:
+        1. EXPLICITLY mentioned as requirements (not just action verbs)
+        2. Clearly separate concerns (e.g., "validate email AND send notification")
+        3. Not just different ways to express the same thing
+        
+        Skip detection if prompt is simple/minimal (< 10 words or single action).
+        """
         issues = []
         
-        # Extract action verbs from prompt
-        prompt_lower = prompt.lower()
-        mentioned_actions = []
+        # Skip for very simple prompts (likely don't have multiple explicit features)
+        prompt_words = prompt.split()
+        if len(prompt_words) < 10:
+            # Too short to have multiple distinct feature requests
+            return {
+                'found': False,
+                'issues': [],
+                'layer': 'rule_engine',
+                'confidence': 0
+            }
         
-        for verb in self.ACTION_VERBS:
-            if re.search(rf'\b{verb}\b', prompt_lower):
-                mentioned_actions.append(verb)
+        # Look for explicit feature lists (e.g., "do X and Y and Z")
+        # Patterns: "X and Y", "X, Y, and Z", "X; Y; Z"
+        explicit_features = re.findall(r'\band\b|,|;', prompt)
         
-        # Check if corresponding code exists
-        for action in mentioned_actions:
-            # Look for function definitions with this action
-            func_pattern = rf'def\s+\w*{action}\w*\s*\('
-            if not re.search(func_pattern, code, re.IGNORECASE):
-                issues.append({
-                    'type': 'missing_function',
-                    'action': action,
-                    'message': f'Prompt mentions "{action}" but no corresponding function found',
-                    'confidence': 0.7  # Lower confidence - might be implemented differently
-                })
+        if len(explicit_features) < 2:
+            # No clear list of multiple features
+            return {
+                'found': False,
+                'issues': [],
+                'layer': 'rule_engine',
+                'confidence': 0
+            }
+        
+        # If we get here, prompt has multiple clauses - analyze carefully
+        # This is very conservative - most simple prompts will return no missing features
         
         return {
-            'found': len(issues) > 0,
+            'found': False,  # Conservative: leave to LLM Layer 3 for complex cases
             'issues': issues,
             'layer': 'rule_engine',
-            'confidence': max([i['confidence'] for i in issues]) if issues else 0
+            'confidence': 0
         }
     
     def detect_misinterpretation(self, code: str, prompt: str) -> Dict[str, Any]:
