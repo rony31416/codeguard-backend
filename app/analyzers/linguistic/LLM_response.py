@@ -53,6 +53,12 @@ class LLM:
         
         # Overall LLM status
         self.enabled = self.ollama_enabled or self.openrouter_enabled
+        
+        # Debug logging
+        if not self.enabled:
+            print(f"❌ LLM Disabled: OLLAMA_AVAILABLE={OLLAMA_AVAILABLE}, Ollama Key={'[SET]' if self.ollama_api_key else '[MISSING]'}, OpenRouter Key={'[SET]' if self.openrouter_api_key else '[MISSING]'}")
+        else:
+            print(f"✓ LLM Enabled: Ollama={self.ollama_enabled}, OpenRouter={self.openrouter_enabled}")
     
     def ask(self, prompt: str, max_retries: int = 2) -> Optional[str]:
         """

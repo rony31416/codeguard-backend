@@ -18,6 +18,12 @@ class LLMReasoner:
         self.llm = get_llm()
         self.enabled = self.llm.enabled
         self.confidence = 0.98  # High confidence for AI analysis
+        
+        # Debug logging
+        if self.enabled:
+            print(f"✓ Layer 3 (LLM) ✅ Enabled - Using {'Ollama' if self.llm.ollama_enabled else ''} {'OpenRouter' if self.llm.openrouter_enabled else ''}")
+        else:
+            print("✗ Layer 3 (LLM) ❌ Disabled - No API keys configured")
     
     def deep_semantic_analysis(self, prompt: str, code: str, previous_findings: Dict = None) -> Dict[str, Any]:
         """
@@ -32,6 +38,7 @@ class LLMReasoner:
             Dict with semantic analysis results
         """
         if not self.enabled:
+            print("⚠️  Layer 3 (LLM) ❌ Skipped - No LLM APIs available")
             return {
                 'found': False,
                 'issues': [],
