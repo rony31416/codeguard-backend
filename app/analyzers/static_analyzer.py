@@ -78,15 +78,55 @@ class StaticAnalyzer:
             (r'import\s+(\w+)', 'import_statement'),
         ]
         
-        # Known built-ins and common modules
-        builtins = set(dir(__builtins__))
-        common_modules = {'math', 'os', 'sys', 're', 'json', 'time', 'datetime', 
-                         'random', 'collections', 'itertools', 'functools', 'numpy', 'pandas'}
+        # Hardcoded Python built-ins (more reliable than dir(__builtins__) on cloud platforms)
+        builtins = {
+            # Built-in functions
+            'abs', 'all', 'any', 'ascii', 'bin', 'bool', 'bytearray', 'bytes',
+            'callable', 'chr', 'classmethod', 'compile', 'complex', 'delattr',
+            'dict', 'dir', 'divmod', 'enumerate', 'eval', 'exec', 'filter',
+            'float', 'format', 'frozenset', 'getattr', 'globals', 'hasattr',
+            'hash', 'help', 'hex', 'id', 'input', 'int', 'isinstance', 'issubclass',
+            'iter', 'len', 'list', 'locals', 'map', 'max', 'memoryview', 'min',
+            'next', 'object', 'oct', 'open', 'ord', 'pow', 'print', 'property',
+            'range', 'repr', 'reversed', 'round', 'set', 'setattr', 'slice',
+            'sorted', 'staticmethod', 'str', 'sum', 'super', 'tuple', 'type',
+            'vars', 'zip', '__import__',
+            # Built-in exceptions
+            'BaseException', 'Exception', 'ArithmeticError', 'AssertionError',
+            'AttributeError', 'BlockingIOError', 'BrokenPipeError', 'BufferError',
+            'BytesWarning', 'ChildProcessError', 'ConnectionError', 'ConnectionAbortedError',
+            'ConnectionRefusedError', 'ConnectionResetError', 'DeprecationWarning',
+            'EOFError', 'EnvironmentError', 'FileExistsError', 'FileNotFoundError',
+            'FloatingPointError', 'FutureWarning', 'GeneratorExit', 'IOError',
+            'ImportError', 'ImportWarning', 'IndentationError', 'IndexError',
+            'InterruptedError', 'IsADirectoryError', 'KeyError', 'KeyboardInterrupt',
+            'LookupError', 'MemoryError', 'ModuleNotFoundError', 'NameError',
+            'NotADirectoryError', 'NotImplementedError', 'OSError', 'OverflowError',
+            'PendingDeprecationWarning', 'PermissionError', 'ProcessLookupError',
+            'RecursionError', 'ReferenceError', 'ResourceWarning', 'RuntimeError',
+            'RuntimeWarning', 'StopAsyncIteration', 'StopIteration', 'SyntaxError',
+            'SyntaxWarning', 'SystemError', 'SystemExit', 'TabError', 'TimeoutError',
+            'TypeError', 'UnboundLocalError', 'UnicodeDecodeError', 'UnicodeEncodeError',
+            'UnicodeError', 'UnicodeTranslateError', 'UnicodeWarning', 'UserWarning',
+            'ValueError', 'Warning', 'ZeroDivisionError',
+            # Built-in constants
+            'False', 'True', 'None', 'NotImplemented', 'Ellipsis', '__debug__',
+        }
         
-        # Look for suspicious class instantiations
+        common_modules = {'math', 'os', 'sys', 're', 'json', 'time', 'datetime', 
+                         'random', 'collections', 'itertools', 'functools', 'numpy', 'pandas',
+                         'logging', 'pathlib', 'io', 'typing', 'copy', 'pickle'}
+        
+        # Look for suspicious class instantiations (skip comments)
         class_pattern = re.compile(r'([A-Z][a-zA-Z0-9]*)\s*\(')
         for i, line in enumerate(self.lines):
-            matches = class_pattern.findall(line)
+            # Skip comment lines
+            stripped = line.strip()
+            if stripped.startswith('#'):
+                continue
+            # Remove inline comments before matching
+            code_part = line.split('#')[0]
+            matches = class_pattern.findall(code_part)
             for match in matches:
                 if match not in builtins and match not in common_modules:
                     # Check if it's defined in the code
@@ -106,6 +146,17 @@ class StaticAnalyzer:
             for node in ast.walk(tree):
                 if isinstance(node, ast.FunctionDef):
                     defined_names.add(node.name)
+                    # Add function parameters to defined names
+                    for arg in node.args.args:
+                        defined_names.add(arg.arg)
+                    # Add keyword-only args
+                    for arg in node.args.kwonlyargs:
+                        defined_names.add(arg.arg)
+                    # Add *args and **kwargs
+                    if node.args.vararg:
+                        defined_names.add(node.args.vararg.arg)
+                    if node.args.kwarg:
+                        defined_names.add(node.args.kwarg.arg)
                 elif isinstance(node, ast.ClassDef):
                     defined_names.add(node.name)
                 elif isinstance(node, ast.Assign):
