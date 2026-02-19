@@ -41,11 +41,14 @@ class TaxonomyClassifier:
                 self._add_hallucinated_object_from_runtime()
         
         # Stage III: Logic and Linguistic Patterns
-        if self.static.get("npc", {}).get("found"):
+        if self.linguistic.get("npc", {}).get("found"):
             self._add_npc()
         
-        if self.static.get("prompt_biased", {}).get("found"):
+        if self.linguistic.get("prompt_biased", {}).get("found"):
             self._add_prompt_biased()
+        
+        if self.linguistic.get("missing_features", {}).get("found"):
+            self._add_missing_features()
         
         if self.static.get("missing_corner_case", {}).get("found"):
             self._add_missing_corner_case()
@@ -152,25 +155,72 @@ class TaxonomyClassifier:
         ))
     
     def _add_npc(self):
-        details = self.static["npc"]["details"]
+        npc_data = self.linguistic["npc"]
+        features = npc_data.get("features", [])
+        count = npc_data.get("count", 0)
+        confidence = npc_data.get("confidence", 0.70)
+        
+        # Format features list for display
+        if features:
+            features_list = ', '.join(features[:3])  # Show first 3
+            if len(features) > 3:
+                features_list += f" (+{len(features)-3} more)"
+        else:
+            features_list = "unrequested code additions"
+        
         self.bug_patterns.append(BugPatternSchema(
             pattern_name="Non-Prompted Consideration (NPC)",
             severity=5,
-            confidence=0.70,
-            description=f"The code includes features that weren't requested. Detected {len(details)} unrequested addition(s): {details[0]['description']}. LLMs sometimes add security checks, validations, or features beyond the prompt scope.",
-            location=f"Line {details[0]['line']}",
+            confidence=confidence,
+            description=f"The code includes features that weren't requested. Detected {count} unrequested addition(s): {features_list}. LLMs sometimes add security checks, validations, or features beyond the prompt scope.",
+            location=f"Multiple locations ({count} issues)",
             fix_suggestion="Remove the unrequested features unless they are actually needed for your use case."
         ))
     
     def _add_prompt_biased(self):
-        details = self.static["prompt_biased"]["details"]
+        biased_data = self.linguistic["prompt_biased"]
+        values = biased_data.get("values", [])
+        count = biased_data.get("count", 0)
+        confidence = biased_data.get("confidence", 0.75)
+        
+        # Format values list for display
+        if values:
+            values_list = ', '.join(str(v) for v in values[:3])  # Show first 3
+            if len(values) > 3:
+                values_list += f" (+{len(values)-3} more)"
+        else:
+            values_list = "hardcoded example values"
+        
         self.bug_patterns.append(BugPatternSchema(
             pattern_name="Prompt-Biased Code",
             severity=6,
-            confidence=0.75,
-            description=f"The code contains hardcoded logic based on specific examples from the prompt rather than general solutions. Found {len(details)} instance(s) of example-specific code.",
-            location=f"Line {details[0]['line']}",
+            confidence=confidence,
+            description=f"The code contains hardcoded logic based on specific examples from the prompt rather than general solutions. Found {count} instance(s) of example-specific code: {values_list}.",
+            location=f"Multiple locations ({count} issues)",
             fix_suggestion="Replace hardcoded values and example-specific logic with general-purpose code that works for all inputs."
+        ))
+    
+    def _add_missing_features(self):
+        missing_data = self.linguistic["missing_features"]
+        features = missing_data.get("features", [])
+        count = missing_data.get("count", 0)
+        confidence = missing_data.get("confidence", 0.65)
+        
+        # Format features list for display
+        if features:
+            features_list = ', '.join(features[:3])  # Show first 3
+            if len(features) > 3:
+                features_list += f" (+{len(features)-3} more)"
+        else:
+            features_list = "requested features"
+        
+        self.bug_patterns.append(BugPatternSchema(
+            pattern_name="Missing Features",
+            severity=6,
+            confidence=confidence,
+            description=f"The code is missing features that were requested in the prompt. Detected {count} missing feature(s): {features_list}. The LLM may have overlooked or misunderstood some requirements.",
+            location=f"Multiple locations ({count} missing)",
+            fix_suggestion="Add the missing features mentioned in the prompt. Review the prompt carefully to ensure all requirements are implemented."
         ))
     
     def _add_missing_corner_case(self):
