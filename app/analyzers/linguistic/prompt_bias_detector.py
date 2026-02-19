@@ -1,12 +1,12 @@
 """
 Detect hardcoded values from prompt examples (Prompt-Biased Code)
-Enhanced with 3-layer cascade architecture
+Enhanced with 3-layer evidence → LLM verdict architecture
 """
 import re
 import ast
 from typing import Dict, Any, List
 from .base_detector import BaseDetector
-from .layers import RuleEngine, ASTAnalyzer, LLMReasoner, LayerAggregator
+from .layers import RuleEngine, ASTAnalyzer, LLMReasoner
 
 
 class PromptBiasDetector(BaseDetector):
@@ -15,57 +15,34 @@ class PromptBiasDetector(BaseDetector):
     def __init__(self, prompt: str, code: str, code_ast: ast.AST = None):
         super().__init__(prompt, code, code_ast)
         
-        # Initialize 3-layer architecture
+        # Initialize 3-layer architecture (NO aggregator needed)
         self.rule_engine = RuleEngine()
         self.ast_analyzer = ASTAnalyzer()
         self.llm_reasoner = LLMReasoner()
-        self.aggregator = LayerAggregator()
     
     def detect(self) -> Dict[str, Any]:
-        """Main detection method using 3-layer cascade with aggregation"""
-        # LAYER 1: Rule Engine (Fast pattern matching ~10ms, 95% confidence)
-        layer1_result = self.rule_engine.detect_prompt_bias(self.code, self.prompt)
+        """
+        NEW 3-Stage Flow:
+        Stage 1: Rule Engine collects evidence
+        Stage 2: AST Analyzer collects evidence  
+        Stage 3: LLM makes final verdict based on combined evidence
+        """
+        # LAYER 1: Rule Engine - Collect evidence (Fast pattern matching ~10ms)
+        layer1_evidence = self.rule_engine.detect_prompt_bias(self.code, self.prompt)
         
-        # LAYER 2: AST Analyzer (Structural verification ~50ms, 100% confidence)
-        layer2_result = None
-        if self.code_ast and layer1_result.get('issues'):
-            layer2_result = self.ast_analyzer.verify_prompt_bias(self.code, self.prompt)
+        # LAYER 2: AST Analyzer - Collect evidence (Structural verification ~50ms)
+        layer2_evidence = self.ast_analyzer.verify_prompt_bias(self.code, self.prompt) if self.code_ast else None
         
-        # LAYER 3: LLM Reasoner (Deep semantic analysis ~300ms, 98% confidence)
-        layer3_result = None
-        if layer1_result.get('confidence', 0) < 0.98 and layer1_result.get('issues'):
-            layer3_result = self.llm_reasoner.deep_semantic_analysis(
-                self.prompt,
-                self.code,
-                previous_findings={
-                    'rule_engine': layer1_result,
-                    'ast': layer2_result
-                }
-            )
-        
-        # AGGREGATE RESULTS from all layers
-        aggregated = self.aggregator.aggregate_findings(
-            layer1_result,
-            layer2_result,
-            layer3_result
+        # LAYER 3: LLM makes final verdict based on Layer 1 & 2 evidence (~300ms)
+        final_verdict = self.llm_reasoner.final_verdict(
+            prompt=self.prompt,
+            code=self.code,
+            layer1_evidence=layer1_evidence,
+            layer2_evidence=layer2_evidence,
+            detector_type='prompt_bias'
         )
         
-        # Return aggregated results in expected format
-        return {
-            "found": aggregated['found'],
-            "values": aggregated['findings'],
-            "count": aggregated['count'],
-            "confidence": aggregated['confidence'],
-            "severity": aggregated.get('severity'),
-            "consensus": aggregated['consensus'],
-            "primary_detection": aggregated['primary_detection'],
-            "layers_used": aggregated['layers_used'],
-            "layers_detail": aggregated['layers_detail'],
-            "reliability": self.aggregator.calculate_reliability_score(
-                aggregated['consensus'], 
-                aggregated['confidence']
-            )
-        }
+        return final_verdict
     
     def _detect_string_literals(self) -> List[str]:
         """Extract quoted strings from prompt and check if hardcoded"""

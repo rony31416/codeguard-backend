@@ -1,7 +1,9 @@
 """
 Layer 3: LLM Reasoner
 ====================
-Semantic understanding using OpenRouter AI.
+Semantic understanding using Dual LLM APIs:
+- Primary: Ollama (local/cloud, free, fast)
+- Fallback: OpenRouter (free tier, if Ollama fails)
 Handles edge cases and nuanced interpretation (~300ms).
 """
 
@@ -11,7 +13,7 @@ from ..LLM_response import get_llm
 
 
 class LLMReasoner:
-    """AI-powered semantic analysis using OpenRouter."""
+    """AI-powered semantic analysis using Dual APIs (Ollama → OpenRouter fallback)."""
     
     def __init__(self):
         """Initialize LLM reasoner."""
@@ -199,6 +201,338 @@ Return ONLY valid JSON in this exact format:
                 'layer': 'llm',
                 'confidence': 0,
                 'error': str(e)
+            }
+    
+    def final_verdict(self, prompt: str, code: str, layer1_evidence: Dict, layer2_evidence: Dict, detector_type: str) -> Dict[str, Any]:
+        """
+        LLM makes final verdict based on combined evidence from Layer 1 & 2.
+        
+        Args:
+            prompt: User's original prompt
+            code: Generated code
+            layer1_evidence: Evidence from Rule Engine (Layer 1)
+            layer2_evidence: Evidence from AST Analyzer (Layer 2)
+            detector_type: 'npc' | 'prompt_bias' | 'missing_feature' | 'misinterpretation'
+        
+        Returns:
+            Final verdict with all required fields
+        """
+        if not self.enabled:
+            print(f"⚠️  Layer 3 (LLM) ❌ Skipped - No LLM APIs available")
+            # Fallback to combined Layer 1 & 2 results
+            return self._fallback_verdict(layer1_evidence, layer2_evidence, detector_type)
+        
+        # Build evidence summary
+        evidence_summary = self._format_evidence(layer1_evidence, layer2_evidence)
+        
+        # Create targeted prompt based on detector type
+        if detector_type == 'npc':
+            question = self._create_npc_verdict_prompt(prompt, code, evidence_summary)
+        elif detector_type == 'prompt_bias':
+            question = self._create_prompt_bias_verdict_prompt(prompt, code, evidence_summary)
+        elif detector_type == 'missing_feature':
+            question = self._create_missing_feature_verdict_prompt(prompt, code, evidence_summary)
+        elif detector_type == 'misinterpretation':
+            question = self._create_misinterpretation_verdict_prompt(prompt, code, evidence_summary)
+        else:
+            raise ValueError(f"Unknown detector type: {detector_type}")
+        
+        try:
+            result = self.llm.ask(question)
+            
+            if not result:
+                return self._fallback_verdict(layer1_evidence, layer2_evidence, detector_type)
+            
+            # Parse JSON response
+            try:
+                if '```json' in result:
+                    result = result.split('```json')[1].split('```')[0].strip()
+                elif '```' in result:
+                    result = result.split('```')[1].split('```')[0].strip()
+                
+                verdict = json.loads(result)
+                
+                # Format response based on detector type
+                return self._format_verdict_response(verdict, detector_type)
+            
+            except (json.JSONDecodeError, ValueError) as e:
+                print(f"⚠️  LLM JSON parse error: {e}")
+                return self._fallback_verdict(layer1_evidence, layer2_evidence, detector_type)
+        
+        except Exception as e:
+            print(f"⚠️  LLM error: {e}")
+            return self._fallback_verdict(layer1_evidence, layer2_evidence, detector_type)
+    
+    def _format_evidence(self, layer1: Dict, layer2: Dict) -> str:
+        """Format Layer 1 & 2 evidence for LLM."""
+        evidence = []
+        
+        if layer1 and layer1.get('issues'):
+            evidence.append(f"**Layer 1 (Rule Engine) Findings:**")
+            evidence.append(f"- Found: {layer1.get('found', False)}")
+            evidence.append(f"- Issues Count: {len(layer1.get('issues', []))}")
+            evidence.append(f"- Confidence: {layer1.get('confidence', 0)}")
+            for issue in layer1.get('issues', [])[:5]:  # Limit to 5
+                evidence.append(f"  - {issue.get('message', issue)}")
+        
+        if layer2 and layer2.get('issues'):
+            evidence.append(f"\n**Layer 2 (AST Analyzer) Findings:**")
+            evidence.append(f"- Found: {layer2.get('found', False)}")
+            evidence.append(f"- Issues Count: {len(layer2.get('issues', []))}")
+            evidence.append(f"- Confidence: {layer2.get('confidence', 0)}")
+            for issue in layer2.get('issues', [])[:5]:
+                evidence.append(f"  - {issue.get('message', issue)}")
+        
+        return "\n".join(evidence) if evidence else "No evidence found by Layer 1 or Layer 2"
+    
+    def _create_npc_verdict_prompt(self, prompt: str, code: str, evidence: str) -> str:
+        """Create LLM prompt for NPC detection verdict."""
+        return f"""You are analyzing code for Non-Prompted Considerations (NPC).
+
+**USER'S ORIGINAL PROMPT:**
+{prompt}
+
+**GENERATED CODE:**
+```python
+{code}
+```
+
+**EVIDENCE FROM PREVIOUS LAYERS:**
+{evidence}
+
+**YOUR TASK:**
+Based on the evidence from Layer 1 (Rule Engine) and Layer 2 (AST Analyzer), make your final verdict.
+
+**Definition of NPC:** Features or code added that were NOT explicitly requested in the prompt.
+- Example: User asks "add two numbers" but code includes logging, validation, type checking
+- Example: User asks "sort a list" but code includes caching, error handling
+
+**Be conservative:** Only report truly unrequested additions, not missing validations.
+
+Return JSON in this exact format:
+{{
+    "found": true/false,
+    "features": ["list of unrequested features found"],
+    "count": number_of_npc_issues,
+    "confidence": 0.0-1.0,
+    "severity": 0-10,
+    "summary": "brief explanation"
+}}"""
+    
+    def _create_prompt_bias_verdict_prompt(self, prompt: str, code: str, evidence: str) -> str:
+        """Create LLM prompt for Prompt Bias detection verdict."""
+        return f"""You are analyzing code for Prompt Bias (hardcoded example values).
+
+**USER'S ORIGINAL PROMPT:**
+{prompt}
+
+**GENERATED CODE:**
+```python
+{code}
+```
+
+**EVIDENCE FROM PREVIOUS LAYERS:**
+{evidence}
+
+**YOUR TASK:**
+Based on the evidence, determine if code uses hardcoded values from prompt examples instead of general logic.
+
+**Definition of Prompt Bias:** Using specific example values from prompt as hardcoded defaults.
+- Example: Prompt says "sort [3,1,2]" and code only works for those exact 3 numbers
+- Example: Using "test@example.com" as hardcoded default instead of accepting any email
+
+Return JSON in this exact format:
+{{
+    "found": true/false,
+    "values": ["list of hardcoded values found"],
+    "count": number_of_bias_issues,
+    "confidence": 0.0-1.0,
+    "severity": 0-10,
+    "summary": "brief explanation"
+}}"""
+    
+    def _create_missing_feature_verdict_prompt(self, prompt: str, code: str, evidence: str) -> str:
+        """Create LLM prompt for Missing Feature detection verdict."""
+        return f"""You are analyzing code for Missing Features.
+
+**USER'S ORIGINAL PROMPT:**
+{prompt}
+
+**GENERATED CODE:**
+```python
+{code}
+```
+
+**EVIDENCE FROM PREVIOUS LAYERS:**
+{evidence}
+
+**YOUR TASK:**
+Based on the evidence, determine what features were EXPLICITLY requested but NOT implemented.
+
+**CRITICAL:** Only report features that were clearly mentioned in the original prompt.
+- DO NOT report general best practices (error handling, edge cases) unless explicitly requested
+- If prompt is simple (e.g., "add two numbers"), missing_features should be EMPTY []
+- Be very conservative - only explicit requests count
+
+Return JSON in this exact format:
+{{
+    "found": true/false,
+    "features": ["list of explicitly requested but missing features"],
+    "count": number_of_missing_features,
+    "confidence": 0.0-1.0,
+    "severity": 0-10,
+    "summary": "brief explanation"
+}}"""
+    
+    def _create_misinterpretation_verdict_prompt(self, prompt: str, code: str, evidence: str) -> str:
+        """Create LLM prompt for Misinterpretation detection verdict."""
+        return f"""You are analyzing code for Fundamental Misinterpretation.
+
+**USER'S ORIGINAL PROMPT:**
+{prompt}
+
+**GENERATED CODE:**
+```python
+{code}
+```
+
+**EVIDENCE FROM PREVIOUS LAYERS:**
+{evidence}
+
+**YOUR TASK:**
+Based on the evidence, determine if code does something fundamentally different from what was asked.
+
+**Definition of Misinterpretation:** Code does something fundamentally different from the request.
+- Example: User asks to "remove duplicates" but code sorts instead
+- Example: User asks for "average" but code returns sum
+- Example: User asks for "factorial" but code returns fibonacci
+
+Return JSON in this exact format:
+{{
+    "found": true/false,
+    "reasons": ["list of misinterpretations found"],
+    "score": 0-10 (severity),
+    "confidence": 0.0-1.0,
+    "severity": 0-10,
+    "summary": "brief explanation"
+}}"""
+    
+    def _format_verdict_response(self, verdict: Dict, detector_type: str) -> Dict[str, Any]:
+        """Format LLM verdict into standard response format."""
+        if detector_type == 'npc':
+            return {
+                'found': verdict.get('found', False),
+                'features': verdict.get('features', []),
+                'count': verdict.get('count', 0),
+                'confidence': verdict.get('confidence', 0.98),
+                'severity': verdict.get('severity', 0),
+                'summary': verdict.get('summary', ''),
+                'layers_used': ['layer1', 'layer2', 'layer3_llm'],
+                'verdict_by': 'llm'
+            }
+        elif detector_type == 'prompt_bias':
+            return {
+                'found': verdict.get('found', False),
+                'values': verdict.get('values', []),
+                'count': verdict.get('count', 0),
+                'confidence': verdict.get('confidence', 0.98),
+                'severity': verdict.get('severity', 0),
+                'summary': verdict.get('summary', ''),
+                'layers_used': ['layer1', 'layer2', 'layer3_llm'],
+                'verdict_by': 'llm'
+            }
+        elif detector_type == 'missing_feature':
+            return {
+                'found': verdict.get('found', False),
+                'features': verdict.get('features', []),
+                'count': verdict.get('count', 0),
+                'confidence': verdict.get('confidence', 0.98),
+                'severity': verdict.get('severity', 0),
+                'summary': verdict.get('summary', ''),
+                'layers_used': ['layer1', 'layer2', 'layer3_llm'],
+                'verdict_by': 'llm'
+            }
+        elif detector_type == 'misinterpretation':
+            return {
+                'found': verdict.get('found', False),
+                'reasons': verdict.get('reasons', []),
+                'score': verdict.get('score', 0),
+                'confidence': verdict.get('confidence', 0.98),
+                'severity': verdict.get('severity', 0),
+                'summary': verdict.get('summary', ''),
+                'layers_used': ['layer1', 'layer2', 'layer3_llm'],
+                'verdict_by': 'llm'
+            }
+    
+    def _fallback_verdict(self, layer1: Dict, layer2: Dict, detector_type: str) -> Dict[str, Any]:
+        """Fallback verdict when LLM is not available - combine Layer 1 & 2."""
+        # Prefer Layer 2 (AST) over Layer 1 (Rules) when both available
+        primary = layer2 if (layer2 and layer2.get('found')) else layer1
+        
+        if not primary or not primary.get('found'):
+            # No bugs found
+            if detector_type == 'npc':
+                return {'found': False, 'features': [], 'count': 0, 'confidence': 0.95, 'severity': 0, 'layers_used': ['layer1', 'layer2'], 'verdict_by': 'fallback'}
+            elif detector_type == 'prompt_bias':
+                return {'found': False, 'values': [], 'count': 0, 'confidence': 0.95, 'severity': 0, 'layers_used': ['layer1', 'layer2'], 'verdict_by': 'fallback'}
+            elif detector_type == 'missing_feature':
+                return {'found': False, 'features': [], 'count': 0, 'confidence': 0.95, 'severity': 0, 'layers_used': ['layer1', 'layer2'], 'verdict_by': 'fallback'}
+            elif detector_type == 'misinterpretation':
+                return {'found': False, 'reasons': [], 'score': 0, 'confidence': 0.95, 'severity': 0, 'layers_used': ['layer1', 'layer2'], 'verdict_by': 'fallback'}
+        
+        # Combine findings from both layers
+        combined_issues = []
+        for layer in [layer1, layer2]:
+            if layer and layer.get('issues'):
+                for issue in layer.get('issues', []):
+                    msg = issue.get('message', str(issue))
+                    if msg not in combined_issues:
+                        combined_issues.append(msg)
+        
+        confidence = max(
+            layer1.get('confidence', 0) if layer1 else 0,
+            layer2.get('confidence', 0) if layer2 else 0
+        )
+        
+        if detector_type == 'npc':
+            return {
+                'found': True,
+                'features': combined_issues,
+                'count': len(combined_issues),
+                'confidence': confidence,
+                'severity': primary.get('severity', 5),
+                'layers_used': ['layer1', 'layer2'],
+                'verdict_by': 'fallback'
+            }
+        elif detector_type == 'prompt_bias':
+            return {
+                'found': True,
+                'values': combined_issues,
+                'count': len(combined_issues),
+                'confidence': confidence,
+                'severity': primary.get('severity', 5),
+                'layers_used': ['layer1', 'layer2'],
+                'verdict_by': 'fallback'
+            }
+        elif detector_type == 'missing_feature':
+            return {
+                'found': True,
+                'features': combined_issues,
+                'count': len(combined_issues),
+                'confidence': confidence,
+                'severity': primary.get('severity', 5),
+                'layers_used': ['layer1', 'layer2'],
+                'verdict_by': 'fallback'
+            }
+        elif detector_type == 'misinterpretation':
+            return {
+                'found': True,
+                'reasons': combined_issues,
+                'score': primary.get('severity', 5),
+                'confidence': confidence,
+                'severity': primary.get('severity', 5),
+                'layers_used': ['layer1', 'layer2'],
+                'verdict_by': 'fallback'
             }
     
     def verify_misinterpretation(self, prompt: str, code: str) -> Dict[str, Any]:

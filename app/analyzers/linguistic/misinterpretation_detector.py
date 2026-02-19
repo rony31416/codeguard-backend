@@ -1,13 +1,13 @@
 """
 Detect fundamental misunderstanding of the task
-Enhanced with 3-layer cascade architecture
+Enhanced with 3-layer evidence → LLM verdict architecture
 """
 import re
 import ast
 from typing import Dict, Any, List
 from .base_detector import BaseDetector
 from .utils.similarity_calculator import SimilarityCalculator
-from .layers import RuleEngine, ASTAnalyzer, LLMReasoner, LayerAggregator
+from .layers import RuleEngine, ASTAnalyzer, LLMReasoner
 
 
 class MisinterpretationDetector(BaseDetector):
@@ -17,62 +17,34 @@ class MisinterpretationDetector(BaseDetector):
         super().__init__(prompt, code, code_ast)
         self.similarity_calculator = SimilarityCalculator()
         
-        # Initialize 3-layer architecture
+        # Initialize 3-layer architecture (NO aggregator needed)
         self.rule_engine = RuleEngine()
         self.ast_analyzer = ASTAnalyzer()
         self.llm_reasoner = LLMReasoner()
-        self.aggregator = LayerAggregator()
     
     def detect(self) -> Dict[str, Any]:
-        """Main detection method using 3-layer cascade with aggregation"""
-        # LAYER 1: Rule Engine (Fast pattern matching ~10ms, 95% confidence)
-        layer1_result = self.rule_engine.detect_misinterpretation(self.code, self.prompt)
+        """
+        NEW 3-Stage Flow:
+        Stage 1: Rule Engine collects evidence
+        Stage 2: AST Analyzer collects evidence  
+        Stage 3: LLM makes final verdict based on combined evidence
+        """
+        # LAYER 1: Rule Engine - Collect evidence (Fast pattern matching ~10ms)
+        layer1_evidence = self.rule_engine.detect_misinterpretation(self.code, self.prompt)
         
-        # LAYER 2: AST Analyzer (Structural verification ~50ms, 100% confidence)
-        layer2_result = None
-        if self.code_ast:
-            layer2_result = self.ast_analyzer.analyze_return_type_mismatch(self.code, self.prompt)
+        # LAYER 2: AST Analyzer - Collect evidence (Structural verification ~50ms)
+        layer2_evidence = self.ast_analyzer.analyze_return_type_mismatch(self.code, self.prompt) if self.code_ast else None
         
-        # LAYER 3: LLM Reasoner (ALWAYS invoke - most important for misinterpretation)
-        layer3_result = self.llm_reasoner.verify_misinterpretation(
-            self.prompt,
-            self.code
+        # LAYER 3: LLM makes final verdict based on Layer 1 & 2 evidence (~300ms)
+        final_verdict = self.llm_reasoner.final_verdict(
+            prompt=self.prompt,
+            code=self.code,
+            layer1_evidence=layer1_evidence,
+            layer2_evidence=layer2_evidence,
+            detector_type='misinterpretation'
         )
         
-        # AGGREGATE RESULTS from all layers
-        aggregated = self.aggregator.aggregate_findings(
-            layer1_result,
-            layer2_result,
-            layer3_result
-        )
-        
-        # Semantic similarity check (backup for edge cases)
-        similarity = self.similarity_calculator.calculate_similarity(self.prompt, self.code)
-        if similarity < 0.2 and not aggregated['findings']:
-            aggregated['findings'].append(f"low semantic similarity ({round(similarity, 2)})")
-            aggregated['found'] = True
-            aggregated['severity'] = max(aggregated.get('severity') or 0, 3.0)
-        
-        # Calculate misinterpretation score from severity (handle None)
-        severity_value = aggregated.get('severity') or 0
-        misinterpretation_score = severity_value / 10.0 if severity_value else 0.0
-        
-        # Return aggregated results in expected format
-        return {
-            "found": aggregated['found'] or misinterpretation_score > 0.4,
-            "score": round(misinterpretation_score, 2),
-            "reasons": aggregated['findings'],
-            "confidence": aggregated['confidence'],
-            "severity": aggregated.get('severity'),
-            "consensus": aggregated['consensus'],
-            "primary_detection": aggregated['primary_detection'],
-            "layers_used": aggregated['layers_used'],
-            "layers_detail": aggregated['layers_detail'],
-            "reliability": self.aggregator.calculate_reliability_score(
-                aggregated['consensus'], 
-                aggregated['confidence']
-            )
-        }
+        return final_verdict
     
     def _detect_return_print_mismatch(self) -> tuple:
         """Check if code prints when it should return"""
