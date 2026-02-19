@@ -200,6 +200,21 @@ class RuleEngine:
         """Basic pattern-based misinterpretation detection."""
         issues = []
         
+        # CRITICAL: Check for print vs return mismatch
+        # If prompt says "return" but code only prints
+        if re.search(r'\breturn(s|ing)?\b', prompt.lower()):
+            has_return = bool(re.search(r'return\s+(?!None)', code))
+            has_print = bool(re.search(r'print\s*\(', code))
+            
+            if has_print and not has_return:
+                issues.append({
+                    'type': 'print_vs_return',
+                    'expected': 'return',
+                    'actual': 'print',
+                    'message': 'Prompt asks to return but code uses print instead',
+                    'confidence': 0.85  # High confidence for this pattern
+                })
+        
         # Check for return type mismatches (basic)
         if 'return a list' in prompt.lower() or 'return list' in prompt.lower():
             if not re.search(r'return\s*\[', code):
@@ -224,8 +239,61 @@ class RuleEngine:
             'issues': issues,
             'layer': 'rule_engine',
             'confidence': max([i['confidence'] for i in issues]) if issues else 0
+        }    
+    def detect_silly_mistakes(self, code: str, prompt: str) -> Dict[str, Any]:
+        """Detect silly calculation/logic mistakes."""
+        issues = []
+        
+        # CRITICAL: Check for wrong exponent in square/cube operations
+        if re.search(r'\\bsquare\\b', prompt.lower()):
+            # Looking for square - should be ** 2
+            if re.search(r'\\*\\*\\s*3', code):  # Found ** 3 (cube)
+                issues.append({
+                    'type': 'wrong_exponent',
+                    'expected': '** 2',
+                    'actual': '** 3',
+                    'message': 'Code uses ** 3 (cube) when prompt asks for square (** 2)',
+                    'confidence': 0.95
+                })
+        
+        if re.search(r'\\bcube\\b', prompt.lower()):
+            # Looking for cube - should be ** 3
+            if re.search(r'\\*\\*\\s*2', code):  # Found ** 2 (square)
+                issues.append({
+                    'type': 'wrong_exponent',
+                    'expected': '** 3',
+                    'actual': '** 2',
+                    'message': 'Code uses ** 2 (square) when prompt asks for cube (** 3)',
+                    'confidence': 0.95
+                })
+        
+        # Check for wrong arithmetic operations
+        if re.search(r'\\b(sum|add|total)\\b', prompt.lower()):
+            # Expects addition but might use multiplication/subtraction
+            if re.search(r'=\\s*\\w+\\s*\\*\\s*\\w+', code) and not re.search(r'\\+', code):
+                issues.append({
+                    'type': 'wrong_operation',
+                    'expected': 'addition (+)',
+                    'message': 'Prompt asks for sum/addition but code uses multiplication',
+                    'confidence': 0.7
+                })
+        
+        if re.search(r'\\b(average|mean)\\b', prompt.lower()):
+            # Average needs division, check if missing
+            if not re.search(r'/|len\\(', code):
+                issues.append({
+                    'type': 'missing_division',
+                    'expected': 'division for average',
+                    'message': 'Average calculation missing division by count',
+                    'confidence': 0.8
+                })
+        
+        return {
+            'found': len(issues) > 0,
+            'issues': issues,
+            'layer': 'rule_engine',
+            'confidence': max([i['confidence'] for i in issues]) if issues else 0
         }
-
 
 if __name__ == "__main__":
     """Quick test"""

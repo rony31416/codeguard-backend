@@ -226,6 +226,28 @@ class ASTAnalyzer:
         
         issues = []
         
+        # CRITICAL: Check for print vs return (AST verification)
+        import re
+        if re.search(r'\breturn(s|ing)?\b', prompt.lower()):
+            has_return_statement = False
+            has_print_statement = False
+            
+            for node in ast.walk(tree):
+                if isinstance(node, ast.Return) and node.value:
+                    has_return_statement = True
+                if isinstance(node, ast.Call):
+                    if isinstance(node.func, ast.Name) and node.func.id == 'print':
+                        has_print_statement = True
+            
+            if has_print_statement and not has_return_statement:
+                issues.append({
+                    'type': 'print_vs_return',
+                    'expected': 'return statement',
+                    'actual': 'print statement',
+                    'message': 'Function prints output instead of returning it',
+                    'confidence': self.confidence  # 100% confidence from AST
+                })
+        
         # Check what prompt expects
         expects_list = 'list' in prompt.lower() and 'return' in prompt.lower()
         expects_dict = 'dict' in prompt.lower() and 'return' in prompt.lower()
