@@ -1,10 +1,11 @@
 {
   "test_set_id": 3,
-  "test_set_name": "Real-World Code Scenarios",
+  "name": "Real-World Code Scenarios",
   "total_cases": 16,
-  "correct": 11,
-  "accuracy": 68.75,
-  "timestamp": "2026-02-20T17:42:53.680955",
+  "correct": 13,
+  "errors": 0,
+  "accuracy": 81.25,
+  "total_execution_time": 282.63240242004395,
   "results": [
     {
       "test_case_id": 33,
@@ -12,28 +13,42 @@
       "expected": "bug",
       "predicted": "bug",
       "correct": true,
-      "bug_count": 1,
+      "bug_count": 2,
       "bugs_found": [
         {
-          "type": "incomplete_generation",
-          "description": "Bug detected"
+          "pattern_name": "Incomplete Generation",
+          "severity": 7,
+          "description": "Code generation appears incomplete. Issues: Comment indicates incomplete code. The LLM may have been"
+        },
+        {
+          "pattern_name": "Non-Prompted Consideration (NPC)",
+          "severity": 5,
+          "description": "The code includes features that weren't requested. Detected 1 unrequested addition(s): Unnecessary '"
         }
       ],
-      "severity_score": 1,
+      "severity_score": 7,
       "expected_bug_type": "incomplete_generation",
-      "prompt": "Find first even number"
+      "execution_time": 22.688345432281494,
+      "analysis_id": 145
     },
     {
       "test_case_id": 34,
       "name": "Bug - Off-by-One Error",
       "expected": "bug",
-      "predicted": "clean",
-      "correct": false,
-      "bug_count": 0,
-      "bugs_found": [],
-      "severity_score": 0,
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "Missing Features",
+          "severity": 6,
+          "description": "The code is missing features that were requested in the prompt. Detected 1 missing feature(s): retur"
+        }
+      ],
+      "severity_score": 6,
       "expected_bug_type": "silly_mistake",
-      "prompt": "Get last 5 elements of list"
+      "execution_time": 17.84828233718872,
+      "analysis_id": 146
     },
     {
       "test_case_id": 35,
@@ -41,11 +56,18 @@
       "expected": "bug",
       "predicted": "clean",
       "correct": false,
-      "bug_count": 0,
-      "bugs_found": [],
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
       "severity_score": 0,
       "expected_bug_type": "silly_mistake",
-      "prompt": "Append to list with default empty list"
+      "execution_time": 28.47727656364441,
+      "analysis_id": 147
     },
     {
       "test_case_id": 36,
@@ -53,28 +75,42 @@
       "expected": "bug",
       "predicted": "bug",
       "correct": true,
-      "bug_count": 1,
+      "bug_count": 2,
       "bugs_found": [
         {
-          "type": "incomplete_generation",
-          "description": "Bug detected"
+          "pattern_name": "Incomplete Generation",
+          "severity": 7,
+          "description": "Code generation appears incomplete. Issues: Comment indicates incomplete code. The LLM may have been"
+        },
+        {
+          "pattern_name": "Missing Features",
+          "severity": 6,
+          "description": "The code is missing features that were requested in the prompt. Detected 1 missing feature(s): Missi"
         }
       ],
-      "severity_score": 1,
+      "severity_score": 7,
       "expected_bug_type": "incomplete_generation",
-      "prompt": "Calculate product of numbers"
+      "execution_time": 17.31464171409607,
+      "analysis_id": 148
     },
     {
       "test_case_id": 37,
       "name": "Bug - Type Comparison Error",
       "expected": "bug",
-      "predicted": "clean",
-      "correct": false,
-      "bug_count": 0,
-      "bugs_found": [],
-      "severity_score": 0,
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "Missing Features",
+          "severity": 6,
+          "description": "The code is missing features that were requested in the prompt. Detected 1 missing feature(s): The f"
+        }
+      ],
+      "severity_score": 6,
       "expected_bug_type": "wrong_input_type",
-      "prompt": "Check if value is numeric"
+      "execution_time": 20.558350801467896,
+      "analysis_id": 149
     },
     {
       "test_case_id": 38,
@@ -82,11 +118,18 @@
       "expected": "bug",
       "predicted": "clean",
       "correct": false,
-      "bug_count": 0,
-      "bugs_found": [],
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
       "severity_score": 0,
       "expected_bug_type": "missing_corner_case",
-      "prompt": "Format user greeting"
+      "execution_time": 17.979395866394043,
+      "analysis_id": 150
     },
     {
       "test_case_id": 39,
@@ -97,13 +140,15 @@
       "bug_count": 1,
       "bugs_found": [
         {
-          "type": "syntax_error",
-          "description": "Bug detected"
+          "pattern_name": "Syntax Error",
+          "severity": 9,
+          "description": "The code contains a syntax error at line 2: invalid syntax. Maybe you meant '==' or ':=' instead of "
         }
       ],
-      "severity_score": 1,
+      "severity_score": 9,
       "expected_bug_type": "syntax_error",
-      "prompt": "Check if number is zero"
+      "execution_time": 21.21639633178711,
+      "analysis_id": 151
     },
     {
       "test_case_id": 40,
@@ -111,11 +156,18 @@
       "expected": "bug",
       "predicted": "clean",
       "correct": false,
-      "bug_count": 0,
-      "bugs_found": [],
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
       "severity_score": 0,
       "expected_bug_type": "missing_corner_case",
-      "prompt": "Get user age from dictionary"
+      "execution_time": 14.567790985107422,
+      "analysis_id": 152
     },
     {
       "test_case_id": 41,
@@ -123,11 +175,18 @@
       "expected": "clean",
       "predicted": "clean",
       "correct": true,
-      "bug_count": 0,
-      "bugs_found": [],
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "prompt": "Get positive numbers"
+      "execution_time": 14.117969274520874,
+      "analysis_id": 153
     },
     {
       "test_case_id": 42,
@@ -135,11 +194,18 @@
       "expected": "clean",
       "predicted": "clean",
       "correct": true,
-      "bug_count": 0,
-      "bugs_found": [],
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "prompt": "Square dictionary values"
+      "execution_time": 13.62831711769104,
+      "analysis_id": 154
     },
     {
       "test_case_id": 43,
@@ -147,11 +213,18 @@
       "expected": "clean",
       "predicted": "clean",
       "correct": true,
-      "bug_count": 0,
-      "bugs_found": [],
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "prompt": "Classify number as positive, negative, or zero"
+      "execution_time": 14.156965494155884,
+      "analysis_id": 155
     },
     {
       "test_case_id": 44,
@@ -159,11 +232,18 @@
       "expected": "clean",
       "predicted": "clean",
       "correct": true,
-      "bug_count": 0,
-      "bugs_found": [],
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "prompt": "Create a multiplier function factory"
+      "execution_time": 12.836632251739502,
+      "analysis_id": 156
     },
     {
       "test_case_id": 45,
@@ -171,11 +251,18 @@
       "expected": "clean",
       "predicted": "clean",
       "correct": true,
-      "bug_count": 0,
-      "bugs_found": [],
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "prompt": "Find unique elements in two lists"
+      "execution_time": 18.556305646896362,
+      "analysis_id": 157
     },
     {
       "test_case_id": 46,
@@ -183,11 +270,18 @@
       "expected": "clean",
       "predicted": "clean",
       "correct": true,
-      "bug_count": 0,
-      "bugs_found": [],
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "prompt": "Format person info"
+      "execution_time": 14.486379861831665,
+      "analysis_id": 158
     },
     {
       "test_case_id": 47,
@@ -195,11 +289,18 @@
       "expected": "clean",
       "predicted": "clean",
       "correct": true,
-      "bug_count": 0,
-      "bugs_found": [],
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "prompt": "Get index and value pairs"
+      "execution_time": 16.76241374015808,
+      "analysis_id": 159
     },
     {
       "test_case_id": 48,
@@ -207,11 +308,19 @@
       "expected": "clean",
       "predicted": "clean",
       "correct": true,
-      "bug_count": 0,
-      "bugs_found": [],
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "prompt": "Combine two lists into tuples"
+      "execution_time": 17.436939001083374,
+      "analysis_id": 160
     }
-  ]
+  ],
+  "timestamp": "2026-02-20T20:31:45.691027"
 }

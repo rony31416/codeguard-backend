@@ -1,10 +1,11 @@
 {
   "test_set_id": 8,
-  "test_set_name": "OOP & Structural Bugs",
+  "name": "OOP & Structural Bugs",
   "total_cases": 16,
-  "correct": 10,
-  "accuracy": 62.5,
-  "timestamp": "2026-02-20T17:42:53.745747",
+  "correct": 12,
+  "errors": 0,
+  "accuracy": 75.0,
+  "total_execution_time": 308.52852416038513,
   "results": [
     {
       "test_case_id": 1,
@@ -15,13 +16,15 @@
       "bug_count": 1,
       "bugs_found": [
         {
-          "type": "wrong_attribute",
-          "description": "Bug detected"
+          "pattern_name": "Wrong Attribute",
+          "severity": 7,
+          "description": "Detected incorrect attribute access patterns: self.name. Likely treating dictionary keys as object a"
         }
       ],
-      "severity_score": 1,
+      "severity_score": 7,
       "expected_bug_type": "missing_corner_case",
-      "prompt": "Create class"
+      "execution_time": 14.163544416427612,
+      "analysis_id": 225
     },
     {
       "test_case_id": 2,
@@ -29,24 +32,23 @@
       "expected": "bug",
       "predicted": "bug",
       "correct": true,
-      "bug_count": 3,
+      "bug_count": 2,
       "bugs_found": [
         {
-          "type": "incomplete_generation",
-          "description": "Bug detected"
+          "pattern_name": "Incomplete Generation",
+          "severity": 7,
+          "description": "Code generation appears incomplete. Issues: Comment indicates incomplete code. The LLM may have been"
         },
         {
-          "type": "undefined_names",
-          "description": "Bug detected"
-        },
-        {
-          "type": "wrong_attribute",
-          "description": "Bug detected"
+          "pattern_name": "Wrong Attribute",
+          "severity": 7,
+          "description": "Detected incorrect attribute access patterns: self.name. Likely treating dictionary keys as object a"
         }
       ],
-      "severity_score": 3,
+      "severity_score": 7,
       "expected_bug_type": "wrong_attribute",
-      "prompt": "Get name"
+      "execution_time": 20.80831241607666,
+      "analysis_id": 226
     },
     {
       "test_case_id": 3,
@@ -57,17 +59,20 @@
       "bug_count": 2,
       "bugs_found": [
         {
-          "type": "hallucinated_objects",
-          "description": "Bug detected"
+          "pattern_name": "Hallucinated Object",
+          "severity": 8,
+          "description": "The code references undefined objects that may not exist: BaseUser. LLMs sometimes invent functions,"
         },
         {
-          "type": "undefined_names",
-          "description": "Bug detected"
+          "pattern_name": "Missing Features",
+          "severity": 6,
+          "description": "The code is missing features that were requested in the prompt. Detected 1 missing feature(s): BaseU"
         }
       ],
-      "severity_score": 2,
+      "severity_score": 8,
       "expected_bug_type": "hallucinated_object",
-      "prompt": "Inherit from BaseUser"
+      "execution_time": 18.734057426452637,
+      "analysis_id": 227
     },
     {
       "test_case_id": 4,
@@ -75,32 +80,47 @@
       "expected": "bug",
       "predicted": "bug",
       "correct": true,
-      "bug_count": 2,
+      "bug_count": 3,
       "bugs_found": [
         {
-          "type": "syntax_error",
-          "description": "Bug detected"
+          "pattern_name": "Syntax Error",
+          "severity": 9,
+          "description": "The code contains a syntax error at line 7: expected ':' (<unknown>, line 7)"
         },
         {
-          "type": "incomplete_generation",
-          "description": "Bug detected"
+          "pattern_name": "Incomplete Generation",
+          "severity": 7,
+          "description": "Code generation appears incomplete. Issues: Code contains incomplete markers; Code contains incomple"
+        },
+        {
+          "pattern_name": "Non-Prompted Consideration (NPC)",
+          "severity": 5,
+          "description": "The code includes features that weren't requested. Detected 1 unrequested addition(s): debug print s"
         }
       ],
-      "severity_score": 2,
+      "severity_score": 9,
       "expected_bug_type": "mixed_bugs",
-      "prompt": "Delete user"
+      "execution_time": 19.5690975189209,
+      "analysis_id": 228
     },
     {
       "test_case_id": 5,
       "name": "Silly Mistake - Init Return",
       "expected": "bug",
-      "predicted": "clean",
-      "correct": false,
-      "bug_count": 0,
-      "bugs_found": [],
-      "severity_score": 0,
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "Non-Prompted Consideration (NPC)",
+          "severity": 5,
+          "description": "The code includes features that weren't requested. Detected 1 unrequested addition(s): Unexpected re"
+        }
+      ],
+      "severity_score": 5,
       "expected_bug_type": "silly_mistake",
-      "prompt": "Init class"
+      "execution_time": 23.02768063545227,
+      "analysis_id": 229
     },
     {
       "test_case_id": 6,
@@ -111,41 +131,68 @@
       "bug_count": 2,
       "bugs_found": [
         {
-          "type": "syntax_error",
-          "description": "Bug detected"
+          "pattern_name": "Syntax Error",
+          "severity": 9,
+          "description": "The code contains a syntax error at line 4: expected an indented block after function definition on "
         },
         {
-          "type": "incomplete_generation",
-          "description": "Bug detected"
+          "pattern_name": "Incomplete Generation",
+          "severity": 7,
+          "description": "Code generation appears incomplete. Issues: Code contains incomplete markers. The LLM may have been "
         }
       ],
-      "severity_score": 2,
+      "severity_score": 9,
       "expected_bug_type": "incomplete_generation",
-      "prompt": "Create API class"
+      "execution_time": 15.98282504081726,
+      "analysis_id": 230
     },
     {
       "test_case_id": 7,
       "name": "Prompt Bias - Hardcoded ID Check",
       "expected": "bug",
-      "predicted": "clean",
-      "correct": false,
-      "bug_count": 0,
-      "bugs_found": [],
-      "severity_score": 0,
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 2,
+      "bugs_found": [
+        {
+          "pattern_name": "Prompt-Biased Code",
+          "severity": 6,
+          "description": "The code contains hardcoded logic based on specific examples from the prompt rather than general sol"
+        },
+        {
+          "pattern_name": "Missing Features",
+          "severity": 6,
+          "description": "The code is missing features that were requested in the prompt. Detected 1 missing feature(s): Retur"
+        }
+      ],
+      "severity_score": 6,
       "expected_bug_type": "prompt_bias",
-      "prompt": "Check ID 99"
+      "execution_time": 19.101904153823853,
+      "analysis_id": 231
     },
     {
       "test_case_id": 8,
       "name": "Wrong Input Type - Math on Self",
       "expected": "bug",
-      "predicted": "clean",
-      "correct": false,
-      "bug_count": 0,
-      "bugs_found": [],
-      "severity_score": 0,
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 2,
+      "bugs_found": [
+        {
+          "pattern_name": "Non-Prompted Consideration (NPC)",
+          "severity": 5,
+          "description": "The code includes features that weren't requested. Detected 1 unrequested addition(s): Class 'Num' d"
+        },
+        {
+          "pattern_name": "Missing Features",
+          "severity": 6,
+          "description": "The code is missing features that were requested in the prompt. Detected 1 missing feature(s): Add x"
+        }
+      ],
+      "severity_score": 6,
       "expected_bug_type": "wrong_input_type",
-      "prompt": "Add to self"
+      "execution_time": 26.913636445999146,
+      "analysis_id": 232
     },
     {
       "test_case_id": 9,
@@ -156,13 +203,15 @@
       "bug_count": 1,
       "bugs_found": [
         {
-          "type": "incomplete_generation",
-          "description": "Bug detected"
+          "pattern_name": "Incomplete Generation",
+          "severity": 7,
+          "description": "Code generation appears incomplete. Issues: Function '__init__' contains only 'pass'. The LLM may ha"
         }
       ],
-      "severity_score": 1,
+      "severity_score": 7,
       "expected_bug_type": null,
-      "prompt": "Inherit init"
+      "execution_time": 14.662705421447754,
+      "analysis_id": 233
     },
     {
       "test_case_id": 10,
@@ -170,11 +219,18 @@
       "expected": "clean",
       "predicted": "clean",
       "correct": true,
-      "bug_count": 0,
-      "bugs_found": [],
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "prompt": "Static helper"
+      "execution_time": 16.155507564544678,
+      "analysis_id": 234
     },
     {
       "test_case_id": 11,
@@ -182,11 +238,18 @@
       "expected": "clean",
       "predicted": "clean",
       "correct": true,
-      "bug_count": 0,
-      "bugs_found": [],
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "prompt": "Factory method"
+      "execution_time": 16.19500970840454,
+      "analysis_id": 235
     },
     {
       "test_case_id": 12,
@@ -194,28 +257,47 @@
       "expected": "clean",
       "predicted": "bug",
       "correct": false,
-      "bug_count": 1,
+      "bug_count": 3,
       "bugs_found": [
         {
-          "type": "incomplete_generation",
-          "description": "Bug detected"
+          "pattern_name": "Incomplete Generation",
+          "severity": 7,
+          "description": "Code generation appears incomplete. Issues: Function 'x' contains only 'pass'. The LLM may have been"
+        },
+        {
+          "pattern_name": "Prompt-Biased Code",
+          "severity": 6,
+          "description": "The code contains hardcoded logic based on specific examples from the prompt rather than general sol"
+        },
+        {
+          "pattern_name": "Missing Features",
+          "severity": 6,
+          "description": "The code is missing features that were requested in the prompt. Detected 1 missing feature(s): sette"
         }
       ],
-      "severity_score": 1,
+      "severity_score": 7,
       "expected_bug_type": null,
-      "prompt": "Getter setter"
+      "execution_time": 15.934056282043457,
+      "analysis_id": 236
     },
     {
       "test_case_id": 13,
       "name": "Clean - Magic Method",
       "expected": "clean",
-      "predicted": "clean",
-      "correct": true,
-      "bug_count": 0,
-      "bugs_found": [],
-      "severity_score": 0,
+      "predicted": "bug",
+      "correct": false,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "Prompt-Biased Code",
+          "severity": 6,
+          "description": "The code contains hardcoded logic based on specific examples from the prompt rather than general sol"
+        }
+      ],
+      "severity_score": 6,
       "expected_bug_type": null,
-      "prompt": "String repr"
+      "execution_time": 25.21812105178833,
+      "analysis_id": 237
     },
     {
       "test_case_id": 14,
@@ -223,11 +305,18 @@
       "expected": "clean",
       "predicted": "clean",
       "correct": true,
-      "bug_count": 0,
-      "bugs_found": [],
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "prompt": "Private data"
+      "execution_time": 19.195053339004517,
+      "analysis_id": 238
     },
     {
       "test_case_id": 15,
@@ -235,11 +324,18 @@
       "expected": "clean",
       "predicted": "clean",
       "correct": true,
-      "bug_count": 0,
-      "bugs_found": [],
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "prompt": "Optimize memory"
+      "execution_time": 24.689979791641235,
+      "analysis_id": 239
     },
     {
       "test_case_id": 16,
@@ -250,13 +346,16 @@
       "bug_count": 1,
       "bugs_found": [
         {
-          "type": "incomplete_generation",
-          "description": "Bug detected"
+          "pattern_name": "Incomplete Generation",
+          "severity": 7,
+          "description": "Code generation appears incomplete. Issues: Function 'p' contains only 'pass'. The LLM may have been"
         }
       ],
-      "severity_score": 1,
+      "severity_score": 7,
       "expected_bug_type": null,
-      "prompt": "Abstract prop"
+      "execution_time": 18.177032947540283,
+      "analysis_id": 240
     }
-  ]
+  ],
+  "timestamp": "2026-02-20T20:56:40.814461"
 }

@@ -22,9 +22,9 @@ def load_results(results_dir="F:/Codeguard/backend/app/final_test/results"):
             with open(filepath, 'r') as f:
                 data = json.load(f)
                 results.append(data)
-                print(f"  ✓ Loaded {filename}")
+                print(f"  [OK] Loaded {filename}")
         else:
-            print(f"  ⚠ Warning: {filepath} not found")
+            print(f"  [WARNING] {filepath} not found")
     
     return results
 
@@ -103,11 +103,11 @@ def print_metrics_report(metrics, all_results):
     print("  FINAL TEST METRICS REPORT")
     print("=" * 80)
     
-    print(f"\n📊 OVERALL RESULTS:")
+    print(f"\nOVERALL RESULTS:")
     print(f"  Total Test Cases: {metrics['total_cases']}")
     print(f"  Correct Predictions: {metrics['correct_predictions']}")
     
-    print(f"\n🎯 CONFUSION MATRIX:")
+    print(f"\nCONFUSION MATRIX:")
     print(f"  ┌─────────────────┬─────────────┬─────────────┐")
     print(f"  │                 │  Predicted  │  Predicted  │")
     print(f"  │                 │     Bug     │    Clean    │")
@@ -116,7 +116,7 @@ def print_metrics_report(metrics, all_results):
     print(f"  │  Actual Clean   │  FP: {metrics['confusion_matrix']['FP']:5d}  │  TN: {metrics['confusion_matrix']['TN']:5d}  │")
     print(f"  └─────────────────┴─────────────┴─────────────┘")
     
-    print(f"\n📈 PERFORMANCE METRICS:")
+    print(f"\nPERFORMANCE METRICS:")
     print(f"  Accuracy:           {metrics['accuracy']:.2%}  (Correct predictions / Total)")
     print(f"  Precision:          {metrics['precision']:.2%}  (TP / (TP + FP))")
     print(f"  Recall (Sensitivity): {metrics['recall']:.2%}  (TP / (TP + FN))")
@@ -130,7 +130,7 @@ def print_metrics_report(metrics, all_results):
     print(f"\n TEST SET BREAKDOWN:")
     for result_set in all_results:
         test_set_id = result_set['test_set_id']
-        test_set_name = result_set['test_set_name']
+        test_set_name = result_set.get('name', result_set.get('test_set_name', 'Unknown'))
         print(f"\n  Test Set {test_set_id} ({test_set_name}):")
         print(f"    Cases: {result_set['total_cases']}")
         print(f"    Accuracy: {result_set['accuracy']:.2f}%")
@@ -170,7 +170,7 @@ def save_metrics_report(metrics, all_results, output_dir="F:/Codeguard/backend/a
     for result in all_results:
         summary = {
             "test_set_id": result['test_set_id'],
-            "test_set_name": result['test_set_name'],
+            "test_set_name": result.get('name', result.get('test_set_name', 'Unknown')),
             "total_cases": result['total_cases'],
             "correct": result['correct'],
             "accuracy": result['accuracy']

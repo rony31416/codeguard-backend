@@ -1,10 +1,11 @@
 {
   "test_set_id": 6,
-  "test_set_name": "Mixed Bugs & Complex Logic",
+  "name": "Mixed Bugs & Complex Logic",
   "total_cases": 16,
-  "correct": 13,
-  "accuracy": 81.25,
-  "timestamp": "2026-02-20T17:42:53.720559",
+  "correct": 12,
+  "errors": 0,
+  "accuracy": 75.0,
+  "total_execution_time": 311.85625743865967,
   "results": [
     {
       "test_case_id": 1,
@@ -15,21 +16,25 @@
       "bug_count": 3,
       "bugs_found": [
         {
-          "type": "hallucinated_objects",
-          "description": "Bug detected"
+          "pattern_name": "Hallucinated Object",
+          "severity": 8,
+          "description": "The code references undefined objects that may not exist: TaxService. LLMs sometimes invent function"
         },
         {
-          "type": "incomplete_generation",
-          "description": "Bug detected"
+          "pattern_name": "Incomplete Generation",
+          "severity": 7,
+          "description": "Code generation appears incomplete. Issues: Code contains incomplete markers. The LLM may have been "
         },
         {
-          "type": "undefined_names",
-          "description": "Bug detected"
+          "pattern_name": "Non-Prompted Consideration (NPC)",
+          "severity": 5,
+          "description": "The code includes features that weren't requested. Detected 1 unrequested addition(s): unrequested p"
         }
       ],
-      "severity_score": 3,
+      "severity_score": 8,
       "expected_bug_type": "mixed_bugs",
-      "prompt": "Calculate tax"
+      "execution_time": 23.14050841331482,
+      "analysis_id": 193
     },
     {
       "test_case_id": 2,
@@ -40,25 +45,34 @@
       "bug_count": 1,
       "bugs_found": [
         {
-          "type": "syntax_error",
-          "description": "Bug detected"
+          "pattern_name": "Syntax Error",
+          "severity": 9,
+          "description": "The code contains a syntax error at line 3: expected ':' (<unknown>, line 3)"
         }
       ],
-      "severity_score": 1,
+      "severity_score": 9,
       "expected_bug_type": "mixed_bugs",
-      "prompt": "Check if user is 'admin'"
+      "execution_time": 24.34612011909485,
+      "analysis_id": 194
     },
     {
       "test_case_id": 3,
       "name": "Mixed - Wrong Attribute + Silly Mistake",
       "expected": "bug",
-      "predicted": "clean",
-      "correct": false,
-      "bug_count": 0,
-      "bugs_found": [],
-      "severity_score": 0,
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "Missing Features",
+          "severity": 6,
+          "description": "The code is missing features that were requested in the prompt. Detected 2 missing feature(s): actua"
+        }
+      ],
+      "severity_score": 6,
       "expected_bug_type": "mixed_bugs",
-      "prompt": "Update user profile"
+      "execution_time": 22.057891130447388,
+      "analysis_id": 195
     },
     {
       "test_case_id": 4,
@@ -66,16 +80,23 @@
       "expected": "bug",
       "predicted": "bug",
       "correct": true,
-      "bug_count": 1,
+      "bug_count": 2,
       "bugs_found": [
         {
-          "type": "incomplete_generation",
-          "description": "Bug detected"
+          "pattern_name": "Incomplete Generation",
+          "severity": 7,
+          "description": "Code generation appears incomplete. Issues: Comment indicates incomplete code; Code contains incompl"
+        },
+        {
+          "pattern_name": "Missing Features",
+          "severity": 6,
+          "description": "The code is missing features that were requested in the prompt. Detected 1 missing feature(s): imple"
         }
       ],
-      "severity_score": 1,
+      "severity_score": 7,
       "expected_bug_type": "mixed_bugs",
-      "prompt": "Divide list items"
+      "execution_time": 16.623420000076294,
+      "analysis_id": 196
     },
     {
       "test_case_id": 5,
@@ -83,16 +104,28 @@
       "expected": "bug",
       "predicted": "bug",
       "correct": true,
-      "bug_count": 1,
+      "bug_count": 3,
       "bugs_found": [
         {
-          "type": "wrong_input_type",
-          "description": "Bug detected"
+          "pattern_name": "Wrong Input Type",
+          "severity": 6,
+          "description": "Detected wrong input types: sqrt(25). Passing string literals to numeric functions or vice versa."
+        },
+        {
+          "pattern_name": "Non-Prompted Consideration (NPC)",
+          "severity": 5,
+          "description": "The code includes features that weren't requested. Detected 2 unrequested addition(s): unused functi"
+        },
+        {
+          "pattern_name": "Prompt-Biased Code",
+          "severity": 6,
+          "description": "The code contains hardcoded logic based on specific examples from the prompt rather than general sol"
         }
       ],
-      "severity_score": 1,
+      "severity_score": 6,
       "expected_bug_type": "mixed_bugs",
-      "prompt": "Calculate square root of 25"
+      "execution_time": 24.96166443824768,
+      "analysis_id": 197
     },
     {
       "test_case_id": 6,
@@ -100,16 +133,23 @@
       "expected": "bug",
       "predicted": "bug",
       "correct": true,
-      "bug_count": 1,
+      "bug_count": 2,
       "bugs_found": [
         {
-          "type": "incomplete_generation",
-          "description": "Bug detected"
+          "pattern_name": "Incomplete Generation",
+          "severity": 7,
+          "description": "Code generation appears incomplete. Issues: Comment indicates incomplete code. The LLM may have been"
+        },
+        {
+          "pattern_name": "Non-Prompted Consideration (NPC)",
+          "severity": 5,
+          "description": "The code includes features that weren't requested. Detected 1 unrequested addition(s): Unrequested s"
         }
       ],
-      "severity_score": 1,
+      "severity_score": 7,
       "expected_bug_type": "mixed_bugs",
-      "prompt": "Get first item"
+      "execution_time": 17.67402195930481,
+      "analysis_id": 198
     },
     {
       "test_case_id": 7,
@@ -120,21 +160,25 @@
       "bug_count": 3,
       "bugs_found": [
         {
-          "type": "hallucinated_objects",
-          "description": "Bug detected"
+          "pattern_name": "Hallucinated Object",
+          "severity": 8,
+          "description": "The code references undefined objects that may not exist: DataHelper. LLMs sometimes invent function"
         },
         {
-          "type": "silly_mistakes",
-          "description": "Bug detected"
+          "pattern_name": "Silly Mistake",
+          "severity": 6,
+          "description": "Non-human coding patterns detected. Found 1 issue(s) including: If and else branches contain identic"
         },
         {
-          "type": "undefined_names",
-          "description": "Bug detected"
+          "pattern_name": "Non-Prompted Consideration (NPC)",
+          "severity": 5,
+          "description": "The code includes features that weren't requested. Detected 1 unrequested addition(s): Usage of 'Dat"
         }
       ],
-      "severity_score": 3,
+      "severity_score": 8,
       "expected_bug_type": "mixed_bugs",
-      "prompt": "Process data"
+      "execution_time": 23.203791618347168,
+      "analysis_id": 199
     },
     {
       "test_case_id": 8,
@@ -145,13 +189,15 @@
       "bug_count": 1,
       "bugs_found": [
         {
-          "type": "syntax_error",
-          "description": "Bug detected"
+          "pattern_name": "Syntax Error",
+          "severity": 9,
+          "description": "The code contains a syntax error at line 2: expected ':' (<unknown>, line 2)"
         }
       ],
-      "severity_score": 1,
+      "severity_score": 9,
       "expected_bug_type": "mixed_bugs",
-      "prompt": "Get ID"
+      "execution_time": 20.441267728805542,
+      "analysis_id": 200
     },
     {
       "test_case_id": 9,
@@ -159,11 +205,18 @@
       "expected": "clean",
       "predicted": "clean",
       "correct": true,
-      "bug_count": 0,
-      "bugs_found": [],
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "prompt": "Filter odd numbers"
+      "execution_time": 12.573616743087769,
+      "analysis_id": 201
     },
     {
       "test_case_id": 10,
@@ -171,11 +224,18 @@
       "expected": "clean",
       "predicted": "clean",
       "correct": true,
-      "bug_count": 0,
-      "bugs_found": [],
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "prompt": "Flatten matrix"
+      "execution_time": 12.33143138885498,
+      "analysis_id": 202
     },
     {
       "test_case_id": 11,
@@ -183,35 +243,56 @@
       "expected": "clean",
       "predicted": "clean",
       "correct": true,
-      "bug_count": 0,
-      "bugs_found": [],
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "prompt": "Create flying car"
+      "execution_time": 18.343794584274292,
+      "analysis_id": 203
     },
     {
       "test_case_id": 12,
       "name": "Clean - Async Function",
       "expected": "clean",
-      "predicted": "clean",
-      "correct": true,
-      "bug_count": 0,
-      "bugs_found": [],
-      "severity_score": 0,
+      "predicted": "bug",
+      "correct": false,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "Prompt-Biased Code",
+          "severity": 6,
+          "description": "The code contains hardcoded logic based on specific examples from the prompt rather than general sol"
+        }
+      ],
+      "severity_score": 6,
       "expected_bug_type": null,
-      "prompt": "Fetch data async"
+      "execution_time": 19.47135591506958,
+      "analysis_id": 204
     },
     {
       "test_case_id": 13,
       "name": "Clean - Dataclass",
       "expected": "clean",
-      "predicted": "clean",
-      "correct": true,
-      "bug_count": 0,
-      "bugs_found": [],
-      "severity_score": 0,
+      "predicted": "bug",
+      "correct": false,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "Missing Features",
+          "severity": 6,
+          "description": "The code is missing features that were requested in the prompt. Detected 0 missing feature(s): reque"
+        }
+      ],
+      "severity_score": 6,
       "expected_bug_type": null,
-      "prompt": "Create Point class"
+      "execution_time": 18.893912315368652,
+      "analysis_id": 205
     },
     {
       "test_case_id": 14,
@@ -219,16 +300,23 @@
       "expected": "clean",
       "predicted": "bug",
       "correct": false,
-      "bug_count": 1,
+      "bug_count": 2,
       "bugs_found": [
         {
-          "type": "hallucinated_objects",
-          "description": "Bug detected"
+          "pattern_name": "Hallucinated Object",
+          "severity": 8,
+          "description": "The code references undefined objects that may not exist: x. LLMs sometimes invent functions, classe"
+        },
+        {
+          "pattern_name": "Non-Prompted Consideration (NPC)",
+          "severity": 5,
+          "description": "The code includes features that weren't requested. Detected 2 unrequested addition(s): filters the l"
         }
       ],
-      "severity_score": 1,
+      "severity_score": 8,
       "expected_bug_type": null,
-      "prompt": "Process list"
+      "execution_time": 18.967602252960205,
+      "analysis_id": 206
     },
     {
       "test_case_id": 15,
@@ -239,13 +327,15 @@
       "bug_count": 1,
       "bugs_found": [
         {
-          "type": "incomplete_generation",
-          "description": "Bug detected"
+          "pattern_name": "Incomplete Generation",
+          "severity": 7,
+          "description": "Code generation appears incomplete. Issues: Function 'area' contains only 'pass'. The LLM may have b"
         }
       ],
-      "severity_score": 1,
+      "severity_score": 7,
       "expected_bug_type": null,
-      "prompt": "Create interface"
+      "execution_time": 18.194759607315063,
+      "analysis_id": 207
     },
     {
       "test_case_id": 16,
@@ -253,11 +343,19 @@
       "expected": "clean",
       "predicted": "clean",
       "correct": true,
-      "bug_count": 0,
-      "bugs_found": [],
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "prompt": "Define colors"
+      "execution_time": 20.631099224090576,
+      "analysis_id": 208
     }
-  ]
+  ],
+  "timestamp": "2026-02-20T20:46:18.491242"
 }

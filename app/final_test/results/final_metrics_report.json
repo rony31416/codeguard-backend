@@ -1,0 +1,92 @@
+{
+  "metrics": {
+    "confusion_matrix": {
+      "TP": 65,
+      "TN": 50,
+      "FP": 30,
+      "FN": 15
+    },
+    "total_cases": 160,
+    "correct_predictions": 115,
+    "accuracy": 0.71875,
+    "precision": 0.6842105263157895,
+    "recall": 0.8125,
+    "f1_score": 0.742857142857143,
+    "specificity": 0.625,
+    "false_positive_rate": 0.375,
+    "false_negative_rate": 0.1875,
+    "timestamp": "2026-02-20T21:08:14.402345"
+  },
+  "test_sets": [
+    {
+      "test_set_id": 1,
+      "test_set_name": "Basic Bug Patterns",
+      "total_cases": 16,
+      "correct": 14,
+      "accuracy": 87.5
+    },
+    {
+      "test_set_id": 2,
+      "test_set_name": "Advanced Bug Patterns",
+      "total_cases": 16,
+      "correct": 11,
+      "accuracy": 68.75
+    },
+    {
+      "test_set_id": 3,
+      "test_set_name": "Real-World Code Scenarios",
+      "total_cases": 16,
+      "correct": 13,
+      "accuracy": 81.25
+    },
+    {
+      "test_set_id": 4,
+      "test_set_name": "Data Structures & API Usage",
+      "total_cases": 16,
+      "correct": 11,
+      "accuracy": 68.75
+    },
+    {
+      "test_set_id": 5,
+      "test_set_name": "Complex & Real-World Scenarios",
+      "total_cases": 16,
+      "correct": 12,
+      "accuracy": 75.0
+    },
+    {
+      "test_set_id": 6,
+      "test_set_name": "Mixed Bugs & Complex Logic",
+      "total_cases": 16,
+      "correct": 12,
+      "accuracy": 75.0
+    },
+    {
+      "test_set_id": 7,
+      "test_set_name": "Security & Edge Cases",
+      "total_cases": 16,
+      "correct": 11,
+      "accuracy": 68.75
+    },
+    {
+      "test_set_id": 8,
+      "test_set_name": "OOP & Structural Bugs",
+      "total_cases": 16,
+      "correct": 12,
+      "accuracy": 75.0
+    },
+    {
+      "test_set_id": 9,
+      "test_set_name": "Regression & Stress Testing",
+      "total_cases": 16,
+      "correct": 10,
+      "accuracy": 62.5
+    },
+    {
+      "test_set_id": 10,
+      "test_set_name": "Production-Ready Code Patterns",
+      "total_cases": 16,
+      "correct": 9,
+      "accuracy": 56.25
+    }
+  ]
+}

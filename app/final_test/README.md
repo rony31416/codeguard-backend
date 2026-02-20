@@ -1,6 +1,15 @@
-# Final Test Suite
+# Final Test Suite - HTTP API Testing
 
-This folder contains comprehensive test cases and metrics calculation for the CodeGuard bug detection system.
+This folder contains comprehensive test cases for the CodeGuard bug detection system using HTTP API testing to simulate the VSCode extension behavior.
+
+## Important: HTTP Testing Approach
+
+This test suite uses **HTTP POST requests** to test the backend API, simulating how the VSCode extension will communicate with the backend deployed on Render.
+
+**Why HTTP Testing?**
+- Simulates real production workflow (VSCode extension → Render deployment)
+- Tests the complete API stack (FastAPI → 3-stage analysis → Response)
+- Matches actual user experience
 
 ## Structure
 
@@ -17,26 +26,39 @@ This folder contains comprehensive test cases and metrics calculation for the Co
 - **test_sets/test_set_10.json**: Production-ready code patterns (16 cases)
 
 ### Test Runner & Metrics
-- **run_all_tests.py**: Unified test runner for all test sets
+- **run_all_tests.py**: HTTP API test runner for all test sets
 - **calculate_metrics.py**: Calculates Accuracy, Precision, Recall, F1 Score
 - **results/**: JSON files with test results and metrics
 
 ## Running Tests
 
-### Run All Tests (Recommended)
+### Prerequisites
+**IMPORTANT**: The backend server MUST be running before testing!
+
 ```bash
-python backend/app/final_test/run_all_tests.py
+# Terminal 1: Start the backend server
+cd backend
+uvicorn app.main:app --reload
+```
+
+### Run All Tests via HTTP (Recommended)
+```bash
+# Terminal 2: Run tests
+cd backend
+python app/final_test/run_all_tests.py
 ```
 
 This will:
-- Load all 10 test sets (160 test cases total)
-- Run static analysis on each test case
+- Check if backend server is running
+- Send HTTP POST requests to http://localhost:8000/api/analyze
+- Test all 10 test sets (160 test cases total)
 - Save results to `results/test_set_N_results.json`
 - Display per-test-set and overall accuracy
+- **Time:** ~80-160 minutes (30-60s per test with LLM API)
 
 ### Calculate Detailed Metrics
 ```bash
-python backend/app/final_test/calculate_metrics.py
+python app/final_test/calculate_metrics.py
 ```
 
 This will:
@@ -44,6 +66,15 @@ This will:
 - Calculate confusion matrix (TP, TN, FP, FN)
 - Compute comprehensive metrics
 - Display detailed report
+
+## API Endpoint Configuration
+
+By default, tests use: `http://localhost:8000/api/analyze`
+
+To test against a deployed Render instance, edit `run_all_tests.py`:
+```python
+API_URL = "https://your-app.onrender.com/api/analyze"
+```
 
 ## Adding New Test Sets
 

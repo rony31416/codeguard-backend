@@ -1,10 +1,11 @@
 {
   "test_set_id": 2,
-  "test_set_name": "Advanced Bug Patterns",
+  "name": "Advanced Bug Patterns",
   "total_cases": 16,
   "correct": 11,
+  "errors": 0,
   "accuracy": 68.75,
-  "timestamp": "2026-02-20T17:42:53.669235",
+  "total_execution_time": 284.0255756378174,
   "results": [
     {
       "test_case_id": 17,
@@ -12,16 +13,23 @@
       "expected": "bug",
       "predicted": "bug",
       "correct": true,
-      "bug_count": 1,
+      "bug_count": 2,
       "bugs_found": [
         {
-          "type": "syntax_error",
-          "description": "Bug detected"
+          "pattern_name": "Syntax Error",
+          "severity": 9,
+          "description": "The code contains a syntax error at line 2: '(' was never closed (<unknown>, line 2)"
+        },
+        {
+          "pattern_name": "Non-Prompted Consideration (NPC)",
+          "severity": 5,
+          "description": "The code includes features that weren't requested. Detected 1 unrequested addition(s): Unrequested r"
         }
       ],
-      "severity_score": 1,
+      "severity_score": 9,
       "expected_bug_type": "syntax_error",
-      "prompt": "Create a function to print message"
+      "execution_time": 22.487813472747803,
+      "analysis_id": 129
     },
     {
       "test_case_id": 18,
@@ -29,20 +37,28 @@
       "expected": "bug",
       "predicted": "bug",
       "correct": true,
-      "bug_count": 2,
+      "bug_count": 3,
       "bugs_found": [
         {
-          "type": "hallucinated_objects",
-          "description": "Bug detected"
+          "pattern_name": "Hallucinated Object",
+          "severity": 8,
+          "description": "The code references undefined objects that may not exist: JSONParser, DataCleaner. LLMs sometimes in"
         },
         {
-          "type": "undefined_names",
-          "description": "Bug detected"
+          "pattern_name": "Non-Prompted Consideration (NPC)",
+          "severity": 5,
+          "description": "The code includes features that weren't requested. Detected 2 unrequested addition(s): Instantiation"
+        },
+        {
+          "pattern_name": "Missing Features",
+          "severity": 6,
+          "description": "The code is missing features that were requested in the prompt. Detected 1 missing feature(s): parse"
         }
       ],
-      "severity_score": 2,
+      "severity_score": 8,
       "expected_bug_type": "hallucinated_object",
-      "prompt": "Parse JSON data"
+      "execution_time": 19.811151266098022,
+      "analysis_id": 130
     },
     {
       "test_case_id": 19,
@@ -50,28 +66,42 @@
       "expected": "bug",
       "predicted": "bug",
       "correct": true,
-      "bug_count": 1,
+      "bug_count": 2,
       "bugs_found": [
         {
-          "type": "incomplete_generation",
-          "description": "Bug detected"
+          "pattern_name": "Incomplete Generation",
+          "severity": 7,
+          "description": "Code generation appears incomplete. Issues: Code contains incomplete markers; Code contains incomple"
+        },
+        {
+          "pattern_name": "Missing Features",
+          "severity": 6,
+          "description": "The code is missing features that were requested in the prompt. Detected 2 missing feature(s): Passw"
         }
       ],
-      "severity_score": 1,
+      "severity_score": 7,
       "expected_bug_type": "incomplete_generation",
-      "prompt": "Implement user authentication"
+      "execution_time": 19.73284673690796,
+      "analysis_id": 131
     },
     {
       "test_case_id": 20,
       "name": "Silly Mistake - Wrong Exponent",
       "expected": "bug",
-      "predicted": "clean",
-      "correct": false,
-      "bug_count": 0,
-      "bugs_found": [],
-      "severity_score": 0,
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "Missing Features",
+          "severity": 6,
+          "description": "The code is missing features that were requested in the prompt. Detected 1 missing feature(s): compu"
+        }
+      ],
+      "severity_score": 6,
       "expected_bug_type": "silly_mistake",
-      "prompt": "Calculate volume of cube (side^3)"
+      "execution_time": 15.556707859039307,
+      "analysis_id": 132
     },
     {
       "test_case_id": 21,
@@ -82,13 +112,15 @@
       "bug_count": 1,
       "bugs_found": [
         {
-          "type": "wrong_attribute",
-          "description": "Bug detected"
+          "pattern_name": "Wrong Attribute",
+          "severity": 7,
+          "description": "Detected incorrect attribute access patterns: item.price. Likely treating dictionary keys as object "
         }
       ],
-      "severity_score": 1,
+      "severity_score": 7,
       "expected_bug_type": "wrong_attribute",
-      "prompt": "Calculate total price from items"
+      "execution_time": 16.124408721923828,
+      "analysis_id": 133
     },
     {
       "test_case_id": 22,
@@ -96,11 +128,18 @@
       "expected": "bug",
       "predicted": "clean",
       "correct": false,
-      "bug_count": 0,
-      "bugs_found": [],
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
       "severity_score": 0,
       "expected_bug_type": "wrong_input_type",
-      "prompt": "Convert text to uppercase"
+      "execution_time": 18.43740940093994,
+      "analysis_id": 134
     },
     {
       "test_case_id": 23,
@@ -111,13 +150,15 @@
       "bug_count": 1,
       "bugs_found": [
         {
-          "type": "npc",
-          "description": "Bug detected"
+          "pattern_name": "Non-Prompted Consideration (NPC)",
+          "severity": 5,
+          "description": "The code includes features that weren't requested. Detected 1 unrequested addition(s): admin usernam"
         }
       ],
-      "severity_score": 1,
+      "severity_score": 5,
       "expected_bug_type": "npc",
-      "prompt": "Create a simple user registration function"
+      "execution_time": 21.28794002532959,
+      "analysis_id": 135
     },
     {
       "test_case_id": 24,
@@ -125,11 +166,18 @@
       "expected": "bug",
       "predicted": "clean",
       "correct": false,
-      "bug_count": 0,
-      "bugs_found": [],
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
       "severity_score": 0,
       "expected_bug_type": "missing_corner_case",
-      "prompt": "Calculate percentage"
+      "execution_time": 14.177130699157715,
+      "analysis_id": 136
     },
     {
       "test_case_id": 25,
@@ -137,11 +185,18 @@
       "expected": "clean",
       "predicted": "clean",
       "correct": true,
-      "bug_count": 0,
-      "bugs_found": [],
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "prompt": "Calculate average with empty list handling"
+      "execution_time": 17.482581853866577,
+      "analysis_id": 137
     },
     {
       "test_case_id": 26,
@@ -149,11 +204,18 @@
       "expected": "clean",
       "predicted": "clean",
       "correct": true,
-      "bug_count": 0,
-      "bugs_found": [],
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "prompt": "Read file with error handling"
+      "execution_time": 19.789621591567993,
+      "analysis_id": 138
     },
     {
       "test_case_id": 27,
@@ -164,13 +226,15 @@
       "bug_count": 1,
       "bugs_found": [
         {
-          "type": "hallucinated_objects",
-          "description": "Bug detected"
+          "pattern_name": "Hallucinated Object",
+          "severity": 8,
+          "description": "The code references undefined objects that may not exist: b, a. LLMs sometimes invent functions, cla"
         }
       ],
-      "severity_score": 1,
+      "severity_score": 8,
       "expected_bug_type": null,
-      "prompt": "Create a fibonacci generator"
+      "execution_time": 15.882761001586914,
+      "analysis_id": 139
     },
     {
       "test_case_id": 28,
@@ -178,11 +242,18 @@
       "expected": "clean",
       "predicted": "clean",
       "correct": true,
-      "bug_count": 0,
-      "bugs_found": [],
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "prompt": "Get squares of even numbers"
+      "execution_time": 15.99925422668457,
+      "analysis_id": 140
     },
     {
       "test_case_id": 29,
@@ -190,11 +261,18 @@
       "expected": "clean",
       "predicted": "clean",
       "correct": true,
-      "bug_count": 0,
-      "bugs_found": [],
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "prompt": "Create a timer context manager"
+      "execution_time": 23.206862926483154,
+      "analysis_id": 141
     },
     {
       "test_case_id": 30,
@@ -202,23 +280,37 @@
       "expected": "clean",
       "predicted": "clean",
       "correct": true,
-      "bug_count": 0,
-      "bugs_found": [],
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "prompt": "Create a logging decorator"
+      "execution_time": 13.357023477554321,
+      "analysis_id": 142
     },
     {
       "test_case_id": 31,
       "name": "Clean - Data Class",
       "expected": "clean",
-      "predicted": "clean",
-      "correct": true,
-      "bug_count": 0,
-      "bugs_found": [],
-      "severity_score": 0,
+      "predicted": "bug",
+      "correct": false,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "Non-Prompted Consideration (NPC)",
+          "severity": 5,
+          "description": "The code includes features that weren't requested. Detected 1 unrequested addition(s): distance_from"
+        }
+      ],
+      "severity_score": 5,
       "expected_bug_type": null,
-      "prompt": "Create a Point class with coordinates"
+      "execution_time": 15.814393758773804,
+      "analysis_id": 143
     },
     {
       "test_case_id": 32,
@@ -229,13 +321,16 @@
       "bug_count": 1,
       "bugs_found": [
         {
-          "type": "hallucinated_objects",
-          "description": "Bug detected"
+          "pattern_name": "Hallucinated Object",
+          "severity": 8,
+          "description": "The code references undefined objects that may not exist: c. LLMs sometimes invent functions, classe"
         }
       ],
-      "severity_score": 1,
+      "severity_score": 8,
       "expected_bug_type": null,
-      "prompt": "Convert temperatures from Celsius to Fahrenheit"
+      "execution_time": 14.877668619155884,
+      "analysis_id": 144
     }
-  ]
+  ],
+  "timestamp": "2026-02-20T20:27:03.054991"
 }
