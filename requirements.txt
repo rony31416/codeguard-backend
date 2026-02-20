@@ -9,6 +9,7 @@ psycopg2-binary
 pydantic 
 python-dotenv
 requests
+slowapi  # Rate limiting for API endpoints
 
 # LLM API Clients
 ollama>=0.4.3

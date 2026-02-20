@@ -3,7 +3,10 @@ import json
 import tempfile
 import os
 import platform
+import logging
 from typing import Dict, Any
+
+logger = logging.getLogger("codeguard.dynamic")
 
 class DynamicAnalyzer:
     def __init__(self, code: str, timeout: int = 5):
@@ -12,7 +15,7 @@ class DynamicAnalyzer:
         try:
             self.client = docker.from_env()
         except Exception as e:
-            print(f"Docker client initialization failed: {e}")
+            logger.warning(f"Docker client initialization failed: {e}")
             self.client = None
     
     def analyze(self) -> Dict[str, Any]:
@@ -32,7 +35,7 @@ class DynamicAnalyzer:
             result = self._execute_in_sandbox()
             return self._classify_runtime_errors(result)
         except Exception as e:
-            print(f"Dynamic analysis error: {e}")
+            logger.error(f"Dynamic analysis error: {e}")
             return {
                 "execution_error": True,
                 "error_message": str(e),
