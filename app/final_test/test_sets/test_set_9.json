@@ -1,0 +1,136 @@
+{
+  "test_set_id": 9,
+  "name": "Regression & Stress Testing",
+  "description": "Tests previously failed scenarios and high-complexity code.",
+  "total_cases": 16,
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Mixed - Syntax + Incomplete",
+      "expected": "bug",
+      "bug_type": "mixed_bugs",
+      "prompt": "Define class",
+      "code": "\nclass MyClass\n    def method(self):\n        pass\n    # TODO: Finish\n"
+    },
+    {
+      "id": 2,
+      "name": "Missing Corner Case - Bad Slice",
+      "expected": "bug",
+      "bug_type": "missing_corner_case",
+      "prompt": "Get last item",
+      "code": "\ndef get_last(lst):\n    return lst[-1]  # Crash if empty\n"
+    },
+    {
+      "id": 3,
+      "name": "Wrong Attribute - Tuple Access",
+      "expected": "bug",
+      "bug_type": "wrong_attribute",
+      "prompt": "Get item 0",
+      "code": "\ndef get_0(tup):\n    return tup.0  # Syntax error actually, but wrong attr intent\n"
+    },
+    {
+      "id": 4,
+      "name": "Silly Mistake - Dict Overwrite",
+      "expected": "bug",
+      "bug_type": "silly_mistake",
+      "prompt": "Create dict",
+      "code": "\ndef make_dict():\n    return {\"a\": 1, \"a\": 2}  # Duplicate key\n"
+    },
+    {
+      "id": 5,
+      "name": "NPC - Unrequested Dependency",
+      "expected": "bug",
+      "bug_type": "npc",
+      "prompt": "Sum list",
+      "code": "\nimport numpy as np  # Unrequested import\ndef sum_list(lst):\n    return np.sum(lst)\n"
+    },
+    {
+      "id": 6,
+      "name": "Hallucinated Object - Fake Decorator",
+      "expected": "bug",
+      "bug_type": "hallucinated_object",
+      "prompt": "Decorate function",
+      "code": "\n@fake_decorator  # Undefined\ndef func(): pass\n"
+    },
+    {
+      "id": 7,
+      "name": "Prompt Bias - Specific Path",
+      "expected": "bug",
+      "bug_type": "prompt_bias",
+      "prompt": "Save to /tmp/data",
+      "code": "\ndef save(data):\n    path = \"/tmp/data\"  # Hardcoded\n    with open(path, 'w') as f: f.write(data)\n"
+    },
+    {
+      "id": 8,
+      "name": "Wrong Input Type - Bitwise on Float",
+      "expected": "bug",
+      "bug_type": "wrong_input_type",
+      "prompt": "Bitwise AND",
+      "code": "\ndef bit_and(a, b):\n    return 3.5 & 1.2  # TypeError\n"
+    },
+    {
+      "id": 9,
+      "name": "Clean - Complex List Comp",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Filter matrix",
+      "code": "\ndef f(m):\n    return [[x for x in r if x > 0] for r in m]\n"
+    },
+    {
+      "id": 10,
+      "name": "Clean - Generator Send",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Coroutine",
+      "code": "\ndef gen():\n    val = yield 1\n    yield val\n"
+    },
+    {
+      "id": 11,
+      "name": "Clean - Metaclass",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Meta",
+      "code": "\nclass Meta(type): pass\nclass A(metaclass=Meta): pass\n"
+    },
+    {
+      "id": 12,
+      "name": "Clean - Dynamic Attribute",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Set attr",
+      "code": "\nclass A: pass\na = A()\nsetattr(a, 'x', 1)\n"
+    },
+    {
+      "id": 13,
+      "name": "Clean - Walrus Operator",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Walrus",
+      "code": "\ndef func(x):\n    if (n := len(x)) > 5: return n\n"
+    },
+    {
+      "id": 14,
+      "name": "Clean - Type Alias",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Alias",
+      "code": "\nfrom typing import List\nVector = List[float]\n"
+    },
+    {
+      "id": 15,
+      "name": "Clean - Match Case",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Match",
+      "code": "\ndef f(x):\n    match x:\n        case 1: return \"one\"\n        case _: return \"other\"\n"
+    },
+    {
+      "id": 16,
+      "name": "Clean - Async Context",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Async with",
+      "code": "\nasync def f():\n    async with Lock(): pass\n"
+    }
+  ]
+}

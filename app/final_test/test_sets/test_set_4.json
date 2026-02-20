@@ -1,0 +1,136 @@
+{
+  "test_set_id": 4,
+  "name": "Data Structures & API Usage",
+  "description": "Tests usage of lists, dicts, and external libraries.",
+  "total_cases": 16,
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Wrong Attribute - String Method",
+      "expected": "bug",
+      "bug_type": "wrong_attribute",
+      "prompt": "Convert string to uppercase",
+      "code": "\ndef to_upper(text):\n    return text.to_upper()  # Correct method is .upper()\n"
+    },
+    {
+      "id": 2,
+      "name": "Hallucinated Object - Fake Library",
+      "expected": "bug",
+      "bug_type": "hallucinated_object",
+      "prompt": "Translate text",
+      "code": "\ndef translate(text):\n    translator = TextTranslator()  # Fake class\n    return translator.translate(text, \"es\")\n"
+    },
+    {
+      "id": 3,
+      "name": "Silly Mistake - Self Assignment",
+      "expected": "bug",
+      "bug_type": "silly_mistake",
+      "prompt": "Update variable",
+      "code": "\ndef update_x(x):\n    x = x  # Redundant self-assignment\n    return x\n"
+    },
+    {
+      "id": 4,
+      "name": "NPC - Unrequested Sorting",
+      "expected": "bug",
+      "bug_type": "npc",
+      "prompt": "Find median of list",
+      "code": "\ndef median(nums):\n    nums.sort()  # Modifies input list!\n    n = len(nums)\n    return nums[n//2]\n"
+    },
+    {
+      "id": 5,
+      "name": "Missing Corner Case - Key Error",
+      "expected": "bug",
+      "bug_type": "missing_corner_case",
+      "prompt": "Get user age from dict",
+      "code": "\ndef get_age(user_data):\n    return user_data['age']  # Crashes if key missing\n"
+    },
+    {
+      "id": 6,
+      "name": "Prompt Bias - Specific ID",
+      "expected": "bug",
+      "bug_type": "prompt_bias",
+      "prompt": "Check if user is ID 123",
+      "code": "\ndef check_user(uid):\n    if uid == 123:  # Hardcoded\n        return True\n    return False\n"
+    },
+    {
+      "id": 7,
+      "name": "Incomplete Generation - Truncated Loop",
+      "expected": "bug",
+      "bug_type": "incomplete_generation",
+      "prompt": "Print numbers",
+      "code": "\ndef print_nums(n):\n    for i in range(n):\n        print(\n"
+    },
+    {
+      "id": 8,
+      "name": "Syntax Error - Invalid Indentation",
+      "expected": "bug",
+      "bug_type": "syntax_error",
+      "prompt": "Simple function",
+      "code": "\ndef my_func():\nprint(\"Hello\")  # Indentation error\n"
+    },
+    {
+      "id": 9,
+      "name": "Clean - List Append",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Add to list",
+      "code": "\ndef add_element(lst, elem):\n    lst.append(elem)\n    return lst\n"
+    },
+    {
+      "id": 10,
+      "name": "Clean - Dict Iteration",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Print dict keys",
+      "code": "\ndef print_keys(d):\n    for key in d:\n        print(key)\n"
+    },
+    {
+      "id": 11,
+      "name": "Clean - String Split",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Split sentence",
+      "code": "\ndef split_words(sentence):\n    return sentence.split(' ')\n"
+    },
+    {
+      "id": 12,
+      "name": "Clean - Math Module",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Calculate cosine",
+      "code": "\nimport math\ndef get_cos(x):\n    return math.cos(x)\n"
+    },
+    {
+      "id": 13,
+      "name": "Clean - JSON Load",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Parse JSON string",
+      "code": "\nimport json\ndef parse_json(s):\n    try:\n        return json.loads(s)\n    except json.JSONDecodeError:\n        return {}\n"
+    },
+    {
+      "id": 14,
+      "name": "Clean - Random Choice",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Pick random item",
+      "code": "\nimport random\ndef pick_one(items):\n    if not items:\n        return None\n    return random.choice(items)\n"
+    },
+    {
+      "id": 15,
+      "name": "Clean - Time Module",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Get current time",
+      "code": "\nimport time\ndef get_time():\n    return time.time()\n"
+    },
+    {
+      "id": 16,
+      "name": "Clean - Tuple Unpacking",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Swap values",
+      "code": "\ndef swap(a, b):\n    return b, a\n"
+    }
+  ]
+}

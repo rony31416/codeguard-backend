@@ -1,0 +1,241 @@
+{
+  "test_set_id": 2,
+  "test_set_name": "Advanced Bug Patterns",
+  "total_cases": 16,
+  "correct": 11,
+  "accuracy": 68.75,
+  "timestamp": "2026-02-20T17:42:53.669235",
+  "results": [
+    {
+      "test_case_id": 17,
+      "name": "Syntax Error - Missing Parenthesis",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "syntax_error",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": "syntax_error",
+      "prompt": "Create a function to print message"
+    },
+    {
+      "test_case_id": 18,
+      "name": "Hallucinated Object - Unknown Module",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 2,
+      "bugs_found": [
+        {
+          "type": "hallucinated_objects",
+          "description": "Bug detected"
+        },
+        {
+          "type": "undefined_names",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 2,
+      "expected_bug_type": "hallucinated_object",
+      "prompt": "Parse JSON data"
+    },
+    {
+      "test_case_id": 19,
+      "name": "Incomplete Generation - TODO Marker",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "incomplete_generation",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": "incomplete_generation",
+      "prompt": "Implement user authentication"
+    },
+    {
+      "test_case_id": 20,
+      "name": "Silly Mistake - Wrong Exponent",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "silly_mistake",
+      "prompt": "Calculate volume of cube (side^3)"
+    },
+    {
+      "test_case_id": 21,
+      "name": "Wrong Attribute - Multiple Dict Access",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "wrong_attribute",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": "wrong_attribute",
+      "prompt": "Calculate total price from items"
+    },
+    {
+      "test_case_id": 22,
+      "name": "Wrong Input Type - Method with Wrong Args",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "wrong_input_type",
+      "prompt": "Convert text to uppercase"
+    },
+    {
+      "test_case_id": 23,
+      "name": "NPC - Unrequested Admin Check",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "npc",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": "npc",
+      "prompt": "Create a simple user registration function"
+    },
+    {
+      "test_case_id": 24,
+      "name": "Missing Corner Case - No Zero Check",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "missing_corner_case",
+      "prompt": "Calculate percentage"
+    },
+    {
+      "test_case_id": 25,
+      "name": "Clean - Safe Division with Check",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Calculate average with empty list handling"
+    },
+    {
+      "test_case_id": 26,
+      "name": "Clean - Proper Exception Handling",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Read file with error handling"
+    },
+    {
+      "test_case_id": 27,
+      "name": "Clean - Generator Function",
+      "expected": "clean",
+      "predicted": "bug",
+      "correct": false,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "hallucinated_objects",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": null,
+      "prompt": "Create a fibonacci generator"
+    },
+    {
+      "test_case_id": 28,
+      "name": "Clean - List Comprehension with Filter",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Get squares of even numbers"
+    },
+    {
+      "test_case_id": 29,
+      "name": "Clean - Context Manager",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Create a timer context manager"
+    },
+    {
+      "test_case_id": 30,
+      "name": "Clean - Decorator Function",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Create a logging decorator"
+    },
+    {
+      "test_case_id": 31,
+      "name": "Clean - Data Class",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Create a Point class with coordinates"
+    },
+    {
+      "test_case_id": 32,
+      "name": "Clean - Lambda and Map",
+      "expected": "clean",
+      "predicted": "bug",
+      "correct": false,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "hallucinated_objects",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": null,
+      "prompt": "Convert temperatures from Celsius to Fahrenheit"
+    }
+  ]
+}

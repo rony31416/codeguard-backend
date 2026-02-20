@@ -1,0 +1,226 @@
+{
+  "test_set_id": 5,
+  "test_set_name": "Complex & Real-World Scenarios",
+  "total_cases": 16,
+  "correct": 10,
+  "accuracy": 62.5,
+  "timestamp": "2026-02-20T17:42:53.705725",
+  "results": [
+    {
+      "test_case_id": 1,
+      "name": "Missing Corner Case - Zero Division",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "missing_corner_case",
+      "prompt": "Calculate percentage"
+    },
+    {
+      "test_case_id": 2,
+      "name": "Incomplete Generation - Only Comments",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "incomplete_generation",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": "incomplete_generation",
+      "prompt": "Implement sort"
+    },
+    {
+      "test_case_id": 3,
+      "name": "NPC - Unrequested Security Check",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "npc",
+      "prompt": "Read file content"
+    },
+    {
+      "test_case_id": 4,
+      "name": "Silly Mistake - Comparison",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "silly_mistake",
+      "prompt": "Check bounds"
+    },
+    {
+      "test_case_id": 5,
+      "name": "Prompt Bias - Hardcoded Filename",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "prompt_bias",
+      "prompt": "Parse log file 'error.log'"
+    },
+    {
+      "test_case_id": 6,
+      "name": "Hallucinated Object - Fake Module",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 2,
+      "bugs_found": [
+        {
+          "type": "hallucinated_objects",
+          "description": "Bug detected"
+        },
+        {
+          "type": "undefined_names",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 2,
+      "expected_bug_type": "hallucinated_object",
+      "prompt": "Use AI model"
+    },
+    {
+      "test_case_id": 7,
+      "name": "Syntax Error - Bad Def",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "syntax_error",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": "syntax_error",
+      "prompt": "Define function"
+    },
+    {
+      "test_case_id": 8,
+      "name": "Wrong Attribute - List Method on String",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "wrong_attribute",
+      "prompt": "Add to string"
+    },
+    {
+      "test_case_id": 9,
+      "name": "Clean - Context Manager",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Write to file safely"
+    },
+    {
+      "test_case_id": 10,
+      "name": "Clean - Default Args",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Greet with default"
+    },
+    {
+      "test_case_id": 11,
+      "name": "Clean - Lambda Function",
+      "expected": "clean",
+      "predicted": "bug",
+      "correct": false,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "hallucinated_objects",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": null,
+      "prompt": "Sort list"
+    },
+    {
+      "test_case_id": 12,
+      "name": "Clean - Recursive Function",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Fibonacci sequence"
+    },
+    {
+      "test_case_id": 13,
+      "name": "Clean - OS Module",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Check file exists"
+    },
+    {
+      "test_case_id": 14,
+      "name": "Clean - Regex",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Find email pattern"
+    },
+    {
+      "test_case_id": 15,
+      "name": "Clean - Class Properties",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Class with property"
+    },
+    {
+      "test_case_id": 16,
+      "name": "Clean - Decorators",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Simple decorator"
+    }
+  ]
+}

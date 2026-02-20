@@ -1,0 +1,217 @@
+{
+  "test_set_id": 3,
+  "test_set_name": "Real-World Code Scenarios",
+  "total_cases": 16,
+  "correct": 11,
+  "accuracy": 68.75,
+  "timestamp": "2026-02-20T17:42:53.680955",
+  "results": [
+    {
+      "test_case_id": 33,
+      "name": "Bug - Infinite Loop Missing Break",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "incomplete_generation",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": "incomplete_generation",
+      "prompt": "Find first even number"
+    },
+    {
+      "test_case_id": 34,
+      "name": "Bug - Off-by-One Error",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "silly_mistake",
+      "prompt": "Get last 5 elements of list"
+    },
+    {
+      "test_case_id": 35,
+      "name": "Bug - Mutable Default Argument",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "silly_mistake",
+      "prompt": "Append to list with default empty list"
+    },
+    {
+      "test_case_id": 36,
+      "name": "Bug - Missing Return Statement",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "incomplete_generation",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": "incomplete_generation",
+      "prompt": "Calculate product of numbers"
+    },
+    {
+      "test_case_id": 37,
+      "name": "Bug - Type Comparison Error",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "wrong_input_type",
+      "prompt": "Check if value is numeric"
+    },
+    {
+      "test_case_id": 38,
+      "name": "Bug - String Concatenation with None",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "missing_corner_case",
+      "prompt": "Format user greeting"
+    },
+    {
+      "test_case_id": 39,
+      "name": "Bug - Using = Instead of ==",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "syntax_error",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": "syntax_error",
+      "prompt": "Check if number is zero"
+    },
+    {
+      "test_case_id": 40,
+      "name": "Bug - Accessing Non-existent Dict Key",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "missing_corner_case",
+      "prompt": "Get user age from dictionary"
+    },
+    {
+      "test_case_id": 41,
+      "name": "Clean - List Comprehension with Condition",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Get positive numbers"
+    },
+    {
+      "test_case_id": 42,
+      "name": "Clean - Dictionary Comprehension",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Square dictionary values"
+    },
+    {
+      "test_case_id": 43,
+      "name": "Clean - Multiple Return Paths",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Classify number as positive, negative, or zero"
+    },
+    {
+      "test_case_id": 44,
+      "name": "Clean - Nested Functions",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Create a multiplier function factory"
+    },
+    {
+      "test_case_id": 45,
+      "name": "Clean - Set Operations",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Find unique elements in two lists"
+    },
+    {
+      "test_case_id": 46,
+      "name": "Clean - String Formatting",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Format person info"
+    },
+    {
+      "test_case_id": 47,
+      "name": "Clean - Enumerate Usage",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Get index and value pairs"
+    },
+    {
+      "test_case_id": 48,
+      "name": "Clean - Zip Function",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Combine two lists into tuples"
+    }
+  ]
+}

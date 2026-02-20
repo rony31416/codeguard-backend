@@ -1,0 +1,262 @@
+{
+  "test_set_id": 8,
+  "test_set_name": "OOP & Structural Bugs",
+  "total_cases": 16,
+  "correct": 10,
+  "accuracy": 62.5,
+  "timestamp": "2026-02-20T17:42:53.745747",
+  "results": [
+    {
+      "test_case_id": 1,
+      "name": "Missing Corner Case - Bad Init",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "wrong_attribute",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": "missing_corner_case",
+      "prompt": "Create class"
+    },
+    {
+      "test_case_id": 2,
+      "name": "Wrong Attribute - Bad Self",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 3,
+      "bugs_found": [
+        {
+          "type": "incomplete_generation",
+          "description": "Bug detected"
+        },
+        {
+          "type": "undefined_names",
+          "description": "Bug detected"
+        },
+        {
+          "type": "wrong_attribute",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 3,
+      "expected_bug_type": "wrong_attribute",
+      "prompt": "Get name"
+    },
+    {
+      "test_case_id": 3,
+      "name": "Hallucinated Object - Parent Class",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 2,
+      "bugs_found": [
+        {
+          "type": "hallucinated_objects",
+          "description": "Bug detected"
+        },
+        {
+          "type": "undefined_names",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 2,
+      "expected_bug_type": "hallucinated_object",
+      "prompt": "Inherit from BaseUser"
+    },
+    {
+      "test_case_id": 4,
+      "name": "Mixed - Syntax + NPC",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 2,
+      "bugs_found": [
+        {
+          "type": "syntax_error",
+          "description": "Bug detected"
+        },
+        {
+          "type": "incomplete_generation",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 2,
+      "expected_bug_type": "mixed_bugs",
+      "prompt": "Delete user"
+    },
+    {
+      "test_case_id": 5,
+      "name": "Silly Mistake - Init Return",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "silly_mistake",
+      "prompt": "Init class"
+    },
+    {
+      "test_case_id": 6,
+      "name": "Incomplete Generation - Class Body",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 2,
+      "bugs_found": [
+        {
+          "type": "syntax_error",
+          "description": "Bug detected"
+        },
+        {
+          "type": "incomplete_generation",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 2,
+      "expected_bug_type": "incomplete_generation",
+      "prompt": "Create API class"
+    },
+    {
+      "test_case_id": 7,
+      "name": "Prompt Bias - Hardcoded ID Check",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "prompt_bias",
+      "prompt": "Check ID 99"
+    },
+    {
+      "test_case_id": 8,
+      "name": "Wrong Input Type - Math on Self",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "wrong_input_type",
+      "prompt": "Add to self"
+    },
+    {
+      "test_case_id": 9,
+      "name": "Clean - Super Init",
+      "expected": "clean",
+      "predicted": "bug",
+      "correct": false,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "incomplete_generation",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": null,
+      "prompt": "Inherit init"
+    },
+    {
+      "test_case_id": 10,
+      "name": "Clean - Static Method",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Static helper"
+    },
+    {
+      "test_case_id": 11,
+      "name": "Clean - Class Method",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Factory method"
+    },
+    {
+      "test_case_id": 12,
+      "name": "Clean - Property Setter",
+      "expected": "clean",
+      "predicted": "bug",
+      "correct": false,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "incomplete_generation",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": null,
+      "prompt": "Getter setter"
+    },
+    {
+      "test_case_id": 13,
+      "name": "Clean - Magic Method",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "String repr"
+    },
+    {
+      "test_case_id": 14,
+      "name": "Clean - Private Attribute",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Private data"
+    },
+    {
+      "test_case_id": 15,
+      "name": "Clean - Slots",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Optimize memory"
+    },
+    {
+      "test_case_id": 16,
+      "name": "Clean - Abstract Property",
+      "expected": "clean",
+      "predicted": "bug",
+      "correct": false,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "incomplete_generation",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": null,
+      "prompt": "Abstract prop"
+    }
+  ]
+}

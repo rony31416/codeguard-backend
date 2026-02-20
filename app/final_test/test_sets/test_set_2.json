@@ -1,0 +1,136 @@
+{
+  "test_set_id": 2,
+  "name": "Advanced Bug Patterns",
+  "description": "Tests edge cases and complex scenarios",
+  "total_cases": 16,
+  "test_cases": [
+    {
+      "id": 17,
+      "name": "Syntax Error - Missing Parenthesis",
+      "expected": "bug",
+      "bug_type": "syntax_error",
+      "prompt": "Create a function to print message",
+      "code": "def print_message(msg):\n    print(msg\n    return True"
+    },
+    {
+      "id": 18,
+      "name": "Hallucinated Object - Unknown Module",
+      "expected": "bug",
+      "bug_type": "hallucinated_object",
+      "prompt": "Parse JSON data",
+      "code": "def parse_data(text):\n    parser = JSONParser()  # This class doesn't exist\n    cleaner = DataCleaner()  # Neither does this\n    return parser.parse(text)"
+    },
+    {
+      "id": 19,
+      "name": "Incomplete Generation - TODO Marker",
+      "expected": "bug",
+      "bug_type": "incomplete_generation",
+      "prompt": "Implement user authentication",
+      "code": "def authenticate_user(username, password):\n    # TODO: Implement password hashing\n    # TODO: Check against database\n    return True"
+    },
+    {
+      "id": 20,
+      "name": "Silly Mistake - Wrong Exponent",
+      "expected": "bug",
+      "bug_type": "silly_mistake",
+      "prompt": "Calculate volume of cube (side^3)",
+      "code": "def cube_volume(side):\n    return side ** 2  # Should be side ** 3!"
+    },
+    {
+      "id": 21,
+      "name": "Wrong Attribute - Multiple Dict Access",
+      "expected": "bug",
+      "bug_type": "wrong_attribute",
+      "prompt": "Calculate total price from items",
+      "code": "def calculate_total(items):\n    total = 0\n    for item in items:\n        total += item.price * item.quantity  # Should use item['price'], item['quantity']\n    return total"
+    },
+    {
+      "id": 22,
+      "name": "Wrong Input Type - Method with Wrong Args",
+      "expected": "bug",
+      "bug_type": "wrong_input_type",
+      "prompt": "Convert text to uppercase",
+      "code": "def to_upper(text):\n    return text.upper(123)  # upper() doesn't take arguments"
+    },
+    {
+      "id": 23,
+      "name": "NPC - Unrequested Admin Check",
+      "expected": "bug",
+      "bug_type": "npc",
+      "prompt": "Create a simple user registration function",
+      "code": "def register_user(username, email):\n    if username == \"admin\":  # Unrequested admin logic\n        raise PermissionError(\"Cannot register as admin\")\n    return {\"username\": username, \"email\": email}"
+    },
+    {
+      "id": 24,
+      "name": "Missing Corner Case - No Zero Check",
+      "expected": "bug",
+      "bug_type": "missing_corner_case",
+      "prompt": "Calculate percentage",
+      "code": "def calculate_percentage(part, total):\n    return (part / total) * 100  # No check for total == 0"
+    },
+    {
+      "id": 25,
+      "name": "Clean - Safe Division with Check",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Calculate average with empty list handling",
+      "code": "def safe_average(numbers):\n    if not numbers:\n        return 0.0\n    return sum(numbers) / len(numbers)"
+    },
+    {
+      "id": 26,
+      "name": "Clean - Proper Exception Handling",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Read file with error handling",
+      "code": "def read_file_safe(filename):\n    try:\n        with open(filename, 'r') as f:\n            return f.read()\n    except FileNotFoundError:\n        return None"
+    },
+    {
+      "id": 27,
+      "name": "Clean - Generator Function",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Create a fibonacci generator",
+      "code": "def fibonacci(n):\n    a, b = 0, 1\n    for _ in range(n):\n        yield a\n        a, b = b, a + b"
+    },
+    {
+      "id": 28,
+      "name": "Clean - List Comprehension with Filter",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Get squares of even numbers",
+      "code": "def even_squares(numbers):\n    return [x**2 for x in numbers if x % 2 == 0]"
+    },
+    {
+      "id": 29,
+      "name": "Clean - Context Manager",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Create a timer context manager",
+      "code": "import time\n\nclass Timer:\n    def __enter__(self):\n        self.start = time.time()\n        return self\n    \n    def __exit__(self, *args):\n        self.end = time.time()\n        self.duration = self.end - self.start"
+    },
+    {
+      "id": 30,
+      "name": "Clean - Decorator Function",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Create a logging decorator",
+      "code": "def log_calls(func):\n    def wrapper(*args, **kwargs):\n        print(f\"Calling {func.__name__}\")\n        return func(*args, **kwargs)\n    return wrapper"
+    },
+    {
+      "id": 31,
+      "name": "Clean - Data Class",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Create a Point class with coordinates",
+      "code": "class Point:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n    \n    def distance_from_origin(self):\n        return (self.x**2 + self.y**2)**0.5"
+    },
+    {
+      "id": 32,
+      "name": "Clean - Lambda and Map",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Convert temperatures from Celsius to Fahrenheit",
+      "code": "def celsius_to_fahrenheit(temps):\n    return list(map(lambda c: c * 9/5 + 32, temps))"
+    }
+  ]
+}

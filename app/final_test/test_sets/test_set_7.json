@@ -1,0 +1,136 @@
+{
+  "test_set_id": 7,
+  "name": "Security & Edge Cases",
+  "description": "Tests security-related patterns and extreme edge cases.",
+  "total_cases": 16,
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "NPC - Hardcoded Secret",
+      "expected": "bug",
+      "bug_type": "npc",
+      "prompt": "Connect to DB",
+      "code": "\ndef connect():\n    # NPC: Unrequested hardcoded password\n    password = \"super_secret_password_123\"\n    return DB.connect(password)\n"
+    },
+    {
+      "id": 2,
+      "name": "Missing Corner Case - Infinite Loop",
+      "expected": "bug",
+      "bug_type": "missing_corner_case",
+      "prompt": "Count down",
+      "code": "\ndef countdown(n):\n    while n != 0:  # Infinite loop if n < 0\n        print(n)\n        n -= 1\n"
+    },
+    {
+      "id": 3,
+      "name": "Prompt Bias - Specific API Key",
+      "expected": "bug",
+      "bug_type": "prompt_bias",
+      "prompt": "Use API key '12345'",
+      "code": "\ndef call_api():\n    key = \"12345\"  # Hardcoded from prompt\n    return API.call(key)\n"
+    },
+    {
+      "id": 4,
+      "name": "Mixed - Hallucination + Missing Return",
+      "expected": "bug",
+      "bug_type": "mixed_bugs",
+      "prompt": "Encrypt data",
+      "code": "\ndef encrypt(data):\n    cipher = AES_256()  # Hallucination\n    encrypted = cipher.encrypt(data)\n    # Missing return statement!\n"
+    },
+    {
+      "id": 5,
+      "name": "Wrong Attribute - File Object",
+      "expected": "bug",
+      "bug_type": "wrong_attribute",
+      "prompt": "Close file",
+      "code": "\ndef close_file(f):\n    f.finish()  # Should be f.close()\n"
+    },
+    {
+      "id": 6,
+      "name": "Wrong Input Type - List Index",
+      "expected": "bug",
+      "bug_type": "wrong_input_type",
+      "prompt": "Get item",
+      "code": "\ndef get_item(lst, idx):\n    return lst[\"0\"]  # String index for list!\n"
+    },
+    {
+      "id": 7,
+      "name": "Silly Mistake - Unreachable Code",
+      "expected": "bug",
+      "bug_type": "silly_mistake",
+      "prompt": "Check status",
+      "code": "\ndef check():\n    return True\n    print(\"Done\")  # Unreachable!\n"
+    },
+    {
+      "id": 8,
+      "name": "Syntax Error - Bad Except",
+      "expected": "bug",
+      "bug_type": "syntax_error",
+      "prompt": "Handle error",
+      "code": "\ntry:\n    x = 1\nexcept:  # Bare except (bad practice/syntax warning)\n    pass\n"
+    },
+    {
+      "id": 9,
+      "name": "Clean - Secrets Management",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Connect securely",
+      "code": "\nimport os\ndef connect():\n    password = os.getenv(\"DB_PASS\")\n    return DB.connect(password)\n"
+    },
+    {
+      "id": 10,
+      "name": "Clean - Infinite Loop Protection",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Safe countdown",
+      "code": "\ndef countdown(n):\n    while n > 0:\n        print(n)\n        n -= 1\n"
+    },
+    {
+      "id": 11,
+      "name": "Clean - With Statement",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Open resource",
+      "code": "\ndef process():\n    with open(\"data.txt\") as f:\n        return f.read()\n"
+    },
+    {
+      "id": 12,
+      "name": "Clean - Type Hinting",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Add numbers typed",
+      "code": "\ndef add(a: int, b: int) -> int:\n    return a + b\n"
+    },
+    {
+      "id": 13,
+      "name": "Clean - List Slice",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Copy list",
+      "code": "\ndef copy_list(lst):\n    return lst[:]\n"
+    },
+    {
+      "id": 14,
+      "name": "Clean - Is None Check",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Check None",
+      "code": "\ndef is_valid(x):\n    return x is not None\n"
+    },
+    {
+      "id": 15,
+      "name": "Clean - F-String",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Format string",
+      "code": "\ndef fmt(val):\n    return f\"Value: {val:.2f}\"\n"
+    },
+    {
+      "id": 16,
+      "name": "Clean - Docstring",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Document function",
+      "code": "\ndef func():\n    '''This is a docstring.'''\n    pass\n"
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+{
+  "test_set_id": 5,
+  "name": "Complex & Real-World Scenarios",
+  "description": "Tests more realistic functions and multi-line logic.",
+  "total_cases": 16,
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Missing Corner Case - Zero Division",
+      "expected": "bug",
+      "bug_type": "missing_corner_case",
+      "prompt": "Calculate percentage",
+      "code": "\ndef percentage(part, total):\n    return (part / total) * 100  # Crash if total is 0\n"
+    },
+    {
+      "id": 2,
+      "name": "Incomplete Generation - Only Comments",
+      "expected": "bug",
+      "bug_type": "incomplete_generation",
+      "prompt": "Implement sort",
+      "code": "\ndef sort_list(lst):\n    # TODO: Implement sorting logic\n    # Need to compare elements\n    pass\n"
+    },
+    {
+      "id": 3,
+      "name": "NPC - Unrequested Security Check",
+      "expected": "bug",
+      "bug_type": "npc",
+      "prompt": "Read file content",
+      "code": "\ndef read_file(path):\n    if \"admin\" in path:  # Unrequested security check!\n        return None\n    with open(path) as f:\n        return f.read()\n"
+    },
+    {
+      "id": 4,
+      "name": "Silly Mistake - Comparison",
+      "expected": "bug",
+      "bug_type": "silly_mistake",
+      "prompt": "Check bounds",
+      "code": "\ndef check_bounds(x):\n    if x > 10 and x < 5:  # Impossible condition!\n        return True\n    return False\n"
+    },
+    {
+      "id": 5,
+      "name": "Prompt Bias - Hardcoded Filename",
+      "expected": "bug",
+      "bug_type": "prompt_bias",
+      "prompt": "Parse log file 'error.log'",
+      "code": "\ndef parse_logs():\n    with open(\"error.log\") as f:  # Hardcoded!\n        return f.readlines()\n"
+    },
+    {
+      "id": 6,
+      "name": "Hallucinated Object - Fake Module",
+      "expected": "bug",
+      "bug_type": "hallucinated_object",
+      "prompt": "Use AI model",
+      "code": "\ndef predict(data):\n    model = FakeAIModel.load()  # Module doesn't exist\n    return model.predict(data)\n"
+    },
+    {
+      "id": 7,
+      "name": "Syntax Error - Bad Def",
+      "expected": "bug",
+      "bug_type": "syntax_error",
+      "prompt": "Define function",
+      "code": "\nfunction my_func():  # Uses 'function' instead of 'def'\n    return True\n"
+    },
+    {
+      "id": 8,
+      "name": "Wrong Attribute - List Method on String",
+      "expected": "bug",
+      "bug_type": "wrong_attribute",
+      "prompt": "Add to string",
+      "code": "\ndef append_str(text, char):\n    text.append(char)  # Strings don't have .append()\n    return text\n"
+    },
+    {
+      "id": 9,
+      "name": "Clean - Context Manager",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Write to file safely",
+      "code": "\ndef write_file(filename, data):\n    with open(filename, 'w') as f:\n        f.write(data)\n"
+    },
+    {
+      "id": 10,
+      "name": "Clean - Default Args",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Greet with default",
+      "code": "\ndef greet(name=\"World\"):\n    return f\"Hello, {name}\"\n"
+    },
+    {
+      "id": 11,
+      "name": "Clean - Lambda Function",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Sort list",
+      "code": "\ndef sort_items(items):\n    items.sort(key=lambda x: x[1])\n    return items\n"
+    },
+    {
+      "id": 12,
+      "name": "Clean - Recursive Function",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Fibonacci sequence",
+      "code": "\ndef fib(n):\n    if n <= 1: return n\n    return fib(n-1) + fib(n-2)\n"
+    },
+    {
+      "id": 13,
+      "name": "Clean - OS Module",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Check file exists",
+      "code": "\nimport os\ndef file_exists(path):\n    return os.path.exists(path)\n"
+    },
+    {
+      "id": 14,
+      "name": "Clean - Regex",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Find email pattern",
+      "code": "\nimport re\ndef has_email(text):\n    return bool(re.search(r\"[^@]+@[^@]+\\.[^@]+\", text))\n"
+    },
+    {
+      "id": 15,
+      "name": "Clean - Class Properties",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Class with property",
+      "code": "\nclass Circle:\n    def __init__(self, r):\n        self.r = r\n    @property\n    def area(self):\n        return 3.14 * self.r ** 2\n"
+    },
+    {
+      "id": 16,
+      "name": "Clean - Decorators",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Simple decorator",
+      "code": "\ndef log_call(func):\n    def wrapper(*args):\n        print(\"Calling\")\n        return func(*args)\n    return wrapper\n"
+    }
+  ]
+}

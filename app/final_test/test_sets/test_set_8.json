@@ -1,0 +1,136 @@
+{
+  "test_set_id": 8,
+  "name": "OOP & Structural Bugs",
+  "description": "Tests Class/Object related bugs and structural issues.",
+  "total_cases": 16,
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Missing Corner Case - Bad Init",
+      "expected": "bug",
+      "bug_type": "missing_corner_case",
+      "prompt": "Create class",
+      "code": "\nclass User:\n    def __init__(self, name):\n        self.name = name\n    def get_age(self):\n        return self.age  # 'age' never initialized!\n"
+    },
+    {
+      "id": 2,
+      "name": "Wrong Attribute - Bad Self",
+      "expected": "bug",
+      "bug_type": "wrong_attribute",
+      "prompt": "Get name",
+      "code": "\nclass User:\n    def __init__(self, name):\n        self.name = name\n    def get_name():  # Missing 'self' argument\n        return name\n"
+    },
+    {
+      "id": 3,
+      "name": "Hallucinated Object - Parent Class",
+      "expected": "bug",
+      "bug_type": "hallucinated_object",
+      "prompt": "Inherit from BaseUser",
+      "code": "\nclass Admin(BaseUser):  # BaseUser not defined\n    pass\n"
+    },
+    {
+      "id": 4,
+      "name": "Mixed - Syntax + NPC",
+      "expected": "bug",
+      "bug_type": "mixed_bugs",
+      "prompt": "Delete user",
+      "code": "\ndef delete_user(u):\n    print(\"Deleting...\")  # NPC\n    del u  # Valid, but...\n    return  # Syntax: missing value? No, valid but weird.\n    # Actually, let's force a real syntax error\n    if True\n        pass\n"
+    },
+    {
+      "id": 5,
+      "name": "Silly Mistake - Init Return",
+      "expected": "bug",
+      "bug_type": "silly_mistake",
+      "prompt": "Init class",
+      "code": "\nclass A:\n    def __init__(self):\n        return 1  # __init__ cannot return value!\n"
+    },
+    {
+      "id": 6,
+      "name": "Incomplete Generation - Class Body",
+      "expected": "bug",
+      "bug_type": "incomplete_generation",
+      "prompt": "Create API class",
+      "code": "\nclass API:\n    def get(self):\n        # TODO\n"
+    },
+    {
+      "id": 7,
+      "name": "Prompt Bias - Hardcoded ID Check",
+      "expected": "bug",
+      "bug_type": "prompt_bias",
+      "prompt": "Check ID 99",
+      "code": "\ndef check(id):\n    if id == 99:  # Hardcoded\n        return True\n"
+    },
+    {
+      "id": 8,
+      "name": "Wrong Input Type - Math on Self",
+      "expected": "bug",
+      "bug_type": "wrong_input_type",
+      "prompt": "Add to self",
+      "code": "\nclass Num:\n    def add(self, x):\n        return self + x  # self is object, not int!\n"
+    },
+    {
+      "id": 9,
+      "name": "Clean - Super Init",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Inherit init",
+      "code": "\nclass Base:\n    def __init__(self): pass\nclass Child(Base):\n    def __init__(self):\n        super().__init__()\n"
+    },
+    {
+      "id": 10,
+      "name": "Clean - Static Method",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Static helper",
+      "code": "\nclass Math:\n    @staticmethod\n    def add(a, b): return a + b\n"
+    },
+    {
+      "id": 11,
+      "name": "Clean - Class Method",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Factory method",
+      "code": "\nclass User:\n    @classmethod\n    def create(cls): return cls()\n"
+    },
+    {
+      "id": 12,
+      "name": "Clean - Property Setter",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Getter setter",
+      "code": "\nclass P:\n    @property\n    def x(self): return 1\n    @x.setter\n    def x(self, v): pass\n"
+    },
+    {
+      "id": 13,
+      "name": "Clean - Magic Method",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "String repr",
+      "code": "\nclass A:\n    def __str__(self): return \"A\"\n"
+    },
+    {
+      "id": 14,
+      "name": "Clean - Private Attribute",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Private data",
+      "code": "\nclass A:\n    def __init__(self):\n        self.__data = 1\n"
+    },
+    {
+      "id": 15,
+      "name": "Clean - Slots",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Optimize memory",
+      "code": "\nclass Point:\n    __slots__ = ['x', 'y']\n"
+    },
+    {
+      "id": 16,
+      "name": "Clean - Abstract Property",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Abstract prop",
+      "code": "\nfrom abc import ABC, abstractproperty\nclass A(ABC):\n    @abstractproperty\n    def p(self): pass\n"
+    }
+  ]
+}

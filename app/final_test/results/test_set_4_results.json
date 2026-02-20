@@ -1,0 +1,221 @@
+{
+  "test_set_id": 4,
+  "test_set_name": "Data Structures & API Usage",
+  "total_cases": 16,
+  "correct": 11,
+  "accuracy": 68.75,
+  "timestamp": "2026-02-20T17:42:53.692761",
+  "results": [
+    {
+      "test_case_id": 1,
+      "name": "Wrong Attribute - String Method",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "wrong_attribute",
+      "prompt": "Convert string to uppercase"
+    },
+    {
+      "test_case_id": 2,
+      "name": "Hallucinated Object - Fake Library",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 2,
+      "bugs_found": [
+        {
+          "type": "hallucinated_objects",
+          "description": "Bug detected"
+        },
+        {
+          "type": "undefined_names",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 2,
+      "expected_bug_type": "hallucinated_object",
+      "prompt": "Translate text"
+    },
+    {
+      "test_case_id": 3,
+      "name": "Silly Mistake - Self Assignment",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "silly_mistake",
+      "prompt": "Update variable"
+    },
+    {
+      "test_case_id": 4,
+      "name": "NPC - Unrequested Sorting",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "npc",
+      "prompt": "Find median of list"
+    },
+    {
+      "test_case_id": 5,
+      "name": "Missing Corner Case - Key Error",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "missing_corner_case",
+      "prompt": "Get user age from dict"
+    },
+    {
+      "test_case_id": 6,
+      "name": "Prompt Bias - Specific ID",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "prompt_bias",
+      "prompt": "Check if user is ID 123"
+    },
+    {
+      "test_case_id": 7,
+      "name": "Incomplete Generation - Truncated Loop",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "syntax_error",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": "incomplete_generation",
+      "prompt": "Print numbers"
+    },
+    {
+      "test_case_id": 8,
+      "name": "Syntax Error - Invalid Indentation",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "syntax_error",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": "syntax_error",
+      "prompt": "Simple function"
+    },
+    {
+      "test_case_id": 9,
+      "name": "Clean - List Append",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Add to list"
+    },
+    {
+      "test_case_id": 10,
+      "name": "Clean - Dict Iteration",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Print dict keys"
+    },
+    {
+      "test_case_id": 11,
+      "name": "Clean - String Split",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Split sentence"
+    },
+    {
+      "test_case_id": 12,
+      "name": "Clean - Math Module",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Calculate cosine"
+    },
+    {
+      "test_case_id": 13,
+      "name": "Clean - JSON Load",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Parse JSON string"
+    },
+    {
+      "test_case_id": 14,
+      "name": "Clean - Random Choice",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Pick random item"
+    },
+    {
+      "test_case_id": 15,
+      "name": "Clean - Time Module",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Get current time"
+    },
+    {
+      "test_case_id": 16,
+      "name": "Clean - Tuple Unpacking",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Swap values"
+    }
+  ]
+}

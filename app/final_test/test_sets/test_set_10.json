@@ -1,0 +1,136 @@
+{
+  "test_set_id": 10,
+  "name": "Production-Ready Code Patterns",
+  "description": "Tests production-quality code with proper error handling and edge cases",
+  "total_cases": 16,
+  "test_cases": [
+    {
+      "id": 145,
+      "name": "Bug - Missing Async Await",
+      "expected": "bug",
+      "bug_type": "syntax_error",
+      "prompt": "Create async function to fetch data",
+      "code": "async def fetch_data():\n    result = get_data()  # Missing await\n    return result"
+    },
+    {
+      "id": 146,
+      "name": "Bug - Resource Leak - No Close",
+      "expected": "bug",
+      "bug_type": "missing_corner_case",
+      "prompt": "Read file contents",
+      "code": "def read_config():\n    f = open('config.txt', 'r')\n    data = f.read()\n    return data  # File not closed!"
+    },
+    {
+      "id": 147,
+      "name": "Bug - SQL Injection Risk",
+      "expected": "bug",
+      "bug_type": "npc",
+      "prompt": "Query user by name",
+      "code": "def get_user(name):\n    query = f\"SELECT * FROM users WHERE name = '{name}'\"  # SQL injection risk\n    return execute_query(query)"
+    },
+    {
+      "id": 148,
+      "name": "Bug - Race Condition - No Lock",
+      "expected": "bug",
+      "bug_type": "missing_corner_case",
+      "prompt": "Increment shared counter",
+      "code": "class Counter:\n    def __init__(self):\n        self.count = 0\n    def increment(self):\n        self.count += 1  # No thread lock!"
+    },
+    {
+      "id": 149,
+      "name": "Bug - Memory Leak - Circular Reference",
+      "expected": "bug",
+      "bug_type": "silly_mistake",
+      "prompt": "Create linked list node",
+      "code": "class Node:\n    def __init__(self, value):\n        self.value = value\n        self.parent = None\n    def set_parent(self, parent):\n        self.parent = parent\n        parent.child = self  # Circular reference!"
+    },
+    {
+      "id": 150,
+      "name": "Bug - Integer Overflow Risk",
+      "expected": "bug",
+      "bug_type": "missing_corner_case",
+      "prompt": "Calculate factorial",
+      "code": "def factorial(n):\n    if n == 0:\n        return 1\n    return n * factorial(n-1)  # No overflow check"
+    },
+    {
+      "id": 151,
+      "name": "Bug - Deprecated Function Usage",
+      "expected": "bug",
+      "bug_type": "hallucinated_object",
+      "prompt": "Get current time",
+      "code": "import time\ndef get_timestamp():\n    return time.clock()  # Deprecated! Use time.perf_counter()"
+    },
+    {
+      "id": 152,
+      "name": "Bug - Hardcoded Credentials",
+      "expected": "bug",
+      "bug_type": "prompt_bias",
+      "prompt": "Connect to database",
+      "code": "def connect_db():\n    password = \"admin123\"  # Hardcoded password!\n    return connect(host=\"localhost\", password=password)"
+    },
+    {
+      "id": 153,
+      "name": "Clean - Proper Context Manager",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Read file safely",
+      "code": "def read_file(filename):\n    with open(filename, 'r') as f:\n        return f.read()"
+    },
+    {
+      "id": 154,
+      "name": "Clean - Thread-Safe Counter",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Thread-safe increment",
+      "code": "import threading\nclass SafeCounter:\n    def __init__(self):\n        self.count = 0\n        self.lock = threading.Lock()\n    def increment(self):\n        with self.lock:\n            self.count += 1"
+    },
+    {
+      "id": 155,
+      "name": "Clean - Environment Variable for Secrets",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Get database password",
+      "code": "import os\ndef get_db_password():\n    return os.getenv('DB_PASSWORD', 'default')"
+    },
+    {
+      "id": 156,
+      "name": "Clean - Proper Exception Handling",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Parse JSON with error handling",
+      "code": "import json\ndef parse_json(text):\n    try:\n        return json.loads(text)\n    except json.JSONDecodeError as e:\n        print(f\"Error: {e}\")\n        return None"
+    },
+    {
+      "id": 157,
+      "name": "Clean - Input Validation",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Validate email format",
+      "code": "import re\ndef is_valid_email(email):\n    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'\n    return bool(re.match(pattern, email))"
+    },
+    {
+      "id": 158,
+      "name": "Clean - Async/Await Proper Usage",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Fetch data asynchronously",
+      "code": "async def fetch_data(url):\n    response = await http_client.get(url)\n    return await response.json()"
+    },
+    {
+      "id": 159,
+      "name": "Clean - Type Hints",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Function with type hints",
+      "code": "from typing import List, Optional\ndef find_max(numbers: List[int]) -> Optional[int]:\n    return max(numbers) if numbers else None"
+    },
+    {
+      "id": 160,
+      "name": "Clean - Logging Instead of Print",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Log application events",
+      "code": "import logging\nlogger = logging.getLogger(__name__)\ndef process_data(data):\n    logger.info(f\"Processing {len(data)} items\")\n    return data"
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+{
+  "test_set_id": 1,
+  "name": "Basic Bug Patterns",
+  "description": "Tests fundamental bug detection patterns",
+  "total_cases": 16,
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Syntax Error - Missing Colon",
+      "expected": "bug",
+      "bug_type": "syntax_error",
+      "prompt": "Write a function to calculate sum of a list",
+      "code": "def calculate_sum(numbers)  # Missing colon\n    total = 0\n    for num in numbers:\n        total += num\n    return total"
+    },
+    {
+      "id": 2,
+      "name": "Hallucinated Object - Undefined Class",
+      "expected": "bug",
+      "bug_type": "hallucinated_object",
+      "prompt": "Create a data validator",
+      "code": "def validate_data(data):\n    validator = DataValidator()  # This class doesn't exist!\n    return validator.validate(data)"
+    },
+    {
+      "id": 3,
+      "name": "Incomplete Generation - Empty Assignment",
+      "expected": "bug",
+      "bug_type": "incomplete_generation",
+      "prompt": "Process orders and calculate total",
+      "code": "def process_orders(orders):\n    total = \n    for order in orders:\n        pass\n    return total"
+    },
+    {
+      "id": 4,
+      "name": "Silly Mistake - Identical If/Else",
+      "expected": "bug",
+      "bug_type": "silly_mistake",
+      "prompt": "Calculate discount for members",
+      "code": "def calculate_price(price, is_member):\n    if is_member:\n        final = price * 0.9\n    else:\n        final = price * 0.9  # Same logic in both branches!\n    return final"
+    },
+    {
+      "id": 5,
+      "name": "Wrong Attribute - Dict Access",
+      "expected": "bug",
+      "bug_type": "wrong_attribute",
+      "prompt": "Get item cost from dictionary",
+      "code": "def get_total_cost(items):\n    total = 0\n    for item in items:\n        total += item.cost  # Should be item['cost']\n    return total"
+    },
+    {
+      "id": 6,
+      "name": "Wrong Input Type - String to Math Function",
+      "expected": "bug",
+      "bug_type": "wrong_input_type",
+      "prompt": "Calculate square root",
+      "code": "import math\n\ndef calculate_sqrt(value):\n    result = math.sqrt(\"25\")  # String instead of number!\n    return result"
+    },
+    {
+      "id": 7,
+      "name": "Prompt Bias - Hardcoded Example Value",
+      "expected": "bug",
+      "bug_type": "prompt_bias",
+      "prompt": "Process CSV files",
+      "code": "def process_file(filename):\n    if filename == \"demo_data.csv\":  # Hardcoded example!\n        return \"Processing demo file\"\n    return \"Processing file\""
+    },
+    {
+      "id": 8,
+      "name": "Missing Corner Case - Division Without Check",
+      "expected": "bug",
+      "bug_type": "missing_corner_case",
+      "prompt": "Calculate average of numbers",
+      "code": "def calculate_average(numbers):\n    total = sum(numbers)\n    avg = total / len(numbers)  # No empty list check!\n    return avg"
+    },
+    {
+      "id": 9,
+      "name": "Clean - Simple Addition Function",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Write a function to add two numbers",
+      "code": "def add_numbers(a, b):\n    return a + b"
+    },
+    {
+      "id": 10,
+      "name": "Clean - List Processing",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Filter even numbers from a list",
+      "code": "def filter_even(numbers):\n    return [num for num in numbers if num % 2 == 0]"
+    },
+    {
+      "id": 11,
+      "name": "Clean - String Manipulation",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Reverse a string",
+      "code": "def reverse_string(text):\n    return text[::-1]"
+    },
+    {
+      "id": 12,
+      "name": "Clean - Dictionary Operations",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Count word frequency",
+      "code": "def count_words(text):\n    words = text.split()\n    freq = {}\n    for word in words:\n        freq[word] = freq.get(word, 0) + 1\n    return freq"
+    },
+    {
+      "id": 13,
+      "name": "Clean - Class with Methods",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Create a simple counter class",
+      "code": "class Counter:\n    def __init__(self):\n        self.count = 0\n    \n    def increment(self):\n        self.count += 1\n    \n    def get_count(self):\n        return self.count"
+    },
+    {
+      "id": 14,
+      "name": "Clean - File Operations",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Read lines from a file",
+      "code": "def read_lines(filename):\n    with open(filename, 'r') as f:\n        return f.readlines()"
+    },
+    {
+      "id": 15,
+      "name": "Clean - Math Operations",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Calculate factorial",
+      "code": "def factorial(n):\n    if n <= 1:\n        return 1\n    return n * factorial(n - 1)"
+    },
+    {
+      "id": 16,
+      "name": "Clean - List Sorting",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Sort a list of dictionaries by key",
+      "code": "def sort_by_age(people):\n    return sorted(people, key=lambda x: x['age'])"
+    }
+  ]
+}

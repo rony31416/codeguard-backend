@@ -1,0 +1,242 @@
+{
+  "test_set_id": 7,
+  "test_set_name": "Security & Edge Cases",
+  "total_cases": 16,
+  "correct": 10,
+  "accuracy": 62.5,
+  "timestamp": "2026-02-20T17:42:53.732687",
+  "results": [
+    {
+      "test_case_id": 1,
+      "name": "NPC - Hardcoded Secret",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 2,
+      "bugs_found": [
+        {
+          "type": "hallucinated_objects",
+          "description": "Bug detected"
+        },
+        {
+          "type": "undefined_names",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 2,
+      "expected_bug_type": "npc",
+      "prompt": "Connect to DB"
+    },
+    {
+      "test_case_id": 2,
+      "name": "Missing Corner Case - Infinite Loop",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "missing_corner_case",
+      "prompt": "Count down"
+    },
+    {
+      "test_case_id": 3,
+      "name": "Prompt Bias - Specific API Key",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 2,
+      "bugs_found": [
+        {
+          "type": "hallucinated_objects",
+          "description": "Bug detected"
+        },
+        {
+          "type": "undefined_names",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 2,
+      "expected_bug_type": "prompt_bias",
+      "prompt": "Use API key '12345'"
+    },
+    {
+      "test_case_id": 4,
+      "name": "Mixed - Hallucination + Missing Return",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 3,
+      "bugs_found": [
+        {
+          "type": "hallucinated_objects",
+          "description": "Bug detected"
+        },
+        {
+          "type": "incomplete_generation",
+          "description": "Bug detected"
+        },
+        {
+          "type": "undefined_names",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 3,
+      "expected_bug_type": "mixed_bugs",
+      "prompt": "Encrypt data"
+    },
+    {
+      "test_case_id": 5,
+      "name": "Wrong Attribute - File Object",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "wrong_attribute",
+      "prompt": "Close file"
+    },
+    {
+      "test_case_id": 6,
+      "name": "Wrong Input Type - List Index",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "wrong_input_type",
+      "prompt": "Get item"
+    },
+    {
+      "test_case_id": 7,
+      "name": "Silly Mistake - Unreachable Code",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "silly_mistake",
+      "prompt": "Check status"
+    },
+    {
+      "test_case_id": 8,
+      "name": "Syntax Error - Bad Except",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "syntax_error",
+      "prompt": "Handle error"
+    },
+    {
+      "test_case_id": 9,
+      "name": "Clean - Secrets Management",
+      "expected": "clean",
+      "predicted": "bug",
+      "correct": false,
+      "bug_count": 2,
+      "bugs_found": [
+        {
+          "type": "hallucinated_objects",
+          "description": "Bug detected"
+        },
+        {
+          "type": "undefined_names",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 2,
+      "expected_bug_type": null,
+      "prompt": "Connect securely"
+    },
+    {
+      "test_case_id": 10,
+      "name": "Clean - Infinite Loop Protection",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Safe countdown"
+    },
+    {
+      "test_case_id": 11,
+      "name": "Clean - With Statement",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Open resource"
+    },
+    {
+      "test_case_id": 12,
+      "name": "Clean - Type Hinting",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Add numbers typed"
+    },
+    {
+      "test_case_id": 13,
+      "name": "Clean - List Slice",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Copy list"
+    },
+    {
+      "test_case_id": 14,
+      "name": "Clean - Is None Check",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Check None"
+    },
+    {
+      "test_case_id": 15,
+      "name": "Clean - F-String",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Format string"
+    },
+    {
+      "test_case_id": 16,
+      "name": "Clean - Docstring",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Document function"
+    }
+  ]
+}

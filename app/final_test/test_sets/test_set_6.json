@@ -1,0 +1,136 @@
+{
+  "test_set_id": 6,
+  "name": "Mixed Bugs & Complex Logic",
+  "description": "Tests scenarios where multiple bug patterns appear simultaneously.",
+  "total_cases": 16,
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Mixed - Hallucination + NPC",
+      "expected": "bug",
+      "bug_type": "mixed_bugs",
+      "prompt": "Calculate tax",
+      "code": "\ndef calculate_tax(price):\n    print(\"Calculating tax...\")  # NPC: Unrequested logging\n    calculator = TaxService()    # Hallucination: Undefined class\n    return calculator.get_rate(price)\n"
+    },
+    {
+      "id": 2,
+      "name": "Mixed - Syntax Error + Prompt Bias",
+      "expected": "bug",
+      "bug_type": "mixed_bugs",
+      "prompt": "Check if user is 'admin'",
+      "code": "\ndef check_user(user):\n    if user == \"admin\"  # Syntax Error: Missing colon\n        return True     # Prompt Bias: Hardcoded 'admin'\n    return False\n"
+    },
+    {
+      "id": 3,
+      "name": "Mixed - Wrong Attribute + Silly Mistake",
+      "expected": "bug",
+      "bug_type": "mixed_bugs",
+      "prompt": "Update user profile",
+      "code": "\ndef update_profile(user):\n    user.age = user.age  # Silly Mistake: Self-assignment\n    return user.naem     # Wrong Attribute: Typo 'naem'\n"
+    },
+    {
+      "id": 4,
+      "name": "Mixed - Missing Corner Case + Incomplete",
+      "expected": "bug",
+      "bug_type": "mixed_bugs",
+      "prompt": "Divide list items",
+      "code": "\ndef divide_items(items, divisor):\n    results = []\n    # Missing Corner Case: divisor could be 0\n    for item in items:\n        # TODO: Implement division\n        pass  # Incomplete Generation\n    return results\n"
+    },
+    {
+      "id": 5,
+      "name": "Mixed - Wrong Input Type + Prompt Bias",
+      "expected": "bug",
+      "bug_type": "mixed_bugs",
+      "prompt": "Calculate square root of 25",
+      "code": "\nimport math\ndef get_sqrt(n):\n    # Wrong Input Type: String passed to sqrt\n    # Prompt Bias: Hardcoded \"25\"\n    return math.sqrt(\"25\")\n"
+    },
+    {
+      "id": 6,
+      "name": "Mixed - NPC + Missing Corner Case",
+      "expected": "bug",
+      "bug_type": "mixed_bugs",
+      "prompt": "Get first item",
+      "code": "\ndef get_first(items):\n    items.sort()  # NPC: Unrequested sorting\n    return items[0]  # Missing Corner Case: Empty list crash\n"
+    },
+    {
+      "id": 7,
+      "name": "Mixed - Hallucination + Silly Mistake",
+      "expected": "bug",
+      "bug_type": "mixed_bugs",
+      "prompt": "Process data",
+      "code": "\ndef process(data):\n    if data:\n        return True\n    else:\n        return True  # Silly Mistake: Both branches return True\n    \n    helper = DataHelper()  # Hallucination: Undefined class\n    helper.clean(data)\n"
+    },
+    {
+      "id": 8,
+      "name": "Mixed - Syntax + Wrong Attribute",
+      "expected": "bug",
+      "bug_type": "mixed_bugs",
+      "prompt": "Get ID",
+      "code": "\ndef get_id(obj)\n    return obj.id_val  # Wrong Attribute (likely)\n"
+    },
+    {
+      "id": 9,
+      "name": "Clean - Generator with Condition",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Filter odd numbers",
+      "code": "\ndef filter_odds(nums):\n    yield from (x for x in nums if x % 2 != 0)\n"
+    },
+    {
+      "id": 10,
+      "name": "Clean - Nested List Comprehension",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Flatten matrix",
+      "code": "\ndef flatten(matrix):\n    return [item for row in matrix for item in row]\n"
+    },
+    {
+      "id": 11,
+      "name": "Clean - Multiple Inheritance",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Create flying car",
+      "code": "\nclass Car: pass\nclass Plane: pass\nclass FlyingCar(Car, Plane):\n    pass\n"
+    },
+    {
+      "id": 12,
+      "name": "Clean - Async Function",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Fetch data async",
+      "code": "\nasync def fetch_data():\n    return {\"data\": \"sample\"}\n"
+    },
+    {
+      "id": 13,
+      "name": "Clean - Dataclass",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Create Point class",
+      "code": "\nfrom dataclasses import dataclass\n@dataclass\nclass Point:\n    x: int\n    y: int\n"
+    },
+    {
+      "id": 14,
+      "name": "Clean - Map and Filter",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Process list",
+      "code": "\ndef process_list(nums):\n    return list(map(str, filter(lambda x: x > 0, nums)))\n"
+    },
+    {
+      "id": 15,
+      "name": "Clean - Abstract Base Class",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Create interface",
+      "code": "\nfrom abc import ABC, abstractmethod\nclass Shape(ABC):\n    @abstractmethod\n    def area(self): pass\n"
+    },
+    {
+      "id": 16,
+      "name": "Clean - Enums",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Define colors",
+      "code": "\nfrom enum import Enum\nclass Color(Enum):\n    RED = 1\n    BLUE = 2\n"
+    }
+  ]
+}

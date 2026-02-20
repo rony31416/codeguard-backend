@@ -1,0 +1,263 @@
+{
+  "test_set_id": 6,
+  "test_set_name": "Mixed Bugs & Complex Logic",
+  "total_cases": 16,
+  "correct": 13,
+  "accuracy": 81.25,
+  "timestamp": "2026-02-20T17:42:53.720559",
+  "results": [
+    {
+      "test_case_id": 1,
+      "name": "Mixed - Hallucination + NPC",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 3,
+      "bugs_found": [
+        {
+          "type": "hallucinated_objects",
+          "description": "Bug detected"
+        },
+        {
+          "type": "incomplete_generation",
+          "description": "Bug detected"
+        },
+        {
+          "type": "undefined_names",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 3,
+      "expected_bug_type": "mixed_bugs",
+      "prompt": "Calculate tax"
+    },
+    {
+      "test_case_id": 2,
+      "name": "Mixed - Syntax Error + Prompt Bias",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "syntax_error",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": "mixed_bugs",
+      "prompt": "Check if user is 'admin'"
+    },
+    {
+      "test_case_id": 3,
+      "name": "Mixed - Wrong Attribute + Silly Mistake",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "mixed_bugs",
+      "prompt": "Update user profile"
+    },
+    {
+      "test_case_id": 4,
+      "name": "Mixed - Missing Corner Case + Incomplete",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "incomplete_generation",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": "mixed_bugs",
+      "prompt": "Divide list items"
+    },
+    {
+      "test_case_id": 5,
+      "name": "Mixed - Wrong Input Type + Prompt Bias",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "wrong_input_type",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": "mixed_bugs",
+      "prompt": "Calculate square root of 25"
+    },
+    {
+      "test_case_id": 6,
+      "name": "Mixed - NPC + Missing Corner Case",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "incomplete_generation",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": "mixed_bugs",
+      "prompt": "Get first item"
+    },
+    {
+      "test_case_id": 7,
+      "name": "Mixed - Hallucination + Silly Mistake",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 3,
+      "bugs_found": [
+        {
+          "type": "hallucinated_objects",
+          "description": "Bug detected"
+        },
+        {
+          "type": "silly_mistakes",
+          "description": "Bug detected"
+        },
+        {
+          "type": "undefined_names",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 3,
+      "expected_bug_type": "mixed_bugs",
+      "prompt": "Process data"
+    },
+    {
+      "test_case_id": 8,
+      "name": "Mixed - Syntax + Wrong Attribute",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "syntax_error",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": "mixed_bugs",
+      "prompt": "Get ID"
+    },
+    {
+      "test_case_id": 9,
+      "name": "Clean - Generator with Condition",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Filter odd numbers"
+    },
+    {
+      "test_case_id": 10,
+      "name": "Clean - Nested List Comprehension",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Flatten matrix"
+    },
+    {
+      "test_case_id": 11,
+      "name": "Clean - Multiple Inheritance",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Create flying car"
+    },
+    {
+      "test_case_id": 12,
+      "name": "Clean - Async Function",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Fetch data async"
+    },
+    {
+      "test_case_id": 13,
+      "name": "Clean - Dataclass",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Create Point class"
+    },
+    {
+      "test_case_id": 14,
+      "name": "Clean - Map and Filter",
+      "expected": "clean",
+      "predicted": "bug",
+      "correct": false,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "hallucinated_objects",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": null,
+      "prompt": "Process list"
+    },
+    {
+      "test_case_id": 15,
+      "name": "Clean - Abstract Base Class",
+      "expected": "clean",
+      "predicted": "bug",
+      "correct": false,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "incomplete_generation",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": null,
+      "prompt": "Create interface"
+    },
+    {
+      "test_case_id": 16,
+      "name": "Clean - Enums",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Define colors"
+    }
+  ]
+}

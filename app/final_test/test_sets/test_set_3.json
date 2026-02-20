@@ -1,0 +1,136 @@
+{
+  "test_set_id": 3,
+  "name": "Real-World Code Scenarios",
+  "description": "Tests common real-world coding patterns and mistakes",
+  "total_cases": 16,
+  "test_cases": [
+    {
+      "id": 33,
+      "name": "Bug - Infinite Loop Missing Break",
+      "expected": "bug",
+      "bug_type": "incomplete_generation",
+      "prompt": "Find first even number",
+      "code": "def find_first_even(numbers):\n    while True:\n        for num in numbers:\n            if num % 2 == 0:\n                return num  # Missing break for while\n        # Infinite loop!"
+    },
+    {
+      "id": 34,
+      "name": "Bug - Off-by-One Error",
+      "expected": "bug",
+      "bug_type": "silly_mistake",
+      "prompt": "Get last 5 elements of list",
+      "code": "def get_last_five(lst):\n    return lst[-6:]  # Should be lst[-5:]"
+    },
+    {
+      "id": 35,
+      "name": "Bug - Mutable Default Argument",
+      "expected": "bug",
+      "bug_type": "silly_mistake",
+      "prompt": "Append to list with default empty list",
+      "code": "def append_item(item, lst=[]):\n    lst.append(item)  # Mutable default!\n    return lst"
+    },
+    {
+      "id": 36,
+      "name": "Bug - Missing Return Statement",
+      "expected": "bug",
+      "bug_type": "incomplete_generation",
+      "prompt": "Calculate product of numbers",
+      "code": "def calculate_product(numbers):\n    result = 1\n    for num in numbers:\n        result *= num\n    # Missing return!"
+    },
+    {
+      "id": 37,
+      "name": "Bug - Type Comparison Error",
+      "expected": "bug",
+      "bug_type": "wrong_input_type",
+      "prompt": "Check if value is numeric",
+      "code": "def is_numeric(value):\n    return value == int  # Should be isinstance(value, int)"
+    },
+    {
+      "id": 38,
+      "name": "Bug - String Concatenation with None",
+      "expected": "bug",
+      "bug_type": "missing_corner_case",
+      "prompt": "Format user greeting",
+      "code": "def greet_user(name):\n    return \"Hello \" + name  # No None check"
+    },
+    {
+      "id": 39,
+      "name": "Bug - Using = Instead of ==",
+      "expected": "bug",
+      "bug_type": "syntax_error",
+      "prompt": "Check if number is zero",
+      "code": "def is_zero(num):\n    if num = 0:  # Should be ==\n        return True\n    return False"
+    },
+    {
+      "id": 40,
+      "name": "Bug - Accessing Non-existent Dict Key",
+      "expected": "bug",
+      "bug_type": "missing_corner_case",
+      "prompt": "Get user age from dictionary",
+      "code": "def get_age(user):\n    return user['age']  # No key existence check"
+    },
+    {
+      "id": 41,
+      "name": "Clean - List Comprehension with Condition",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Get positive numbers",
+      "code": "def get_positive(numbers):\n    return [n for n in numbers if n > 0]"
+    },
+    {
+      "id": 42,
+      "name": "Clean - Dictionary Comprehension",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Square dictionary values",
+      "code": "def square_values(d):\n    return {k: v**2 for k, v in d.items()}"
+    },
+    {
+      "id": 43,
+      "name": "Clean - Multiple Return Paths",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Classify number as positive, negative, or zero",
+      "code": "def classify_number(n):\n    if n > 0:\n        return 'positive'\n    elif n < 0:\n        return 'negative'\n    return 'zero'"
+    },
+    {
+      "id": 44,
+      "name": "Clean - Nested Functions",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Create a multiplier function factory",
+      "code": "def create_multiplier(factor):\n    def multiply(x):\n        return x * factor\n    return multiply"
+    },
+    {
+      "id": 45,
+      "name": "Clean - Set Operations",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Find unique elements in two lists",
+      "code": "def unique_in_both(list1, list2):\n    return list(set(list1) & set(list2))"
+    },
+    {
+      "id": 46,
+      "name": "Clean - String Formatting",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Format person info",
+      "code": "def format_person(name, age):\n    return f\"{name} is {age} years old\""
+    },
+    {
+      "id": 47,
+      "name": "Clean - Enumerate Usage",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Get index and value pairs",
+      "code": "def get_indexed_items(items):\n    return list(enumerate(items))"
+    },
+    {
+      "id": 48,
+      "name": "Clean - Zip Function",
+      "expected": "clean",
+      "bug_type": null,
+      "prompt": "Combine two lists into tuples",
+      "code": "def combine_lists(list1, list2):\n    return list(zip(list1, list2))"
+    }
+  ]
+}

@@ -1,0 +1,258 @@
+{
+  "test_set_id": 1,
+  "test_set_name": "Basic Bug Patterns",
+  "total_cases": 16,
+  "correct": 14,
+  "accuracy": 87.5,
+  "timestamp": "2026-02-20T17:42:53.654621",
+  "results": [
+    {
+      "test_case_id": 1,
+      "name": "Syntax Error - Missing Colon",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 2,
+      "bugs_found": [
+        {
+          "type": "syntax_error",
+          "description": "Bug detected"
+        },
+        {
+          "type": "incomplete_generation",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 2,
+      "expected_bug_type": "syntax_error",
+      "prompt": "Write a function to calculate sum of a list"
+    },
+    {
+      "test_case_id": 2,
+      "name": "Hallucinated Object - Undefined Class",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 2,
+      "bugs_found": [
+        {
+          "type": "hallucinated_objects",
+          "description": "Bug detected"
+        },
+        {
+          "type": "undefined_names",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 2,
+      "expected_bug_type": "hallucinated_object",
+      "prompt": "Create a data validator"
+    },
+    {
+      "test_case_id": 3,
+      "name": "Incomplete Generation - Empty Assignment",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 3,
+      "bugs_found": [
+        {
+          "type": "syntax_error",
+          "description": "Bug detected"
+        },
+        {
+          "type": "hallucinated_objects",
+          "description": "Bug detected"
+        },
+        {
+          "type": "incomplete_generation",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 3,
+      "expected_bug_type": "incomplete_generation",
+      "prompt": "Process orders and calculate total"
+    },
+    {
+      "test_case_id": 4,
+      "name": "Silly Mistake - Identical If/Else",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "silly_mistakes",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": "silly_mistake",
+      "prompt": "Calculate discount for members"
+    },
+    {
+      "test_case_id": 5,
+      "name": "Wrong Attribute - Dict Access",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "wrong_attribute",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": "wrong_attribute",
+      "prompt": "Get item cost from dictionary"
+    },
+    {
+      "test_case_id": 6,
+      "name": "Wrong Input Type - String to Math Function",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "wrong_input_type",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": "wrong_input_type",
+      "prompt": "Calculate square root"
+    },
+    {
+      "test_case_id": 7,
+      "name": "Prompt Bias - Hardcoded Example Value",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "prompt_biased",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": "prompt_bias",
+      "prompt": "Process CSV files"
+    },
+    {
+      "test_case_id": 8,
+      "name": "Missing Corner Case - Division Without Check",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "missing_corner_case",
+      "prompt": "Calculate average of numbers"
+    },
+    {
+      "test_case_id": 9,
+      "name": "Clean - Simple Addition Function",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Write a function to add two numbers"
+    },
+    {
+      "test_case_id": 10,
+      "name": "Clean - List Processing",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Filter even numbers from a list"
+    },
+    {
+      "test_case_id": 11,
+      "name": "Clean - String Manipulation",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Reverse a string"
+    },
+    {
+      "test_case_id": 12,
+      "name": "Clean - Dictionary Operations",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Count word frequency"
+    },
+    {
+      "test_case_id": 13,
+      "name": "Clean - Class with Methods",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Create a simple counter class"
+    },
+    {
+      "test_case_id": 14,
+      "name": "Clean - File Operations",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Read lines from a file"
+    },
+    {
+      "test_case_id": 15,
+      "name": "Clean - Math Operations",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Calculate factorial"
+    },
+    {
+      "test_case_id": 16,
+      "name": "Clean - List Sorting",
+      "expected": "clean",
+      "predicted": "bug",
+      "correct": false,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "hallucinated_objects",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": null,
+      "prompt": "Sort a list of dictionaries by key"
+    }
+  ]
+}

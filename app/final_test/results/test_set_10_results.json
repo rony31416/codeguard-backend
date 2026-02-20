@@ -1,0 +1,262 @@
+{
+  "test_set_id": 10,
+  "test_set_name": "Production-Ready Code Patterns",
+  "total_cases": 16,
+  "correct": 8,
+  "accuracy": 50.0,
+  "timestamp": "2026-02-20T17:42:53.772277",
+  "results": [
+    {
+      "test_case_id": 145,
+      "name": "Bug - Missing Async Await",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 3,
+      "bugs_found": [
+        {
+          "type": "hallucinated_objects",
+          "description": "Bug detected"
+        },
+        {
+          "type": "incomplete_generation",
+          "description": "Bug detected"
+        },
+        {
+          "type": "undefined_names",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 3,
+      "expected_bug_type": "syntax_error",
+      "prompt": "Create async function to fetch data"
+    },
+    {
+      "test_case_id": 146,
+      "name": "Bug - Resource Leak - No Close",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "missing_corner_case",
+      "prompt": "Read file contents"
+    },
+    {
+      "test_case_id": 147,
+      "name": "Bug - SQL Injection Risk",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 2,
+      "bugs_found": [
+        {
+          "type": "hallucinated_objects",
+          "description": "Bug detected"
+        },
+        {
+          "type": "undefined_names",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 2,
+      "expected_bug_type": "npc",
+      "prompt": "Query user by name"
+    },
+    {
+      "test_case_id": 148,
+      "name": "Bug - Race Condition - No Lock",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "missing_corner_case",
+      "prompt": "Increment shared counter"
+    },
+    {
+      "test_case_id": 149,
+      "name": "Bug - Memory Leak - Circular Reference",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "wrong_attribute",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": "silly_mistake",
+      "prompt": "Create linked list node"
+    },
+    {
+      "test_case_id": 150,
+      "name": "Bug - Integer Overflow Risk",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "missing_corner_case",
+      "prompt": "Calculate factorial"
+    },
+    {
+      "test_case_id": 151,
+      "name": "Bug - Deprecated Function Usage",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": "hallucinated_object",
+      "prompt": "Get current time"
+    },
+    {
+      "test_case_id": 152,
+      "name": "Bug - Hardcoded Credentials",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 2,
+      "bugs_found": [
+        {
+          "type": "hallucinated_objects",
+          "description": "Bug detected"
+        },
+        {
+          "type": "undefined_names",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 2,
+      "expected_bug_type": "prompt_bias",
+      "prompt": "Connect to database"
+    },
+    {
+      "test_case_id": 153,
+      "name": "Clean - Proper Context Manager",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Read file safely"
+    },
+    {
+      "test_case_id": 154,
+      "name": "Clean - Thread-Safe Counter",
+      "expected": "clean",
+      "predicted": "bug",
+      "correct": false,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "hallucinated_objects",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": null,
+      "prompt": "Thread-safe increment"
+    },
+    {
+      "test_case_id": 155,
+      "name": "Clean - Environment Variable for Secrets",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Get database password"
+    },
+    {
+      "test_case_id": 156,
+      "name": "Clean - Proper Exception Handling",
+      "expected": "clean",
+      "predicted": "bug",
+      "correct": false,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "hallucinated_objects",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": null,
+      "prompt": "Parse JSON with error handling"
+    },
+    {
+      "test_case_id": 157,
+      "name": "Clean - Input Validation",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Validate email format"
+    },
+    {
+      "test_case_id": 158,
+      "name": "Clean - Async/Await Proper Usage",
+      "expected": "clean",
+      "predicted": "bug",
+      "correct": false,
+      "bug_count": 2,
+      "bugs_found": [
+        {
+          "type": "hallucinated_objects",
+          "description": "Bug detected"
+        },
+        {
+          "type": "undefined_names",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 2,
+      "expected_bug_type": null,
+      "prompt": "Fetch data asynchronously"
+    },
+    {
+      "test_case_id": 159,
+      "name": "Clean - Type Hints",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 0,
+      "bugs_found": [],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "prompt": "Function with type hints"
+    },
+    {
+      "test_case_id": 160,
+      "name": "Clean - Logging Instead of Print",
+      "expected": "clean",
+      "predicted": "bug",
+      "correct": false,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "type": "hallucinated_objects",
+          "description": "Bug detected"
+        }
+      ],
+      "severity_score": 1,
+      "expected_bug_type": null,
+      "prompt": "Log application events"
+    }
+  ]
+}
