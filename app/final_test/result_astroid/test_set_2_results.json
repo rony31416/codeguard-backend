@@ -1,0 +1,336 @@
+{
+  "test_set_id": 2,
+  "name": "Advanced Bug Patterns",
+  "total_cases": 16,
+  "correct": 12,
+  "errors": 0,
+  "accuracy": 75.0,
+  "total_execution_time": 297.4105541706085,
+  "results": [
+    {
+      "test_case_id": 17,
+      "name": "Syntax Error - Missing Parenthesis",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 2,
+      "bugs_found": [
+        {
+          "pattern_name": "Syntax Error",
+          "severity": 9,
+          "description": "The code contains a syntax error at line 2: '(' was never closed (<unknown>, line 2)"
+        },
+        {
+          "pattern_name": "Non-Prompted Consideration (NPC)",
+          "severity": 5,
+          "description": "The code includes features that weren't requested. Detected 1 unrequested addition(s): return True. "
+        }
+      ],
+      "severity_score": 9,
+      "expected_bug_type": "syntax_error",
+      "execution_time": 22.452958583831787,
+      "analysis_id": 59
+    },
+    {
+      "test_case_id": 18,
+      "name": "Hallucinated Object - Unknown Module",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 3,
+      "bugs_found": [
+        {
+          "pattern_name": "Hallucinated Object",
+          "severity": 8,
+          "description": "The code references undefined objects that may not exist: JSONParser, DataCleaner. LLMs sometimes in"
+        },
+        {
+          "pattern_name": "Non-Prompted Consideration (NPC)",
+          "severity": 5,
+          "description": "The code includes features that weren't requested. Detected 1 unrequested addition(s): unused DataCl"
+        },
+        {
+          "pattern_name": "Missing Features",
+          "severity": 6,
+          "description": "The code is missing features that were requested in the prompt. Detected 1 missing feature(s): parse"
+        }
+      ],
+      "severity_score": 8,
+      "expected_bug_type": "hallucinated_object",
+      "execution_time": 23.394319772720337,
+      "analysis_id": 61
+    },
+    {
+      "test_case_id": 19,
+      "name": "Incomplete Generation - TODO Marker",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 2,
+      "bugs_found": [
+        {
+          "pattern_name": "Incomplete Generation",
+          "severity": 7,
+          "description": "Code generation appears incomplete. Issues: Code contains incomplete markers; Code contains incomple"
+        },
+        {
+          "pattern_name": "Missing Features",
+          "severity": 6,
+          "description": "The code is missing features that were requested in the prompt. Detected 2 missing feature(s): Passw"
+        }
+      ],
+      "severity_score": 7,
+      "expected_bug_type": "incomplete_generation",
+      "execution_time": 21.978411197662354,
+      "analysis_id": 64
+    },
+    {
+      "test_case_id": 20,
+      "name": "Silly Mistake - Wrong Exponent",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "Missing Features",
+          "severity": 6,
+          "description": "The code is missing features that were requested in the prompt. Detected 1 missing feature(s): use s"
+        }
+      ],
+      "severity_score": 6,
+      "expected_bug_type": "silly_mistake",
+      "execution_time": 20.828977823257446,
+      "analysis_id": 66
+    },
+    {
+      "test_case_id": 21,
+      "name": "Wrong Attribute - Multiple Dict Access",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "Wrong Attribute",
+          "severity": 7,
+          "description": "Detected incorrect attribute access patterns: item.price. Likely treating dictionary keys as object "
+        }
+      ],
+      "severity_score": 7,
+      "expected_bug_type": "wrong_attribute",
+      "execution_time": 18.461487531661987,
+      "analysis_id": 68
+    },
+    {
+      "test_case_id": 22,
+      "name": "Wrong Input Type - Method with Wrong Args",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "Missing Features",
+          "severity": 6,
+          "description": "The code is missing features that were requested in the prompt. Detected 1 missing feature(s): conve"
+        }
+      ],
+      "severity_score": 6,
+      "expected_bug_type": "wrong_input_type",
+      "execution_time": 26.942468643188477,
+      "analysis_id": 70
+    },
+    {
+      "test_case_id": 23,
+      "name": "NPC - Unrequested Admin Check",
+      "expected": "bug",
+      "predicted": "bug",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "Non-Prompted Consideration (NPC)",
+          "severity": 5,
+          "description": "The code includes features that weren't requested. Detected 2 unrequested addition(s): unrequested a"
+        }
+      ],
+      "severity_score": 5,
+      "expected_bug_type": "npc",
+      "execution_time": 26.817782640457153,
+      "analysis_id": 72
+    },
+    {
+      "test_case_id": 24,
+      "name": "Missing Corner Case - No Zero Check",
+      "expected": "bug",
+      "predicted": "clean",
+      "correct": false,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
+      "severity_score": 0,
+      "expected_bug_type": "missing_corner_case",
+      "execution_time": 17.87974262237549,
+      "analysis_id": 74
+    },
+    {
+      "test_case_id": 25,
+      "name": "Clean - Safe Division with Check",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "execution_time": 14.128910541534424,
+      "analysis_id": 76
+    },
+    {
+      "test_case_id": 26,
+      "name": "Clean - Proper Exception Handling",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "execution_time": 17.59615683555603,
+      "analysis_id": 77
+    },
+    {
+      "test_case_id": 27,
+      "name": "Clean - Generator Function",
+      "expected": "clean",
+      "predicted": "bug",
+      "correct": false,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "Hallucinated Object",
+          "severity": 8,
+          "description": "The code references undefined objects that may not exist: b, a. LLMs sometimes invent functions, cla"
+        }
+      ],
+      "severity_score": 8,
+      "expected_bug_type": null,
+      "execution_time": 15.620306968688965,
+      "analysis_id": 79
+    },
+    {
+      "test_case_id": 28,
+      "name": "Clean - List Comprehension with Filter",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "execution_time": 11.762704133987427,
+      "analysis_id": 81
+    },
+    {
+      "test_case_id": 29,
+      "name": "Clean - Context Manager",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "execution_time": 15.503146886825562,
+      "analysis_id": 83
+    },
+    {
+      "test_case_id": 30,
+      "name": "Clean - Decorator Function",
+      "expected": "clean",
+      "predicted": "clean",
+      "correct": true,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "No Bugs Detected",
+          "severity": 0,
+          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+        }
+      ],
+      "severity_score": 0,
+      "expected_bug_type": null,
+      "execution_time": 12.992724657058716,
+      "analysis_id": 85
+    },
+    {
+      "test_case_id": 31,
+      "name": "Clean - Data Class",
+      "expected": "clean",
+      "predicted": "bug",
+      "correct": false,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "Non-Prompted Consideration (NPC)",
+          "severity": 5,
+          "description": "The code includes features that weren't requested. Detected 1 unrequested addition(s): distance_from"
+        }
+      ],
+      "severity_score": 5,
+      "expected_bug_type": null,
+      "execution_time": 15.49528694152832,
+      "analysis_id": 87
+    },
+    {
+      "test_case_id": 32,
+      "name": "Clean - Lambda and Map",
+      "expected": "clean",
+      "predicted": "bug",
+      "correct": false,
+      "bug_count": 1,
+      "bugs_found": [
+        {
+          "pattern_name": "Hallucinated Object",
+          "severity": 8,
+          "description": "The code references undefined objects that may not exist: c. LLMs sometimes invent functions, classe"
+        }
+      ],
+      "severity_score": 8,
+      "expected_bug_type": null,
+      "execution_time": 15.555168390274048,
+      "analysis_id": 90
+    }
+  ],
+  "timestamp": "2026-02-21T20:12:01.825039"
+}

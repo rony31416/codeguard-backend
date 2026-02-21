@@ -23,9 +23,9 @@ class LLMReasoner:
         
         # Debug logging
         if self.enabled:
-            print(f"✓ Layer 3 (LLM) ✅ Enabled - Using {'Ollama' if self.llm.ollama_enabled else ''} {'OpenRouter' if self.llm.openrouter_enabled else ''}")
+            print(f"✓ Layer 3 (LLM)  Enabled - Using {'Ollama' if self.llm.ollama_enabled else ''} {'OpenRouter' if self.llm.openrouter_enabled else ''}")
         else:
-            print("✗ Layer 3 (LLM) ❌ Disabled - No API keys configured")
+            print("✗ Layer 3 (LLM)  Disabled - No API keys configured")
     
     def deep_semantic_analysis(self, prompt: str, code: str, previous_findings: Dict = None) -> Dict[str, Any]:
         """
@@ -40,7 +40,7 @@ class LLMReasoner:
             Dict with semantic analysis results
         """
         if not self.enabled:
-            print("⚠️  Layer 3 (LLM) ❌ Skipped - No LLM APIs available")
+            print("  Layer 3 (LLM)  Skipped - No LLM APIs available")
             return {
                 'found': False,
                 'issues': [],
@@ -95,6 +95,7 @@ STRICT RULES:
 - If the prompt is simple/minimal, missing_features should be [] or very short
 - Don't confuse critiques of NPC with missing features
 - Unrequested edge case handling = NPC, not a missing feature
+- Ignore standard Pythonic structures like lambda functions, @property decorators, and list comprehensions. They are NOT unrequested features.
 
 Return ONLY valid JSON in this exact format:
 {{
@@ -218,7 +219,7 @@ Return ONLY valid JSON in this exact format:
             Final verdict with all required fields
         """
         if not self.enabled:
-            print(f"⚠️  Layer 3 (LLM) ❌ Skipped - No LLM APIs available")
+            print(f"  Layer 3 (LLM)  Skipped - No LLM APIs available")
             # Fallback to combined Layer 1 & 2 results
             return self._fallback_verdict(layer1_evidence, layer2_evidence, detector_type)
         
@@ -256,11 +257,11 @@ Return ONLY valid JSON in this exact format:
                 return self._format_verdict_response(verdict, detector_type)
             
             except (json.JSONDecodeError, ValueError) as e:
-                print(f"⚠️  LLM JSON parse error: {e}")
+                print(f"  LLM JSON parse error: {e}")
                 return self._fallback_verdict(layer1_evidence, layer2_evidence, detector_type)
         
         except Exception as e:
-            print(f"⚠️  LLM error: {e}")
+            print(f"  LLM error: {e}")
             return self._fallback_verdict(layer1_evidence, layer2_evidence, detector_type)
     
     def _format_evidence(self, layer1: Dict, layer2: Dict) -> str:
