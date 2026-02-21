@@ -7,7 +7,7 @@ This is the main entry point for static analysis.
 It orchestrates individual detectors and aggregates results.
 """
 
-import ast
+import astroid
 from typing import Dict, Any
 
 from .detectors.syntax_detector import SyntaxErrorDetector

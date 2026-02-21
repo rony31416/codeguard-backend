@@ -1,103 +1,120 @@
 """
 Layer 2: AST Analyzer
 =====================
-Structural code analysis using Python AST.
+Structural code analysis using astroid (upgraded from stdlib ast).
 Provides ground truth about code structure (~50ms).
+
+astroid is the AST library used by Pylint - it offers:
+- nodes_of_class() instead of ast.walk() for targeted traversal
+- Node types: nodes.FunctionDef, nodes.Call, nodes.Const, etc.
+- .name attribute instead of .id for Name nodes
+- .attrname instead of .attr for Attribute nodes
+- nodes.Const replaces ast.Constant
 """
 
-import ast
+import astroid
+from astroid import nodes, exceptions as astroid_exceptions
+import re
 from typing import Dict, List, Any, Optional
 
 
 class ASTAnalyzer:
-    """Structural code analysis using Abstract Syntax Tree."""
-    
+    """Structural code analysis using astroid Abstract Syntax Tree."""
+
     def __init__(self):
         """Initialize AST analyzer."""
         self.confidence = 1.0  # AST provides 100% structural accuracy
-    
-    def parse_code(self, code: str) -> Optional[ast.Module]:
-        """Parse code into AST."""
+
+    def parse_code(self, code: str) -> Optional[astroid.nodes.Module]:
+        """Parse code into astroid Module."""
         try:
-            return ast.parse(code)
-        except SyntaxError as e:
+            return astroid.parse(code)
+        except astroid_exceptions.AstroidSyntaxError as e:
             print(f"Syntax error in code: {e}")
             return None
-    
-    def extract_function_calls(self, tree: ast.Module) -> List[Dict[str, Any]]:
-        """Extract all function calls from AST."""
+        except Exception as e:
+            print(f"Parse error: {e}")
+            return None
+
+    def extract_function_calls(self, tree: astroid.nodes.Module) -> List[Dict[str, Any]]:
+        """Extract all function calls from astroid tree."""
         calls = []
-        
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Call):
-                func_name = None
-                
-                if isinstance(node.func, ast.Name):
-                    func_name = node.func.id
-                elif isinstance(node.func, ast.Attribute):
-                    func_name = node.func.attr
-                
-                if func_name:
-                    calls.append({
-                        'name': func_name,
-                        'lineno': node.lineno if hasattr(node, 'lineno') else None
-                    })
-        
-        return calls
-    
-    def extract_literals(self, tree: ast.Module) -> List[Dict[str, Any]]:
-        """Extract all literal values (strings, numbers)."""
-        literals = []
-        
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Constant):
-                literals.append({
-                    'type': type(node.value).__name__,
-                    'value': node.value,
+
+        # nodes.Call replaces ast.Call
+        for node in tree.nodes_of_class(nodes.Call):
+            func_name = None
+
+            # nodes.Name.name replaces ast.Name.id
+            if isinstance(node.func, nodes.Name):
+                func_name = node.func.name
+            # nodes.Attribute.attrname replaces ast.Attribute.attr
+            elif isinstance(node.func, nodes.Attribute):
+                func_name = node.func.attrname
+
+            if func_name:
+                calls.append({
+                    'name': func_name,
                     'lineno': node.lineno if hasattr(node, 'lineno') else None
                 })
-        
+
+        return calls
+
+    def extract_literals(self, tree: astroid.nodes.Module) -> List[Dict[str, Any]]:
+        """Extract all literal values (strings, numbers)."""
+        literals = []
+
+        # nodes.Const replaces ast.Constant
+        for node in tree.nodes_of_class(nodes.Const):
+            literals.append({
+                'type': type(node.value).__name__,
+                'value': node.value,
+                'lineno': node.lineno if hasattr(node, 'lineno') else None
+            })
+
         return literals
-    
-    def extract_imports(self, tree: ast.Module) -> List[str]:
+
+    def extract_imports(self, tree: astroid.nodes.Module) -> List[str]:
         """Extract all imports."""
         imports = []
-        
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                for alias in node.names:
-                    imports.append(alias.name)
-            elif isinstance(node, ast.ImportFrom):
-                module = node.module or ''
-                for alias in node.names:
-                    imports.append(f"{module}.{alias.name}" if module else alias.name)
-        
+
+        for node in tree.nodes_of_class(nodes.Import):
+            for name, alias in node.names:
+                imports.append(name)
+
+        for node in tree.nodes_of_class(nodes.ImportFrom):
+            module = node.modname or ''
+            for name, alias in node.names:
+                imports.append(f"{module}.{name}" if module else name)
+
         return imports
-    
-    def extract_functions(self, tree: ast.Module) -> List[Dict[str, Any]]:
+
+    def extract_functions(self, tree: astroid.nodes.Module) -> List[Dict[str, Any]]:
         """Extract function definitions."""
         functions = []
-        
-        for node in ast.walk(tree):
-            if isinstance(node, ast.FunctionDef):
-                functions.append({
-                    'name': node.name,
-                    'args': [arg.arg for arg in node.args.args],
-                    'lineno': node.lineno,
-                    'has_return': any(isinstance(n, ast.Return) for n in ast.walk(node))
-                })
-        
+
+        for node in tree.nodes_of_class(nodes.FunctionDef):
+            # In astroid: arg.name (not arg.arg like stdlib ast)
+            args = [arg.name for arg in node.args.args or [] if hasattr(arg, 'name')]
+            # Check for return statements inside the function
+            has_return = any(True for _ in node.nodes_of_class(nodes.Return))
+            functions.append({
+                'name': node.name,
+                'args': args,
+                'lineno': node.lineno,
+                'has_return': has_return
+            })
+
         return functions
-    
+
     def verify_npc(self, code: str) -> Dict[str, Any]:
-        """Verify NPC issues using AST."""
+        """Verify NPC issues using astroid."""
         tree = self.parse_code(code)
         if not tree:
             return {'found': False, 'issues': [], 'layer': 'ast', 'confidence': 0}
-        
+
         issues = []
         calls = self.extract_function_calls(tree)
-        
+
         # Check for print statements (confirmed by AST)
         print_calls = [c for c in calls if c['name'] == 'print']
         if print_calls:
@@ -108,9 +125,11 @@ class ASTAnalyzer:
                 'message': f'{len(print_calls)} print statement(s) found',
                 'confidence': self.confidence
             })
-        
+
         # Check for logging calls
-        logging_calls = [c for c in calls if any(log in c['name'].lower() for log in ['log', 'debug', 'info', 'warning', 'error'])]
+        logging_calls = [c for c in calls if any(
+            log in c['name'].lower() for log in ['log', 'debug', 'info', 'warning', 'error']
+        )]
         if logging_calls:
             issues.append({
                 'type': 'logging',
@@ -118,7 +137,7 @@ class ASTAnalyzer:
                 'message': f'{len(logging_calls)} logging call(s) found',
                 'confidence': self.confidence
             })
-        
+
         # Check for debugger imports
         imports = self.extract_imports(tree)
         debug_imports = [i for i in imports if any(d in i.lower() for d in ['pdb', 'debugger', 'ipdb'])]
@@ -129,30 +148,26 @@ class ASTAnalyzer:
                 'message': f'Debug imports found: {", ".join(debug_imports)}',
                 'confidence': self.confidence
             })
-        
+
         return {
             'found': len(issues) > 0,
             'issues': issues,
             'layer': 'ast',
             'confidence': self.confidence if issues else 0
         }
-    
+
     def verify_prompt_bias(self, code: str, prompt: str = "") -> Dict[str, Any]:
-        """Verify hardcoded literals using AST."""
+        """Verify hardcoded literals using astroid."""
         tree = self.parse_code(code)
         if not tree:
             return {'found': False, 'issues': [], 'layer': 'ast', 'confidence': 0}
-        
+
         issues = []
         literals = self.extract_literals(tree)
-        
-        # If we have a prompt, check for values from prompt
+
         if prompt:
-            # Extract numbers from prompt
-            import re
             prompt_numbers = re.findall(r'\b\d+\b', prompt)
-            
-            # Check if these numbers appear as literals
+
             for lit in literals:
                 if lit['type'] in ['int', 'float']:
                     if str(lit['value']) in prompt_numbers:
@@ -163,8 +178,7 @@ class ASTAnalyzer:
                             'message': f'Number {lit["value"]} from prompt is hardcoded at line {lit["lineno"]}',
                             'confidence': self.confidence
                         })
-        
-        # Check for example strings
+
         example_patterns = ['test', 'example', 'sample', 'demo', 'hello world']
         for lit in literals:
             if lit['type'] == 'str' and lit['value']:
@@ -179,92 +193,77 @@ class ASTAnalyzer:
                             'confidence': 0.9
                         })
                         break
-        
+
         return {
             'found': len(issues) > 0,
             'issues': issues,
             'layer': 'ast',
             'confidence': self.confidence if issues else 0
         }
-    
+
     def verify_missing_features(self, code: str, prompt: str) -> Dict[str, Any]:
-        """Verify if mentioned functions exist using AST.
-        
-        CONSERVATIVE: Only reports missing features for complex prompts with
-        explicit multiple requirements. Simple prompts return no missing features.
+        """
+        Verify if mentioned functions exist using astroid.
+        CONSERVATIVE: Only reports missing features for complex prompts.
         """
         tree = self.parse_code(code)
         if not tree:
             return {'found': False, 'issues': [], 'layer': 'ast', 'confidence': 0}
-        
-        # Conservative approach: Skip for simple prompts
+
         prompt_words = prompt.split()
         if len(prompt_words) < 15:
-            # Simple prompt - don't look for missing features
-            return {
-                'found': False,
-                'issues': [],
-                'layer': 'ast',
-                'confidence': 0
-            }
-        
-        # For complex prompts, could analyze here, but leave to LLM Layer 3
-        # Layer 2 focuses on structural verification, not semantic feature matching
-        
-        return {
-            'found': False,
-            'issues': [],
-            'layer': 'ast',
-            'confidence': 0
-        }
-    
+            return {'found': False, 'issues': [], 'layer': 'ast', 'confidence': 0}
+
+        return {'found': False, 'issues': [], 'layer': 'ast', 'confidence': 0}
+
     def analyze_return_type_mismatch(self, code: str, prompt: str) -> Dict[str, Any]:
-        """Analyze return types vs prompt expectations."""
+        """Analyze return types vs prompt expectations using astroid."""
         tree = self.parse_code(code)
         if not tree:
             return {'found': False, 'issues': [], 'layer': 'ast', 'confidence': 0}
-        
+
         issues = []
-        
-        # CRITICAL: Check for print vs return (AST verification)
-        import re
+
+        # CRITICAL: Check for print vs return
         if re.search(r'\breturn(s|ing)?\b', prompt.lower()):
             has_return_statement = False
             has_print_statement = False
-            
-            for node in ast.walk(tree):
-                if isinstance(node, ast.Return) and node.value:
+
+            # nodes.Return replaces ast.Return
+            for node in tree.nodes_of_class(nodes.Return):
+                if node.value is not None:
                     has_return_statement = True
-                if isinstance(node, ast.Call):
-                    if isinstance(node.func, ast.Name) and node.func.id == 'print':
-                        has_print_statement = True
-            
+
+            # nodes.Call replaces ast.Call; nodes.Name.name replaces ast.Name.id
+            for node in tree.nodes_of_class(nodes.Call):
+                if isinstance(node.func, nodes.Name) and node.func.name == 'print':
+                    has_print_statement = True
+
             if has_print_statement and not has_return_statement:
                 issues.append({
                     'type': 'print_vs_return',
                     'expected': 'return statement',
                     'actual': 'print statement',
                     'message': 'Function prints output instead of returning it',
-                    'confidence': self.confidence  # 100% confidence from AST
+                    'confidence': self.confidence
                 })
-        
-        # Check what prompt expects
+
         expects_list = 'list' in prompt.lower() and 'return' in prompt.lower()
         expects_dict = 'dict' in prompt.lower() and 'return' in prompt.lower()
-        
-        # Analyze actual returns
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Return) and node.value:
+
+        for node in tree.nodes_of_class(nodes.Return):
+            if node.value is not None:
                 return_type = None
-                
-                if isinstance(node.value, ast.List):
+
+                # nodes.List / nodes.Dict replace ast.List / ast.Dict
+                if isinstance(node.value, nodes.List):
                     return_type = 'list'
-                elif isinstance(node.value, ast.Dict):
+                elif isinstance(node.value, nodes.Dict):
                     return_type = 'dict'
-                elif isinstance(node.value, ast.Constant):
+                # nodes.Const replaces ast.Constant
+                elif isinstance(node.value, nodes.Const):
                     return_type = type(node.value.value).__name__
-                
-                # Check mismatch
+
                 if expects_list and return_type != 'list':
                     issues.append({
                         'type': 'return_type_mismatch',
@@ -274,7 +273,7 @@ class ASTAnalyzer:
                         'message': f'Expected list return but got {return_type} at line {node.lineno}',
                         'confidence': self.confidence
                     })
-                
+
                 if expects_dict and return_type != 'dict':
                     issues.append({
                         'type': 'return_type_mismatch',
@@ -284,7 +283,7 @@ class ASTAnalyzer:
                         'message': f'Expected dict return but got {return_type} at line {node.lineno}',
                         'confidence': self.confidence
                     })
-        
+
         return {
             'found': len(issues) > 0,
             'issues': issues,
@@ -296,7 +295,7 @@ class ASTAnalyzer:
 if __name__ == "__main__":
     """Quick test"""
     analyzer = ASTAnalyzer()
-    
+
     test_code = """
 def add_numbers(a, b):
     print(f"Adding {a} and {b}")
@@ -306,16 +305,16 @@ def add_numbers(a, b):
 test_value = "example"
 result = add_numbers(5, 3)
 """
-    
+
     test_prompt = "Create a function to add 5 and 3"
-    
-    print("Testing AST Analyzer...")
+
+    print("Testing ASTAnalyzer (astroid)...")
     print("\n1. NPC Verification:")
     npc = analyzer.verify_npc(test_code)
     print(f"Found: {npc['found']}, Issues: {len(npc['issues'])}")
     for issue in npc['issues']:
         print(f"  - {issue['message']}")
-    
+
     print("\n2. Prompt Bias Verification:")
     bias = analyzer.verify_prompt_bias(test_code, test_prompt)
     print(f"Found: {bias['found']}, Issues: {len(bias['issues'])}")

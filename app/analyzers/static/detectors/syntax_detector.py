@@ -1,19 +1,21 @@
 """
 Syntax Error Detector
 =====================
-Detects Python syntax errors using AST parsing.
+Detects Python syntax errors using astroid parsing.
+Uses astroid (Pylint's AST library) for more accurate parsing.
 
 Pattern: Syntax Error
 Severity: 9/10 (Critical)
 Speed: <5ms
 """
 
-import ast
-from typing import Dict, Any
+import astroid
+from astroid import exceptions as astroid_exceptions
+from typing import Dict, Any, Optional
 
 
 class SyntaxErrorDetector:
-    """Detects syntax errors in Python code."""
+    """Detects syntax errors in Python code using astroid."""
     
     def __init__(self, code: str):
         """
@@ -27,7 +29,7 @@ class SyntaxErrorDetector:
     
     def detect(self) -> Dict[str, Any]:
         """
-        Check for syntax errors using AST parsing.
+        Check for syntax errors using astroid parsing.
         
         Returns:
             Dict with detection results containing:
@@ -38,18 +40,23 @@ class SyntaxErrorDetector:
                 - text: str (if found)
         """
         try:
-            self.tree = ast.parse(self.code)
+            self.tree = astroid.parse(self.code)
             return {
                 "found": False,
                 "error": None
             }
-        except SyntaxError as e:
+        except astroid_exceptions.AstroidSyntaxError as e:
+            # Extract error details from the underlying SyntaxError
+            original = e.error if hasattr(e, 'error') else e
+            lineno = getattr(original, 'lineno', None)
+            offset = getattr(original, 'offset', None)
+            text = getattr(original, 'text', None)
             return {
                 "found": True,
-                "error": str(e),
-                "line": e.lineno,
-                "offset": e.offset,
-                "text": e.text
+                "error": str(original),
+                "line": lineno,
+                "offset": offset,
+                "text": text
             }
         except Exception as e:
             return {
@@ -60,12 +67,12 @@ class SyntaxErrorDetector:
                 "text": None
             }
     
-    def get_partial_ast(self) -> ast.AST:
+    def get_partial_ast(self) -> Optional[astroid.nodes.Module]:
         """
         Try to get a partial AST even if there are syntax errors.
         
         Returns:
-            AST node or None
+            astroid Module node or None
         """
         if self.tree:
             return self.tree
@@ -76,7 +83,7 @@ class SyntaxErrorDetector:
             try:
                 temp_lines = lines[:i] + lines[i+1:]
                 temp_code = '\n'.join(temp_lines)
-                return ast.parse(temp_code)
+                return astroid.parse(temp_code)
             except:
                 continue
         return None
