@@ -57,6 +57,11 @@ class TaxonomyClassifier:
         
         if self.static.get("missing_corner_case", {}).get("found"):
             self._add_missing_corner_case()
+
+        # Dynamic ZeroDivisionError confirms missing corner case at runtime
+        if self.dynamic.get("missing_corner_case", {}).get("found"):
+            if not any(p.pattern_name == "Missing Corner Case" for p in self.bug_patterns):
+                self._add_missing_corner_case_runtime()
         
         # Check for misinterpretation (if code has logic issues but no clear category)
         if len(self.bug_patterns) > 3:
@@ -249,6 +254,26 @@ class TaxonomyClassifier:
             description=f"The code doesn't handle edge cases properly. Detected {len(details)} missing check(s): {details[0]['description']}. Common issues include missing None checks, zero division, or empty input handling.",
             location=f"Multiple locations ({len(details)} issues)",
             fix_suggestion="Add validation for edge cases: check for None inputs, empty lists, zero values in division, and boundary conditions."
+        ))
+
+    def _add_missing_corner_case_runtime(self):
+        error_info = self.dynamic["missing_corner_case"]
+        self.bug_patterns.append(BugPatternSchema(
+            pattern_name="Missing Corner Case",
+            severity=6,
+            confidence=0.95,
+            description=(
+                f"Runtime ZeroDivisionError confirms a missing zero-guard: "
+                f"{error_info.get('error', 'division by zero')}. "
+                f"The function divides by a variable that can be zero without checking first."
+            ),
+            location="Runtime execution",
+            fix_suggestion=(
+                "Add a zero check before dividing, e.g.:\n"
+                "  if b == 0: raise ValueError('Divisor cannot be zero')\n"
+                "  return a / b\n"
+                "Or wrap in a try/except ZeroDivisionError block."
+            ),
         ))
     
     def _add_misinterpretation(self):
