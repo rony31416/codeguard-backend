@@ -487,40 +487,129 @@ class StaticAnalyzer:
         }
     
     def _check_missing_corner_cases(self) -> Dict[str, Any]:
-        """Detect missing critical edge case handling (very conservative)"""
+        """Detect missing critical edge case handling using astroid semantic AST."""
         missing_cases = []
-        
-        # Only check for CRITICAL missing corner cases, not defensive programming
-        tree = self._try_parse_partial()
-        
-        # Check for division operations without ANY zero/empty checking
-        if tree:
+
+        try:
+            import astroid
+            from astroid import nodes, exceptions as astroid_exceptions
+
+            try:
+                tree = astroid.parse(self.code)
+            except Exception:
+                return {"found": False, "details": []}
+
+            for node in tree.nodes_of_class(nodes.BinOp):
+                if node.op != '/':
+                    continue
+
+                right = node.right
+
+                # Division by a numeric literal is always safe
+                if isinstance(right, nodes.Const):
+                    continue
+
+                # Right side is a variable / expression — potentially zero
+                scope = node.scope()
+                if not self._has_zero_protection_astroid(scope, right):
+                    divisor_name = self._get_divisor_name(right)
+                    missing_cases.append({
+                        "line": node.lineno,
+                        "description": (
+                            f"Division by variable '{divisor_name}' without zero check "
+                            f"— may raise ZeroDivisionError"
+                        ),
+                    })
+
+        except ImportError:
+            # astroid not installed — fall back to conservative line-scan
             for i, line in enumerate(self.lines):
-                if '/' in line and 'if' not in line:
-                    # Check if there's ANY protection against division by zero
-                    # Look for checks in surrounding context (wider range)
-                    context_start = max(0, i-5)
-                    context_end = min(len(self.lines), i+3)
-                    context_lines = '\n'.join(self.lines[context_start:context_end])
-                    
-                    # Check for various forms of protection
-                    has_protection = any([
-                        '!= 0' in context_lines,
-                        '== 0' in context_lines,
-                        'if not' in context_lines,  # Empty check
-                        'len(' in context_lines and ('if' in context_lines or 'return' in context_lines),  # Length check
-                        'ZeroDivisionError' in context_lines,  # Exception handling
-                    ])
-                    
-                    if not has_protection:
-                        # Only report if it's clearly risky (dividing by len() without checks)
-                        if 'len(' in line or 'count' in line.lower():
+                stripped = line.strip()
+                if stripped.startswith('#'):
+                    continue
+                if '/' in line and '//' not in line and 'http' not in line:
+                    ctx_start = max(0, i - 5)
+                    ctx_end = min(len(self.lines), i + 4)
+                    ctx = '\n'.join(self.lines[ctx_start:ctx_end])
+                    if not any(kw in ctx for kw in ['!= 0', '== 0', 'ZeroDivisionError', 'try:']):
+                        if 'len(' in line or '.count(' in line:
                             missing_cases.append({
                                 "line": i + 1,
-                                "description": "Division operation without zero check"
+                                "description": "Division operation without zero check",
                             })
-        
-        return {
-            "found": len(missing_cases) > 0,
-            "details": missing_cases
-        }
+
+        return {"found": len(missing_cases) > 0, "details": missing_cases}
+
+    @staticmethod
+    def _get_divisor_name(node) -> str:
+        try:
+            from astroid import nodes
+            if isinstance(node, nodes.Name):
+                return node.name
+            if isinstance(node, nodes.Call):
+                if isinstance(node.func, nodes.Name):
+                    return node.func.name + "()"
+                if isinstance(node.func, nodes.Attribute):
+                    return node.func.attrname + "()"
+        except Exception:
+            pass
+        return "<expr>"
+
+    @staticmethod
+    def _has_zero_protection_astroid(scope, divisor_node) -> bool:
+        try:
+            from astroid import nodes
+
+            divisor_name = None
+            if isinstance(divisor_node, nodes.Name):
+                divisor_name = divisor_node.name
+
+            # 1. try/except ZeroDivisionError or bare except
+            for handler in scope.nodes_of_class(nodes.ExceptHandler):
+                if handler.type is None:
+                    return True
+                exc_names = []
+                if isinstance(handler.type, nodes.Name):
+                    exc_names = [handler.type.name]
+                elif isinstance(handler.type, nodes.Tuple):
+                    exc_names = [
+                        e.name for e in handler.type.elts
+                        if isinstance(e, nodes.Name)
+                    ]
+                if "ZeroDivisionError" in exc_names or "Exception" in exc_names:
+                    return True
+
+            # 2. Explicit zero comparison guard
+            if divisor_name:
+                for if_node in scope.nodes_of_class(nodes.If):
+                    if StaticAnalyzer._test_guards_zero(if_node.test, divisor_name):
+                        return True
+        except Exception:
+            pass
+        return False
+
+    @staticmethod
+    def _test_guards_zero(test_node, name: str) -> bool:
+        try:
+            from astroid import nodes
+            # if name  (truthy guard)
+            if isinstance(test_node, nodes.Name) and test_node.name == name:
+                return True
+            # if not name
+            if (isinstance(test_node, nodes.UnaryOp) and test_node.op == "not"
+                    and isinstance(test_node.operand, nodes.Name)
+                    and test_node.operand.name == name):
+                return True
+            # if name == 0  /  name != 0  /  0 == name  /  0 != name
+            if isinstance(test_node, nodes.Compare):
+                left = test_node.left
+                for _op, comparator in test_node.ops:
+                    if (isinstance(left, nodes.Name) and left.name == name
+                            and isinstance(comparator, nodes.Const) and comparator.value == 0):
+                        return True
+                    if (isinstance(left, nodes.Const) and left.value == 0
+                            and isinstance(comparator, nodes.Name) and comparator.name == name):
+                        return True
+        except Exception:
+            pass
+        return False
