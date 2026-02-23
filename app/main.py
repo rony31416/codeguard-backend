@@ -457,7 +457,7 @@ def get_history(limit: int = 20, db: Session = Depends(get_db)):
                 "has_bugs": a.has_bugs,
                 "bug_count": len(a.bug_patterns),
                 "created_at": a.created_at.isoformat(),
-                "feedback": a.feedback.feedback_type if a.feedback else None
+                "feedback": a.feedbacks[0].feedback_type if a.feedbacks else None
             }
             for a in analyses
         ]
@@ -502,10 +502,10 @@ def get_analysis(analysis_id: int, db: Session = Depends(get_db)):
             "hardcoded_values": json.loads(analysis.linguistic_analysis.hardcoded_values)
         } if analysis.linguistic_analysis else None,
         "feedback": {
-            "type": analysis.feedback.feedback_type,
-            "comment": analysis.feedback.comment,
-            "submitted_at": analysis.feedback.submitted_at.isoformat()
-        } if analysis.feedback else None
+            "type": analysis.feedbacks[0].feedback_type,
+            "comment": analysis.feedbacks[0].comment,
+            "submitted_at": analysis.feedbacks[0].submitted_at.isoformat()
+        } if analysis.feedbacks else None
     }
 
 
