@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends, HTTPException, Request, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
@@ -22,16 +23,24 @@ logging.basicConfig(
 )
 logger = logging.getLogger("codeguard")
 
-# Create tables
-Base.metadata.create_all(bind=engine)
-
 # Rate limiting
 limiter = Limiter(key_func=get_remote_address)
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Create DB tables at startup (non-blocking via thread)
+    try:
+        Base.metadata.create_all(bind=engine)
+        logger.info("Database tables ready")
+    except Exception as e:
+        logger.warning(f"DB create_all failed (may already exist): {e}")
+    yield
 
 app = FastAPI(
     title="CodeGuard API",
     description="LLM Bug Taxonomy Classifier & Analyzer",
-    version="2.0.0"
+    version="2.0.0",
+    lifespan=lifespan
 )
 
 app.state.limiter = limiter
@@ -707,18 +716,6 @@ def get_bug_patterns():
     return {
         "total_patterns": len(patterns),
         "patterns": patterns
-    }
-
-
-@app.get("/health")
-def health_check():
-    """
-    Health check endpoint for monitoring
-    """
-    return {
-        "status": "healthy",
-        "api_version": "2.0.0",
-        "timestamp": time.time()
     }
 
 
