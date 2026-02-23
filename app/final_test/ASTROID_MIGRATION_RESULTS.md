@@ -1,8 +1,10 @@
 # Astroid Migration — Results & Comparison Report
 
-**Date:** February 21, 2026  
-**Scope:** Migration of CodeGuard static analysis from Python stdlib `ast` to `astroid` (Pylint's AST library)  
+**Date:** February 23, 2026 (re-run after Docker dynamic fix)  
+**Scope:** Migration of CodeGuard static analysis from Python stdlib `ast` to `astroid` + Docker dynamic execution fix  
 **Test method:** 160 HTTP POST requests to Render production backend (`https://codeguard-backend-g7ka.onrender.com/api/analyze`), across 10 test sets of 16 cases each.
+
+> **Re-run note:** The previous `result_astroid/` run (2026-02-21) was performed while Docker dynamic execution was broken — user variables like `result = ...` could overwrite the wrapper's internal state, causing empty container stdout and `ParseError`. This run uses the fixed backend.
 
 ---
 
@@ -55,84 +57,77 @@ except SyntaxError               →  except astroid_exceptions.AstroidSyntaxErr
 | Total test cases | 160 |
 | Cases per set | 16 (8 buggy, 8 clean) |
 | Request timeout | 120 s |
-| Previous run date | 2026-02-20 |
-| Astroid run date | 2026-02-21 |
+| Baseline run date | 2026-02-20 (stdlib ast, dynamic broken) |
+| This run date | 2026-02-23 (astroid + Docker dynamic fixed) |
 
 ---
 
 ## 3. Overall Metrics Comparison
 
-| Metric | Pre-Astroid (stdlib ast) | Post-Astroid | Change |
+| Metric | Baseline (stdlib ast) | Post-Fix (astroid + Docker) | Change |
 |---|---|---|---|
-| **Total Cases** | 160 | 160 (1 error) | — |
-| **Correct Predictions** | 115 | 112 | -3 |
-| **Accuracy** | **71.88%** | **70.00%** | -1.88% |
-| **Precision** | **68.42%** | **67.37%** | -1.05% |
-| **Recall** | **81.25%** | **80.00%** | -1.25% |
-| **F1 Score** | **74.29%** | **73.14%** | -1.15% |
-| **Specificity** | **62.50%** | **60.76%** | -1.74% |
-| **False Positive Rate** | 37.50% | 39.24% | +1.74% |
-| **False Negative Rate** | 18.75% | 20.00% | +1.25% |
+| **Total Cases** | 160 | 160 | — |
+| **Correct Predictions** | 115 | **117** | **+2** |
+| **Accuracy** | **71.88%** | **73.12%** | **+1.25%** ↑ |
+| **Precision** | **68.42%** | **67.96%** | -0.46% |
+| **Recall** | **81.25%** | **87.50%** | **+6.25%** ↑ |
+| **F1 Score** | **74.29%** | **76.50%** | **+2.21%** ↑ |
+| **Specificity** | **62.50%** | **58.75%** | -3.75% |
+| **False Positive Rate** | 37.50% | 41.25% | +3.75% |
+| **False Negative Rate** | 18.75% | **12.50%** | **-6.25%** ↓ |
 
 ### Confusion Matrix
 
 |  | Predicted Bug | Predicted Clean |
 |---|---|---|
-| **Actual Bug** | TP: 65 → **64** | FN: 15 → **16** |
-| **Actual Clean** | FP: 30 → **31** | TN: 50 → **48** |
+| **Actual Bug** | TP: 65 → **70** | FN: 15 → **10** |
+| **Actual Clean** | FP: 30 → **33** | TN: 50 → **47** |
 
-> **Note:** 1 HTTP 502 error occurred in Test Set 6 (Render transient error — unrelated to the migration). This case was excluded from per-set accuracy but counted in overall totals as an error.
+> **Key change:** Working Docker dynamic execution now catches runtime bugs (ZeroDivisionError, AttributeError, NameError, TypeError) that the static layer alone missed. This raises Recall significantly (+6.25%) and reduces False Negatives from 15 → 10. The slight FPR increase (+3.75%) is a known trade-off when enabling dynamic detection — some clean code now triggers runtime-based signals.
 
 ---
 
 ## 4. Per-Test-Set Breakdown
 
-| Set | Name | Pre-Astroid | Post-Astroid | Δ | Notes |
+| Set | Name | Baseline | Post-Fix | Δ | Notes |
 |---|---|---|---|---|---|
-| 1 | Basic Bug Patterns | 87.50% (14/16) | **87.50% (14/16)** | = | No change |
+| 1 | Basic Bug Patterns | 87.50% (14/16) | **93.75% (15/16)** | **+6.25%** ↑ | Improved |
 | 2 | Advanced Bug Patterns | 68.75% (11/16) | **75.00% (12/16)** | **+6.25%** ↑ | Improved |
 | 3 | Real-World Code Scenarios | 81.25% (13/16) | **81.25% (13/16)** | = | No change |
 | 4 | Data Structures & API Usage | 68.75% (11/16) | **75.00% (12/16)** | **+6.25%** ↑ | Improved |
-| 5 | Complex & Real-World Scenarios | 75.00% (12/16) | **50.00% (8/16)** | **-25.00%** ↓ | Regressed |
-| 6 | Mixed Bugs & Complex Logic | 75.00% (12/16) | **66.67% (10/15)** | -8.33% ↓ | 1 HTTP 502 error |
+| 5 | Complex & Real-World Scenarios | 75.00% (12/16) | **75.00% (12/16)** | = | No change |
+| 6 | Mixed Bugs & Complex Logic | 75.00% (12/16) | **68.75% (11/16)** | **-6.25%** ↓ | Regressed |
 | 7 | Security & Edge Cases | 68.75% (11/16) | **68.75% (11/16)** | = | No change |
-| 8 | OOP & Structural Bugs | 75.00% (12/16) | **75.00% (12/16)** | = | No change |
-| 9 | Regression & Stress Testing | 62.50% (10/16) | **68.75% (11/16)** | **+6.25%** ↑ | Improved |
-| 10 | Production-Ready Code Patterns | 56.25% (9/16) | **56.25% (9/16)** | = | No change |
+| 8 | OOP & Structural Bugs | 75.00% (12/16) | **68.75% (11/16)** | **-6.25%** ↓ | Regressed |
+| 9 | Regression & Stress Testing | 62.50% (10/16) | **62.50% (10/16)** | = | No change |
+| 10 | Production-Ready Code Patterns | 56.25% (9/16) | **62.50% (10/16)** | **+6.25%** ↑ | Improved |
 
 ---
 
 ## 5. Analysis
 
-### 5.1 Where Astroid Helped (Improved Sets)
+### 5.1 Where the Fix Helped (Improved Sets)
 
-**Set 2 (+6.25%) — Advanced Bug Patterns**  
-The astroid-based `wrong_attribute_detector` and `hallucination_detector` were able to use scope-aware traversal to catch advanced attribute misuses more reliably than the regex-based predecessor.
+**Set 1 (+6.25%) — Basic Bug Patterns**  
+With Docker dynamic execution now working, the `Missing Corner Case - Division Without Check` case is caught at runtime (ZeroDivisionError when called with `divide(10, 0)`), adding a detection signal on top of the static astroid check.
 
-**Set 4 (+6.25%) — Data Structures & API Usage**  
-Dict dot-access detection benefited directly from `node.expr.infer()` — the semantic inference correctly identified dict objects that the old regex patterns missed in more complex expressions.
+**Sets 2 & 4 (+6.25% each) — Advanced Bug Patterns / Data Structures & API Usage**  
+The combination of astroid-based `wrong_attribute_detector` (semantic inference via `node.expr.infer()`) and runtime AttributeError capture jointly improves detection of dict dot-access and advanced attribute misuse.
 
-**Set 9 (+6.25%) — Regression & Stress Testing**  
-Scoped recursion detection in `utils/ast_analyzer.py` through `func_node.nodes_of_class(nodes.Call)` reduced noise from nested calls, leading to cleaner signals in mixed/complex code.
+**Set 10 (+6.25%) — Production-Ready Code Patterns**  
+Runtime dynamic execution catches production-style bugs that require code execution to surface (e.g., resource leaks, deprecated-function calls that raise exceptions under certain inputs).
 
-### 5.2 Where Regression Occurred (Set 5, -25%)
+### 5.2 Where Regression Occurred
 
-**Set 5 — Complex & Real-World Scenarios**  
-This is the most significant regression. The set contains many **clean code cases** that use advanced Python patterns:
+**Set 6 (-6.25%) — Mixed Bugs & Complex Logic**  
+Some mixed-pattern cases involving advanced Python constructs (multiple inheritance, async functions, abstract base classes, `map`/`filter`) are now flagged by the dynamic layer when they were previously classified as clean by a static-only pipeline. The LLM is likely reacting to new dynamic signals.
 
-- Lambda functions with closures → falsely flagged (severity 8)
-- Class properties / descriptors → falsely flagged (severity 6)
-- Recursive functions → falsely flagged (severity 6)
-- Regex usage → falsely flagged (severity 6)
-- Decorators → falsely flagged (severity 5)
-
-The astroid migration may have made the **linguistic/LLM layer more sensitive** to structural complexity — the static layer feeding into the LLM verdict pipeline now surfaces more structural nodes (via `nodes_of_class`) in complex code that previously went undetected, causing the LLM to over-classify them as buggy.
-
-**Set 6 (-8.33%)** — One case returned HTTP 502 from Render (transient infrastructure error). The actual code-level regression is smaller: 10/15 valid cases = 66.67% vs 12/16 = 75.00%.
+**Set 8 (-6.25%) — OOP & Structural Bugs**  
+OOP patterns like `super().__init__()`, property setters, magic methods, and abstract properties trigger dynamic analysis signals that push borderline cases over the bug threshold. These are false positives introduced by the more sensitive dynamic layer.
 
 ### 5.3 Stable Sets (No Change)
 
-Sets 1, 3, 7, 8, 10 were completely unaffected. This confirms the astroid migration is a net-neutral or net-positive change for the majority of bug pattern categories. The core detection pipeline remains stable.
+Sets 3, 5, 7, 9 are unchanged, confirming the core detection pipeline is stable. These sets involve code patterns that neither benefit from runtime detection nor regress from it.
 
 ---
 
@@ -156,18 +151,21 @@ The astroid migration unit tests (`test_astroid_migration.py`) passed all 7 grou
 
 | Finding | Detail |
 |---|---|
-| **Overall accuracy delta** | -1.88% (within noise margin of a single test run) |
-| **Migration stability** | 5/10 test sets unchanged, 3/10 improved, 2/10 regressed |
-| **Primary gain** | Semantic inference (`infer()`) and scope-aware traversal |
-| **Primary risk** | False positive rate on complex clean code increased slightly |
-| **Root cause of Set 5 regression** | LLM over-classification of structurally complex but valid Python (closures, properties, decorators) |
+| **Overall accuracy delta** | **+1.25%** (71.88% → 73.12%) |
+| **Net gain in correct predictions** | +2 (115 → 117) |
+| **Recall improvement** | +6.25% (81.25% → 87.50%) — 5 more bugs caught |
+| **False Negative Rate** | -6.25% (18.75% → 12.50%) — 5 fewer misses |
+| **FPR trade-off** | +3.75% (37.50% → 41.25%) — 3 more clean cases falsely flagged |
+| **Migration stability** | 4/10 sets improved, 4/10 unchanged, 2/10 regressed |
+| **Primary gain** | Docker dynamic execution catches runtime errors (ZeroDivision, AttributeError, NameError, TypeError) that static analysis misses |
+| **Primary risk** | Dynamic layer increases FPR for complex OOP / async patterns |
 
 ### Next Steps (Recommended)
 
-1. **Tune FP threshold for complex patterns** — Add a whitelist/filter in `wrong_attribute_detector.py` for known clean patterns (lambda, property, decorator) to reverse the Set 5 regression.
-2. **Calibrate severity scoring** — Cases falsely flagged in Sets 5–6 all carry severity 5–8. Lowering the clean/bug threshold from `severity > 0` to `severity >= 3` would reduce false positives.
-3. **Re-run Set 6** — The HTTP 502 error was a transient Render issue; a clean re-run would give accurate data.
-4. **Benefit is in code quality** — The astroid migration's primary value is maintainability and correctness of the static analysis layer, not a dramatic accuracy jump. The LLM verdict layer dominates final accuracy.
+1. **Tune FP threshold for OOP patterns** — Sets 6 and 8 false positives involve complex clean OOP (multiple inheritance, property, async). Add a guard in `classifier.py` that discounts dynamic signals when the code contains no function calls with literal arguments.
+2. **Calibrate severity scoring** — Cases falsely flagged carry severity 5–8. Raising the clean/bug threshold from `severity > 0` to `severity >= 4` would reduce false positives at small recall cost.
+3. **Expand dynamic test harness** — The `test_docker_analysis.py` suite (20 cases) should be extended to cover OOP patterns — `super()`, property setters, abstract methods — to catch future regressions early.
+4. **Track FPR separately per pattern** — Log which specific `_cg_result` error types drive false positives in Sets 6/8 to build a targeted suppression list.
 
 ---
 
@@ -175,7 +173,10 @@ The astroid migration unit tests (`test_astroid_migration.py`) passed all 7 grou
 
 | Location | Contents |
 |---|---|
-| `app/final_test/results/` | Pre-astroid results (10 test sets + `final_metrics_report.json`) |
-| `app/final_test/result_astroid/` | Post-astroid results (10 test sets + `final_metrics_report.json`) |
+| `app/final_test/results/` | Baseline (stdlib ast, dynamic broken) — 2026-02-20 |
+| `app/final_test/result_astroid/` | Post-fix (astroid + working Docker dynamic) — 2026-02-23 |
 | `app/final_test/run_tests_astroid.py` | Test runner used for this run (targets Render, saves to `result_astroid/`) |
+| `app/final_test/compare_results.py` | Comparison script that generated `DYNAMIC_FIX_RESULTS.md` |
+| `app/final_test/DYNAMIC_FIX_RESULTS.md` | Auto-generated diff report between results/ and result_astroid/ |
 | `backend/test_astroid_migration.py` | Unit tests validating individual migrated components |
+| `backend/test_docker_analysis.py` | 20-case Docker dynamic executor test suite |

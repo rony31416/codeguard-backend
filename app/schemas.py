@@ -36,6 +36,7 @@ class AnalysisResponse(BaseModel):
     has_bugs: bool
     summary: str
     created_at: datetime
+    status: Optional[str] = None  # "processing" = linguistic pending, "complete" = done
 
     class Config:
         from_attributes = True

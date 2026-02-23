@@ -2,10 +2,10 @@
   "test_set_id": 1,
   "name": "Basic Bug Patterns",
   "total_cases": 16,
-  "correct": 14,
+  "correct": 15,
   "errors": 0,
-  "accuracy": 87.5,
-  "total_execution_time": 285.51329588890076,
+  "accuracy": 93.75,
+  "total_execution_time": 169.74503636360168,
   "results": [
     {
       "test_case_id": 1,
@@ -28,8 +28,8 @@
       ],
       "severity_score": 9,
       "expected_bug_type": "syntax_error",
-      "execution_time": 19.33474898338318,
-      "analysis_id": 29
+      "execution_time": 12.240493774414062,
+      "analysis_id": 354
     },
     {
       "test_case_id": 2,
@@ -37,18 +37,23 @@
       "expected": "bug",
       "predicted": "bug",
       "correct": true,
-      "bug_count": 1,
+      "bug_count": 2,
       "bugs_found": [
         {
           "pattern_name": "Hallucinated Object",
           "severity": 8,
           "description": "The code references undefined objects that may not exist: DataValidator. LLMs sometimes invent funct"
+        },
+        {
+          "pattern_name": "Missing Features",
+          "severity": 6,
+          "description": "The code is missing features that were requested in the prompt. Detected 1 missing feature(s): Imple"
         }
       ],
       "severity_score": 8,
       "expected_bug_type": "hallucinated_object",
-      "execution_time": 19.053893327713013,
-      "analysis_id": 31
+      "execution_time": 11.10034704208374,
+      "analysis_id": 355
     },
     {
       "test_case_id": 3,
@@ -86,8 +91,8 @@
       ],
       "severity_score": 9,
       "expected_bug_type": "incomplete_generation",
-      "execution_time": 21.7707359790802,
-      "analysis_id": 33
+      "execution_time": 11.757148027420044,
+      "analysis_id": 356
     },
     {
       "test_case_id": 4,
@@ -103,15 +108,15 @@
           "description": "Non-human coding patterns detected. Found 1 issue(s) including: If and else branches contain identic"
         },
         {
-          "pattern_name": "Non-Prompted Consideration (NPC)",
-          "severity": 5,
-          "description": "The code includes features that weren't requested. Detected 1 unrequested addition(s): Applying 10% "
+          "pattern_name": "Missing Features",
+          "severity": 6,
+          "description": "The code is missing features that were requested in the prompt. Detected 1 missing feature(s): Apply"
         }
       ],
       "severity_score": 6,
       "expected_bug_type": "silly_mistake",
-      "execution_time": 26.300446033477783,
-      "analysis_id": 35
+      "execution_time": 12.155264377593994,
+      "analysis_id": 357
     },
     {
       "test_case_id": 5,
@@ -129,13 +134,13 @@
         {
           "pattern_name": "Missing Features",
           "severity": 6,
-          "description": "The code is missing features that were requested in the prompt. Detected 1 missing feature(s): Acces"
+          "description": "The code is missing features that were requested in the prompt. Detected 1 missing feature(s): Retri"
         }
       ],
       "severity_score": 7,
       "expected_bug_type": "wrong_attribute",
-      "execution_time": 22.562870979309082,
-      "analysis_id": 37
+      "execution_time": 11.167278528213501,
+      "analysis_id": 358
     },
     {
       "test_case_id": 6,
@@ -158,13 +163,13 @@
         {
           "pattern_name": "Missing Features",
           "severity": 6,
-          "description": "The code is missing features that were requested in the prompt. Detected 1 missing feature(s): Use t"
+          "description": "The code is missing features that were requested in the prompt. Detected 1 missing feature(s): Use i"
         }
       ],
       "severity_score": 6,
       "expected_bug_type": "wrong_input_type",
-      "execution_time": 21.791821241378784,
-      "analysis_id": 39
+      "execution_time": 11.94918942451477,
+      "analysis_id": 359
     },
     {
       "test_case_id": 7,
@@ -172,42 +177,47 @@
       "expected": "bug",
       "predicted": "bug",
       "correct": true,
-      "bug_count": 2,
+      "bug_count": 3,
       "bugs_found": [
         {
           "pattern_name": "Non-Prompted Consideration (NPC)",
           "severity": 5,
-          "description": "The code includes features that weren't requested. Detected 1 unrequested addition(s): Hardcoded fil"
+          "description": "The code includes features that weren't requested. Detected 1 unrequested addition(s): Hardcoded spe"
         },
         {
           "pattern_name": "Prompt-Biased Code",
           "severity": 6,
           "description": "The code contains hardcoded logic based on specific examples from the prompt rather than general sol"
+        },
+        {
+          "pattern_name": "Missing Features",
+          "severity": 6,
+          "description": "The code is missing features that were requested in the prompt. Detected 2 missing feature(s): Read "
         }
       ],
       "severity_score": 6,
       "expected_bug_type": "prompt_bias",
-      "execution_time": 28.700839042663574,
-      "analysis_id": 41
+      "execution_time": 11.783571720123291,
+      "analysis_id": 360
     },
     {
       "test_case_id": 8,
       "name": "Missing Corner Case - Division Without Check",
       "expected": "bug",
-      "predicted": "clean",
-      "correct": false,
+      "predicted": "bug",
+      "correct": true,
       "bug_count": 1,
       "bugs_found": [
         {
-          "pattern_name": "No Bugs Detected",
-          "severity": 0,
-          "description": "Static and dynamic analysis did not detect any obvious bugs. However, logic errors or missing corner"
+          "pattern_name": "Missing Corner Case",
+          "severity": 5,
+          "description": "The code doesn't handle edge cases properly. Detected 1 missing check(s): Division by variable 'len("
         }
       ],
-      "severity_score": 0,
+      "severity_score": 5,
       "expected_bug_type": "missing_corner_case",
-      "execution_time": 13.871598482131958,
-      "analysis_id": 43
+      "execution_time": 7.948911905288696,
+      "analysis_id": 361
     },
     {
       "test_case_id": 9,
@@ -225,8 +235,8 @@
       ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "execution_time": 13.516937255859375,
-      "analysis_id": 44
+      "execution_time": 6.284096717834473,
+      "analysis_id": 362
     },
     {
       "test_case_id": 10,
@@ -244,8 +254,8 @@
       ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "execution_time": 15.780965328216553,
-      "analysis_id": 46
+      "execution_time": 7.676070928573608,
+      "analysis_id": 363
     },
     {
       "test_case_id": 11,
@@ -263,8 +273,8 @@
       ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "execution_time": 12.960092067718506,
-      "analysis_id": 47
+      "execution_time": 7.61902642250061,
+      "analysis_id": 364
     },
     {
       "test_case_id": 12,
@@ -282,8 +292,8 @@
       ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "execution_time": 12.090864896774292,
-      "analysis_id": 49
+      "execution_time": 8.41702127456665,
+      "analysis_id": 365
     },
     {
       "test_case_id": 13,
@@ -301,8 +311,8 @@
       ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "execution_time": 14.114251136779785,
-      "analysis_id": 51
+      "execution_time": 26.835928201675415,
+      "analysis_id": 366
     },
     {
       "test_case_id": 14,
@@ -320,8 +330,8 @@
       ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "execution_time": 13.086183547973633,
-      "analysis_id": 53
+      "execution_time": 7.772849798202515,
+      "analysis_id": 367
     },
     {
       "test_case_id": 15,
@@ -339,8 +349,8 @@
       ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "execution_time": 11.314640045166016,
-      "analysis_id": 55
+      "execution_time": 6.8401665687561035,
+      "analysis_id": 368
     },
     {
       "test_case_id": 16,
@@ -358,14 +368,14 @@
         {
           "pattern_name": "Missing Features",
           "severity": 6,
-          "description": "The code is missing features that were requested in the prompt. Detected 1 missing feature(s): Missi"
+          "description": "The code is missing features that were requested in the prompt. Detected 1 missing feature(s): Accep"
         }
       ],
       "severity_score": 8,
       "expected_bug_type": null,
-      "execution_time": 19.262407541275024,
-      "analysis_id": 57
+      "execution_time": 8.19767165184021,
+      "analysis_id": 369
     }
   ],
-  "timestamp": "2026-02-21T20:07:04.411106"
+  "timestamp": "2026-02-23T02:52:04.424078"
 }

@@ -5,7 +5,7 @@
   "correct": 13,
   "errors": 0,
   "accuracy": 81.25,
-  "total_execution_time": 308.02617263793945,
+  "total_execution_time": 209.93881559371948,
   "results": [
     {
       "test_case_id": 33,
@@ -13,23 +13,18 @@
       "expected": "bug",
       "predicted": "bug",
       "correct": true,
-      "bug_count": 2,
+      "bug_count": 1,
       "bugs_found": [
         {
           "pattern_name": "Incomplete Generation",
           "severity": 7,
           "description": "Code generation appears incomplete. Issues: Comment indicates incomplete code. The LLM may have been"
-        },
-        {
-          "pattern_name": "Non-Prompted Consideration (NPC)",
-          "severity": 5,
-          "description": "The code includes features that weren't requested. Detected 2 unrequested addition(s): Unnecessary w"
         }
       ],
       "severity_score": 7,
       "expected_bug_type": "incomplete_generation",
-      "execution_time": 20.72792935371399,
-      "analysis_id": 92
+      "execution_time": 11.999977111816406,
+      "analysis_id": 386
     },
     {
       "test_case_id": 34,
@@ -42,13 +37,13 @@
         {
           "pattern_name": "Missing Features",
           "severity": 6,
-          "description": "The code is missing features that were requested in the prompt. Detected 1 missing feature(s): Incor"
+          "description": "The code is missing features that were requested in the prompt. Detected 1 missing feature(s): Retur"
         }
       ],
       "severity_score": 6,
       "expected_bug_type": "silly_mistake",
-      "execution_time": 18.34285283088684,
-      "analysis_id": 94
+      "execution_time": 10.660138845443726,
+      "analysis_id": 387
     },
     {
       "test_case_id": 35,
@@ -66,8 +61,8 @@
       ],
       "severity_score": 0,
       "expected_bug_type": "silly_mistake",
-      "execution_time": 30.38421368598938,
-      "analysis_id": 97
+      "execution_time": 10.076058149337769,
+      "analysis_id": 388
     },
     {
       "test_case_id": 36,
@@ -85,13 +80,13 @@
         {
           "pattern_name": "Missing Features",
           "severity": 6,
-          "description": "The code is missing features that were requested in the prompt. Detected 1 missing feature(s): retur"
+          "description": "The code is missing features that were requested in the prompt. Detected 1 missing feature(s): missi"
         }
       ],
       "severity_score": 7,
       "expected_bug_type": "incomplete_generation",
-      "execution_time": 17.395657539367676,
-      "analysis_id": 98
+      "execution_time": 9.596491813659668,
+      "analysis_id": 389
     },
     {
       "test_case_id": 37,
@@ -104,13 +99,13 @@
         {
           "pattern_name": "Missing Features",
           "severity": 6,
-          "description": "The code is missing features that were requested in the prompt. Detected 1 missing feature(s): Missi"
+          "description": "The code is missing features that were requested in the prompt. Detected 1 missing feature(s): Check"
         }
       ],
       "severity_score": 6,
       "expected_bug_type": "wrong_input_type",
-      "execution_time": 30.652493953704834,
-      "analysis_id": 101
+      "execution_time": 11.035360097885132,
+      "analysis_id": 390
     },
     {
       "test_case_id": 38,
@@ -128,8 +123,8 @@
       ],
       "severity_score": 0,
       "expected_bug_type": "missing_corner_case",
-      "execution_time": 20.688902854919434,
-      "analysis_id": 103
+      "execution_time": 62.18601202964783,
+      "analysis_id": 391
     },
     {
       "test_case_id": 39,
@@ -137,23 +132,18 @@
       "expected": "bug",
       "predicted": "bug",
       "correct": true,
-      "bug_count": 2,
+      "bug_count": 1,
       "bugs_found": [
         {
           "pattern_name": "Syntax Error",
           "severity": 9,
           "description": "The code contains a syntax error at line 2: invalid syntax. Maybe you meant '==' or ':=' instead of "
-        },
-        {
-          "pattern_name": "Missing Features",
-          "severity": 6,
-          "description": "The code is missing features that were requested in the prompt. Detected 1 missing feature(s): Corre"
         }
       ],
       "severity_score": 9,
       "expected_bug_type": "syntax_error",
-      "execution_time": 32.74267053604126,
-      "analysis_id": 106
+      "execution_time": 15.092191934585571,
+      "analysis_id": 392
     },
     {
       "test_case_id": 40,
@@ -171,8 +161,8 @@
       ],
       "severity_score": 0,
       "expected_bug_type": "missing_corner_case",
-      "execution_time": 15.222863912582397,
-      "analysis_id": 108
+      "execution_time": 8.688572883605957,
+      "analysis_id": 393
     },
     {
       "test_case_id": 41,
@@ -190,8 +180,8 @@
       ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "execution_time": 15.859072208404541,
-      "analysis_id": 110
+      "execution_time": 8.27426290512085,
+      "analysis_id": 394
     },
     {
       "test_case_id": 42,
@@ -209,8 +199,8 @@
       ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "execution_time": 12.178285360336304,
-      "analysis_id": 111
+      "execution_time": 8.956091165542603,
+      "analysis_id": 395
     },
     {
       "test_case_id": 43,
@@ -228,8 +218,8 @@
       ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "execution_time": 12.936753988265991,
-      "analysis_id": 113
+      "execution_time": 8.529801845550537,
+      "analysis_id": 396
     },
     {
       "test_case_id": 44,
@@ -247,8 +237,8 @@
       ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "execution_time": 14.203990697860718,
-      "analysis_id": 115
+      "execution_time": 9.167951583862305,
+      "analysis_id": 397
     },
     {
       "test_case_id": 45,
@@ -266,8 +256,8 @@
       ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "execution_time": 24.27743411064148,
-      "analysis_id": 118
+      "execution_time": 11.29830288887024,
+      "analysis_id": 398
     },
     {
       "test_case_id": 46,
@@ -285,8 +275,8 @@
       ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "execution_time": 15.831349849700928,
-      "analysis_id": 120
+      "execution_time": 8.28996205329895,
+      "analysis_id": 399
     },
     {
       "test_case_id": 47,
@@ -304,8 +294,8 @@
       ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "execution_time": 13.594963788986206,
-      "analysis_id": 121
+      "execution_time": 7.637633562088013,
+      "analysis_id": 400
     },
     {
       "test_case_id": 48,
@@ -323,9 +313,9 @@
       ],
       "severity_score": 0,
       "expected_bug_type": null,
-      "execution_time": 12.986737966537476,
-      "analysis_id": 123
+      "execution_time": 8.45000672340393,
+      "analysis_id": 401
     }
   ],
-  "timestamp": "2026-02-21T20:17:09.854598"
+  "timestamp": "2026-02-23T02:58:17.526031"
 }
